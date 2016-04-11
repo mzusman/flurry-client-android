@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">BlueTooth</string>
+    <string name="RPM">RPM: </string>
+    <string name="Speed">Speed: </string>
+    <string name="Thro">Thro: </string>
+</resources>
