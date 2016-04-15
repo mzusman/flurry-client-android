@@ -1,31 +1,9 @@
 package com.mzusman.bluetooth;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.protocol.EchoOffCommand;
-import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
-import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
-import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
-import com.github.pires.obd.enums.ObdProtocols;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 	String deviceAdress      = null;
@@ -34,10 +12,15 @@ public class MainActivity extends AppCompatActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final ArrayList<String> devices  = new ArrayList<>();
-		ArrayAdapter<String>    adapter  = new ArrayAdapter<String>(this, R.layout.device_name);
-		final ListView          listView = (ListView) findViewById(R.id.paired);
-		setTitle("Select Device");
+
+        Fragment DeviceList=new FragmentDeviceList();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_container, DeviceList);
+        transaction.commit();
+
+
+		//final ListView          listView = (ListView) findViewById(R.id.paired);
+
 //		listView.setAdapter(adapter);
 
 //		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -60,19 +43,7 @@ public class MainActivity extends AppCompatActivity {
 //				devices.add(device.getAddress());
 //			}
 //		}
-		adapter.add("asdasd");
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-//				deviceAdress = devices.get(position);
-				Intent intent = new Intent(MainActivity.this , DetailsActivity.class);
-//				intent.putExtra("address",deviceAdress);
-				startActivity(intent);
-
-			}
-		});
 
 
 
