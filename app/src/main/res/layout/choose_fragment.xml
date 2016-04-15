@@ -3,26 +3,29 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:text=""
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/bt"
-        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/bt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_height="wrap_content"
         android:text="@string/bt"/>
 
+   <TextView
+        android:layout_width="match_parent"
+        android:text="@string/manager"
+        style="@style/flurry"
+        android:id="@+id/choose"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/bt"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/wifi"
         android:layout_below="@id/bt"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:text="@string/wifi"/>
 </RelativeLayout>

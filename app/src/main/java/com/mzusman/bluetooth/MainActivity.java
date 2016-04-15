@@ -13,7 +13,9 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-        Fragment DeviceList=new FragmentDeviceList();
+		getSupportActionBar().setTitle("Welcome");
+
+        Fragment DeviceList=new FragmentChooseManager();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, DeviceList);
         transaction.commit();
