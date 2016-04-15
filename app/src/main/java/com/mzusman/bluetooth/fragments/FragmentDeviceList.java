@@ -3,6 +3,8 @@ package com.mzusman.bluetooth.fragments;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,24 +15,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.utils.Connector;
 import com.mzusman.bluetooth.utils.Constants;
+import com.mzusman.bluetooth.utils.DevicesAdapter;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created on 04/15/2016.
  */
 public class FragmentDeviceList extends Fragment {
 
-	ArrayAdapter<String> adapter;
+	DevicesAdapter devicesAdapter;
 
-	BTConnector btConnector ;
+	BTConnector btConnector;
 //	WIFIConnector wifiConnector;
 
+	ArrayList<String> devicesArrayList = new ArrayList<>();
 
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
@@ -41,23 +46,24 @@ public class FragmentDeviceList extends Fragment {
 
 		final ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);
 
-		final ArrayList<String> devicesArrayList = new ArrayList<>();
 
-		adapter = new ArrayAdapter<String>(getActivity(), R.layout.device_view);
+		devicesAdapter = new DevicesAdapter(devicesArrayList, getActivity());
 
 
-		listOfDevices.setAdapter(adapter);
+		listOfDevices.setAdapter(devicesAdapter);
 
 
 		listOfDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				String   deviceAdress = adapter.getItem(position);
+				String   deviceAdress = devicesAdapter.getDeviceAddress(position);
 				Fragment details      = new FragmentDetailsList();
 				Bundle   bundle       = new Bundle();
-				bundle.putString("DEVICE", deviceAdress);
+				bundle.putString(Constants.DEVICE_TAG, deviceAdress);
+
 				details.setArguments(bundle);
+
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
 				transaction.replace(R.id.fragment_container, details);
 				transaction.commit();
@@ -68,13 +74,10 @@ public class FragmentDeviceList extends Fragment {
 	}
 
 
-
-
-
-	class BTConnector {
+	class BTConnector implements Connector{
 		private BluetoothAdapter bluetoothAdapter;
 
-		public BTConnector() {
+		@Override public void initateConnection() {
 			bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (bluetoothAdapter == null) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -92,18 +95,26 @@ public class FragmentDeviceList extends Fragment {
 				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
 			}
-//
-//		final Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
-//		if (bluetoothDevices.size() > 0) {
-//			for (BluetoothDevice device : bluetoothDevices) {
-//				adapter.add(device.getName() + "\n" + device.getAddress());
-//				devices.add(device.getAddress());
-//			}
-//		}
 
-
+		final Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
+		if (bluetoothDevices.size() > 0) {
+			for (BluetoothDevice device : bluetoothDevices) {
+				FragmentDeviceList.this.devicesArrayList.add(device.getName() + "," + device.getAddress());
+				FragmentDeviceList.this.devicesAdapter.notifyDataSetChanged();
+			}
 		}
 
 
+		}
+	}
+
+
+
+	class WIFIConnector implements Connector{
+
+
+		@Override public void initateConnection() {
+
+		}
 	}
 }
