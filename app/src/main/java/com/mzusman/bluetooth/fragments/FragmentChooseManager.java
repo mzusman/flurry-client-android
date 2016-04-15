@@ -47,6 +47,7 @@ public class FragmentChooseManager extends Fragment {
 			@Override public void onClick(View v) {
 
 				Bundle wifiBundle = new Bundle();
+				fragment = new FragmentDetailsList();
 				wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
 				fragment.setArguments(wifiBundle);
 				getActivity().getFragmentManager().beginTransaction()

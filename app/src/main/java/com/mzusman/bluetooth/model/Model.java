@@ -17,7 +17,7 @@ public class Model {
 	public void setManager(Manager manager, String deviceAddress) {
 
 		this.manager = manager;
-		manager.connect(deviceAddress);
+//		manager.connect(deviceAddress);
 	}
 
 	public Manager getManager() {

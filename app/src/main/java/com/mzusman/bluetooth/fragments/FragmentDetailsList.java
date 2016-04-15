@@ -3,7 +3,9 @@ package com.mzusman.bluetooth.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,16 +38,17 @@ public class FragmentDetailsList extends Fragment {
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
 
-		View   view = inflater.inflate(R.layout.activity_details, container, false);
+
+		View              view = inflater.inflate(R.layout.activity_details, container, false);
+		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Read Parameters");
 		String request = getArguments().getString(Constants.MANAGER_TAG);
 		if(request.equals(Constants.WIFI_TAG)){
 			Model.getInstance().setManager(new WifiManager(new Manager.Factory() {
 				@Override
 				public void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory) {
 					commandsFactory.put(Constants.REQUEST_SPEED_READING,new SpeedCommand());
-
 				}
-			}), "192.168.0.10:35000");
+			}), Constants.WIFI_ADDRESS);
 		}
 
 		listView = (ListView) view.findViewById(R.id.details);
@@ -55,8 +58,10 @@ public class FragmentDetailsList extends Fragment {
 
 		new Thread(new Runnable() {
 			@Override public void run() {
+				Log.d(Constants.WIFI_TAG, "run: READING");
+				Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
 				while (run){
-
+					Log.d(Constants.WIFI_TAG, "run: READING");
 					String string= Model.getInstance().getRead(Constants.REQUEST_SPEED_READING);
 					arrayList.add(string);
 					detailsAdapter.notifyDataSetChanged();
@@ -66,9 +71,10 @@ public class FragmentDetailsList extends Fragment {
 		return view;
 	}
 
-
-
-
+	@Override public void onPause() {
+		super.onPause();
+		run = false;
+	}
 
 	public void writeToJson(JsonWriter jsonWriter, String string) throws IOException {
 

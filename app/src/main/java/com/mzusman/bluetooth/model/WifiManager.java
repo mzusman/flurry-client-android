@@ -3,7 +3,6 @@ package com.mzusman.bluetooth.model;
 import android.util.Log;
 
 import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -14,7 +13,6 @@ import com.mzusman.bluetooth.utils.Constants;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -33,7 +31,7 @@ public class WifiManager implements Manager {
 	}
 	@Override public void connect(String address) {
 		try {
-			socket = new Socket(address.split(":")[0], Integer.parseInt(address.split(":")[1]));
+			socket = new Socket(address.split(",")[0], Integer.parseInt(address.split(",")[1]));
 
 			new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
 			new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
@@ -108,7 +106,7 @@ public class WifiManager implements Manager {
 		}
 
 
-		return null;
+		return command.getFormattedResult();
 	}
 
 }

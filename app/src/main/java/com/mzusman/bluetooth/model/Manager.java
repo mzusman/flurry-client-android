@@ -21,7 +21,7 @@ public interface Manager {
 	String getReading(String READ);
 
 
-	HashMap<String, ObdCommand> commandsFactory = null;
+	HashMap<String, ObdCommand> commandsFactory = new HashMap<>();
 
 
 	interface Factory {
