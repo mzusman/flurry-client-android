@@ -20,8 +20,9 @@ public class DetailsAdapter extends BaseAdapter {
 	ArrayList<String> parametersList;
 	private static LayoutInflater inflater = null;
 	Context  context;
-	TextView label;
-	TextView text;
+	TextView name;
+	TextView value;
+	TextView time;
 
 	public DetailsAdapter(ArrayList<String> list, Context context) {
 		this.parametersList = list;
@@ -50,10 +51,12 @@ public class DetailsAdapter extends BaseAdapter {
 		}
 
 		String paramter = parametersList.get(position);
-		label = (TextView) vi.findViewById(R.id.label);
-		label.setText(paramter.split(",")[0]);
-		text = (TextView) vi.findViewById(R.id.text);
-		text.setText(paramter.split(",")[1]);
+		name = (TextView) vi.findViewById(R.id.name);
+		name.setText(paramter.split(",")[0]);
+		time = (TextView) vi.findViewById(R.id.time);
+		time.setText(paramter.split(",")[1]);
+		value = (TextView) vi.findViewById(R.id.val);
+		value.setText(paramter.split(",")[2]);
 		return vi;
 
 

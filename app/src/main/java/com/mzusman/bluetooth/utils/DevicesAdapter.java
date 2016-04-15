@@ -38,7 +38,7 @@ public class DevicesAdapter extends BaseAdapter {
 	}
 
 	@Override public long getItemId(int position) {
-		return strings.indexOf(position);
+		return position;
 	}
 
 	@Override public View getView(int position, View convertView, ViewGroup parent) {

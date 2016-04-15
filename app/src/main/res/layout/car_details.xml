@@ -6,15 +6,24 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:id="@+id/label"
+        android:id="@+id/name"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:hint="hello"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/time"
         android:textSize="23dp"
         android:textStyle="bold"
         android:layout_height="wrap_content"
         android:hint="hello"/>
 
 
+
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/val"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
