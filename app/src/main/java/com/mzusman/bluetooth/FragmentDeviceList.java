@@ -19,6 +19,7 @@ import java.util.ArrayList;
  */
 public class FragmentDeviceList extends Fragment {
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,9 +38,9 @@ public class FragmentDeviceList extends Fragment {
                 Fragment details = new FragmentDetailsList();
                 Bundle bundle=new Bundle();
                 bundle.putString("DEVICE",deviceAdress);
-                details.setArguments(new Bundle());
+                details.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_container, details);
+                transaction.replace(R.id.fragment_container, details);
                 transaction.commit();
                 //Intent intent = new Intent(getActivity(), DetailsActivity.class);
 //				intent.putExtra("address",deviceAdress);
