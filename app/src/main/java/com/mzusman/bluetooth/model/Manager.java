@@ -4,6 +4,7 @@ import com.github.pires.obd.commands.ObdCommand;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by zusmanmo on 15/04/2016.
@@ -11,22 +12,22 @@ import java.util.List;
 public interface Manager {
 
 
-	public void connect(String deviceAddress);
+	void connect(String deviceAddress);
 
-	public List<String> getReadings();
+	List<String> getReadings();
 
-	public void stop();
+	void stop();
 
-	public String getReading(String READ);
+	String getReading(String READ);
 
 
-	static HashMap<String, ObdCommand> commandsFactory = null;
+	HashMap<String, ObdCommand> commandsFactory = null;
 
 
 	interface Factory {
-		public void setCommandsFactory(
-				HashMap<String, ObdCommand> commandsFactory);
+		void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory);
 	}
 
+	UUID uuid = UUID.fromString("667d60d3-981e-41c8-befc-ba931ebaa385");
 
 }

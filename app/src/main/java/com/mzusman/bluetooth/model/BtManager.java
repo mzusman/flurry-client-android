@@ -25,18 +25,11 @@ public class BtManager implements Manager {
 	BluetoothAdapter bluetoothAdapter;
 	BluetoothSocket  bluetoothSocket;
 	BluetoothDevice  bluetoothDevice;
-	UUID uuid = UUID.fromString("667d60d3-981e-41c8-befc-ba931ebaa385");
-	//	FileOutputStream fileOutputStream;//for later
-//	JsonWriter       jsonWriter;
-	List<String> setReadings;
 
 	boolean run = true;
 
 
 	ArrayList<String> readings = new ArrayList<>();
-//	RPMCommand              rpmCommand              = new RPMCommand();
-//	SpeedCommand            speedCommand            = new SpeedCommand();
-//	ThrottlePositionCommand throttlePositionCommand = new ThrottlePositionCommand();
 
 	long time = System.currentTimeMillis();
 
