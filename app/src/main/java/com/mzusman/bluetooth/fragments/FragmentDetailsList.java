@@ -21,18 +21,18 @@ import java.util.ArrayList;
 public class FragmentDetailsList extends Fragment {
 
 	ArrayList<String> arrayList;
-	ListView          deviceDetails;
-	DetailsAdapter    deviceAdapter;
+	ListView          listView;
+	DetailsAdapter    detailsAdapter;
 
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
 
 		View   view = inflater.inflate(R.layout.activity_details, container, false);
 		String s    = getArguments().getString("DEVICE");
-		deviceDetails = (ListView) view.findViewById(R.id.details);
+		listView = (ListView) view.findViewById(R.id.details);
 		arrayList = new ArrayList<>();
-		deviceAdapter = new DetailsAdapter(arrayList, getActivity());
-		deviceDetails.setAdapter(deviceAdapter);
+		detailsAdapter = new DetailsAdapter(arrayList, getActivity());
+		listView.setAdapter(detailsAdapter);
 
 		return view;
 	}

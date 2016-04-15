@@ -50,7 +50,7 @@ public class FragmentChooseManager extends Fragment {
 				wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
 				fragment.setArguments(wifiBundle);
 				getActivity().getFragmentManager().beginTransaction()
-							 .replace(R.id.fragment_container, new FragmentDeviceList(),
+							 .replace(R.id.fragment_container, fragment,
 									  Constants.DETAILS_TAG).commit();
 
 			}

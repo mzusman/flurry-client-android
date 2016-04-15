@@ -4,9 +4,13 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -23,6 +27,7 @@ import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DevicesAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,26 +37,39 @@ public class FragmentDeviceList extends Fragment {
 
 	DevicesAdapter devicesAdapter;
 
-	BTConnector btConnector;
-//	WIFIConnector wifiConnector;
+	Connector connector;
 
 	ArrayList<String> devicesArrayList = new ArrayList<>();
 
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.device_list_frag, container, false);
+
+
+		String managerString = getArguments().getString(Constants.MANAGER_TAG);
+		if (managerString.equals(Constants.BT_TAG)) connector = new BTConnector();
+
+
 		((AppCompatActivity) getActivity()).getSupportActionBar()
 										   .setTitle("Select Device");//change toolbar title
 
 
-		final ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);
-
-
+		ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);
 		devicesAdapter = new DevicesAdapter(devicesArrayList, getActivity());
-
-
 		listOfDevices.setAdapter(devicesAdapter);
 
+		connector.initateConnections();
+
+//		if (devicesArrayList.size() == 0) {
+//			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//			builder.setMessage(R.string.no_devices)
+//				   .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//					   @Override public void onClick(DialogInterface dialog, int which) {
+//						   getActivity().finish();
+//					   }
+//				   }).show();
+//
+//		} else devicesAdapter.notifyDataSetChanged();
 
 		listOfDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -71,50 +89,51 @@ public class FragmentDeviceList extends Fragment {
 		});
 
 		return view;
+
+
 	}
 
 
-	class BTConnector implements Connector{
+	class BTConnector implements Connector {
 		private BluetoothAdapter bluetoothAdapter;
+		List<String> devicesString = new ArrayList<>();
 
-		@Override public void initateConnection() {
+		@Override public List<String> initateConnections() {
 			bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (bluetoothAdapter == null) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						getActivity().finish();
-
-					}
-				});
-				builder.setMessage("not supported");
-				builder.show();
-
+				showDialog("Device is'nt supported");
 			}
-			while (!bluetoothAdapter.isEnabled()) {
+			if (!bluetoothAdapter.isEnabled()) {
 				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, Constants.REQUEST_ENABLE_BT);
 			}
 
-		final Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
-		if (bluetoothDevices.size() > 0) {
-			for (BluetoothDevice device : bluetoothDevices) {
-				FragmentDeviceList.this.devicesArrayList.add(device.getName() + "," + device.getAddress());
-				FragmentDeviceList.this.devicesAdapter.notifyDataSetChanged();
+			final Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
+			if (bluetoothDevices.size() > 0) {
+				for (BluetoothDevice device : bluetoothDevices) {
+					devicesString.add(device.getName() + "," +
+									  device.getAddress());//insert address to the list
+				}
 			}
-		}
-
-
+			return devicesString;
 		}
 	}
 
 
 
-	class WIFIConnector implements Connector{
 
+	public void setConnector(Connector connector) {
+		this.connector = connector;
+	}
 
-		@Override public void initateConnection() {
-
-		}
+	public void showDialog(String msg) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				getActivity().finish();
+			}
+		});
+		builder.setMessage(msg);
+		builder.show();
 	}
 }

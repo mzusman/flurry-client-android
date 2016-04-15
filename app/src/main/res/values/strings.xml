@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Flurry</string>
+    <string name="no_devices">Please make sure you have been paired with an OBD-II device</string>
+    <string name="no_devices2">No Devices have been paired</string>
     <string name="bt">BlueTooth</string>
     <string name="wifi">WiFi</string>
     <string name="manager">Choose Your Manager:</string>

@@ -46,16 +46,11 @@ public class DevicesAdapter extends BaseAdapter {
 		if (vi == null) {
 			vi = inflater.inflate(R.layout.device_view, null);
 		}
-		TextView nameView    = (TextView) vi.findViewById(R.id.name);
-		TextView addressView = (TextView) vi.findViewById(R.id.address);
-		if (strings.size() > 0) {
-			String stringToView = strings.get(position);
-			nameView.setText(stringToView.split(",")[0]);
-			addressView.setText(stringToView.split(",")[1]);
-		} else {
-			nameView.setText("No Devices has been paired");
-			addressView.setText("Please make sure you have been paired with an OBD-II device");
-		}
+		TextView nameView     = (TextView) vi.findViewById(R.id.name);
+		TextView addressView  = (TextView) vi.findViewById(R.id.address);
+		String   stringToView = strings.get(position);
+		nameView.setText(stringToView.split(",")[0]);
+		addressView.setText(stringToView.split(",")[1]);
 
 
 		return vi;
