@@ -11,6 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.pires.obd.commands.ObdCommand;
+import com.mzusman.bluetooth.model.BtManager;
+import com.mzusman.bluetooth.model.Manager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;

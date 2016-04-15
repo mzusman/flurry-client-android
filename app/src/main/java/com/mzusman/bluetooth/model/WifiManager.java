@@ -7,12 +7,12 @@ import java.util.List;
  */
 public class WifiManager implements Manager {
     @Override
-    public void connect() {
+    public void connect(String address) {
 
     }
 
     @Override
-    public List<String> getReadings(int READINGS) {
+    public List<String> getReadings() {
 
         return null;
     }
@@ -22,8 +22,8 @@ public class WifiManager implements Manager {
 
     }
 
-    @Override
-    public String getReading(int READ) {
+    @Override public String getReading(String READ) {
         return null;
     }
+
 }
