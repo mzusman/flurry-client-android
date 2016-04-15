@@ -54,126 +54,141 @@ public class DetailsActivity extends Activity {
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_details);
 		arrayList = new ArrayList<>();
 		deviceAddress = getIntent().getStringExtra("address");
-//		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//		device = bluetoothAdapter.getRemoteDevice(deviceAddress);
-		setContentView(R.layout.activity_details);
+		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		device = bluetoothAdapter.getRemoteDevice(deviceAddress);
 		listView = (ListView) findViewById(R.id.details);
 		detailsAdapter = new DetailsAdapter(arrayList, this);
 		listView.setAdapter(detailsAdapter);
 
 
-//		thread = new Thread(new Runnable() {
-//
-//			@Override public void run() {
-//				BluetoothSocket bluetoothSocket ;
-//				try {
-//					bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(uuid);
-//					bluetoothSocket.connect();
-
-//					setting up the AT
-//					new EchoOffCommand().run(bluetoothSocket.getInputStream(),
-//											 bluetoothSocket.getOutputStream());
-//					new LineFeedOffCommand().run(bluetoothSocket.getInputStream(),
-//												 bluetoothSocket.getOutputStream());
-//					new TimeoutCommand(125).run(bluetoothSocket.getInputStream(),
-//												bluetoothSocket.getOutputStream());
-//					new SelectProtocolCommand(ObdProtocols.AUTO)
-//							.run(bluetoothSocket.getInputStream(),
-//								 bluetoothSocket.getOutputStream());
-//					RPMCommand rpmCommand = new RPMCommand();
-//					SpeedCommand speedCommand = new SpeedCommand();
-//					ThrottlePositionCommand throttlePositionCommand = new ThrottlePositionCommand();
-//					arrayList.add("rpm"+","+ "0");
-//					arrayList.add("speed"+","+"0");
-//					arrayList.add("thro"+","+ "0");
-
-//					while (!Thread.currentThread().isInterrupted()) {
-//						rpmCommand.run(bluetoothSocket.getInputStream(),
-//									   bluetoothSocket.getOutputStream());
-//						rpm reading
-//						arrayList.set(0, "rpm" + "\n" + rpmCommand.getFormattedResult());
-//						speedCommand.run(bluetoothSocket.getInputStream(),
-//										 bluetoothSocket.getOutputStream());
-//
-//						speed readin
-//						arrayList.set(1, "speed" + "\n" + speedCommand.getFormattedResult());
-//						throttlePositionCommand.run(bluetoothSocket.getInputStream(),
-//													bluetoothSocket.getOutputStream());
-//
-//						thro reading
-//						arrayList.set(2,
-//									  "thro" + "\n" + throttlePositionCommand.getFormattedResult());
-//						listView.post(new Runnable() {
-//							@Override public void run() {
-//								listView.setAdapter(new DetailsAdapter(arrayList,DetailsActivity.this));
-//							}
-//						});
-//					}
-//				}
-//				catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//		thread.start();
 		thread = new Thread(new Runnable() {
-			String timeStr;
 
 			@Override public void run() {
-
+				BluetoothSocket bluetoothSocket ;
 				try {
+					bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+					bluetoothSocket.connect();
 					fileOutputStream = openFileOutput("js.json", Context.MODE_PRIVATE);
 					jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream));
 					jsonWriter.beginArray();
-
-					long tmp = System.currentTimeMillis();
-					arrayList.add("0" + "," + "hello");
+//
+//					setting up the AT
+					new EchoOffCommand().run(bluetoothSocket.getInputStream(),
+											 bluetoothSocket.getOutputStream());
+					new LineFeedOffCommand().run(bluetoothSocket.getInputStream(),
+												 bluetoothSocket.getOutputStream());
+					new TimeoutCommand(125).run(bluetoothSocket.getInputStream(),
+												bluetoothSocket.getOutputStream());
+					new SelectProtocolCommand(ObdProtocols.AUTO)
+							.run(bluetoothSocket.getInputStream(),
+								 bluetoothSocket.getOutputStream());
+					RPMCommand rpmCommand = new RPMCommand();
+					SpeedCommand speedCommand = new SpeedCommand();
+//					ThrottlePositionCommand throttlePositionCommand = new ThrottlePositionCommand();
+					arrayList.add("rpm"+","+ "0");
+					arrayList.add("speed"+","+"0");
+					arrayList.add("thro"+","+ "0");
+//
+					long time;
 					while (run) {
-						long time = System.currentTimeMillis();
+						time = System.currentTimeMillis();
+						rpmCommand.run(bluetoothSocket.getInputStream(),
+								bluetoothSocket.getOutputStream());
+//						rpm reading
+						arrayList.set(0, Long.toString(time) + "," + rpmCommand.getFormattedResult());
+						speedCommand.run(bluetoothSocket.getInputStream(),
+								bluetoothSocket.getOutputStream());
+//						speed readin
+						arrayList.set(1, Long.toString(time)+ "," + speedCommand.getFormattedResult());
+						writeToJson(jsonWriter, Long.toString(time) + "," + speedCommand.getFormattedResult());
+//
+//						throttlePositionCommand.run(bluetoothSocket.getInputStream(),
+//													bluetoothSocket.getOutputStream());
 
-						timeStr = Long.toString(time) + "," + "hello";
-						arrayList.set(0, timeStr);
-						if (time != tmp) {
-							tmp = time;
-							writeToJson(jsonWriter, timeStr);
-						}
-
+//						thro reading
+//						arrayList.set(2, Long.toString(time)+ "," + throttlePositionCommand.getFormattedResult());
 						listView.post(new Runnable() {
 							@Override public void run() {
-								listView.setAdapter(detailsAdapter);
+								listView.setAdapter(new DetailsAdapter(arrayList,DetailsActivity.this));
+
 							}
-
 						});
-
 					}
+					// after the loopk
+
+
+
 					Log.i("Thread", "json: Dead");
 					jsonWriter.endArray();
 					jsonWriter.close();
 					Log.i("Thread", "file: Dead");
 					fileOutputStream.close();
 
-
-
 				}
-				catch (FileNotFoundException e1) {
-					e1.printStackTrace();
+				catch (IOException e) {
+					e.printStackTrace();
 				}
-				catch (IOException e1) {
-					e1.printStackTrace();
+				catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-
 			}
-		}
-
-		);
+		});
 		thread.start();
-
-
+//		thread = new Thread(new Runnable() {
+//			String timeStr;
+//
+//			@Override public void run() {
+//
+//				try {
+//					fileOutputStream = openFileOutput("js.json", Context.MODE_PRIVATE);
+//					jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream));
+//					jsonWriter.beginArray();
+//
+//					arrayList.add("0" + "," + "hello");
+//					while (run) {
+//						long time = System.currentTimeMillis();
+//
+//						timeStr = Long.toString(time) + "," + "hello";
+//						arrayList.set(0, timeStr);
+//						if (time != tmp) {
+//							tmp = time;
+//							writeToJson(jsonWriter, timeStr);
+//						}
+//
+//						listView.post(new Runnable() {
+//							@Override public void run() {
+//								listView.setAdapter(detailsAdapter);
+//							}
+//
+//						});
+//
+//					}
+//					Log.i("Thread", "json: Dead");
+//					jsonWriter.endArray();
+//					jsonWriter.close();
+//					Log.i("Thread", "file: Dead");
+//					fileOutputStream.close();
+//
+//
+//
+//				}
+//				catch (FileNotFoundException e1) {
+//					e1.printStackTrace();
+//				}
+//				catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+//
+//			}
+//		}
+//
+//		);
+//		thread.start();
+//
+//
 	}
 
 	@Override protected void onPause() {
