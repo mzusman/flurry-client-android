@@ -11,6 +11,7 @@ public interface Constants {
 //	final public static int REQUEST_ENABLE_BT = 1;
 //	final public static int REQUEST_ENABLE_BT = 1;
 	final public static String IO_TAG = "IO";
+	final public static String RUN_TAG = "TH";
 
 
 }

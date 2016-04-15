@@ -81,20 +81,30 @@ public class BtManager implements Manager {
 
     @Override
     public List<String> getReadings(int READINGS) {
-        long time = System.currentTimeMillis();
+        try {
 
-        rpmCommand.run(bluetoothSocket.getInputStream(),
-                bluetoothSocket.getOutputStream());
+            long time = System.currentTimeMillis();
 
-        setReadings.set(0, Long.toString(time) + "," + rpmCommand.getFormattedResult());
-        speedCommand.run(bluetoothSocket.getInputStream(),
-                bluetoothSocket.getOutputStream());
+            rpmCommand.run(bluetoothSocket.getInputStream(),
+                    bluetoothSocket.getOutputStream());
 
-        setReadings.set(1, Long.toString(time) + "," + speedCommand.getFormattedResult());
+            setReadings.set(0, Long.toString(time) + "," + rpmCommand.getFormattedResult());
+            speedCommand.run(bluetoothSocket.getInputStream(),
+                    bluetoothSocket.getOutputStream());
 
-        setReadings.set(2, Long.toString(time) + "," + throttlePositionCommand.getFormattedResult());
+            setReadings.set(1, Long.toString(time) + "," + speedCommand.getFormattedResult());
 
-        return setReadings;
+            setReadings.set(2, Long.toString(time) + "," + throttlePositionCommand.getFormattedResult());
+
+            return setReadings;
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.d(Constants.RUN_TAG, "getReadings Interrupt");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(Constants.IO_TAG, "getReadings IO Error");
+        }
 
     }
 
