@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth;
+package com.mzusman.bluetooth.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mzusman.bluetooth.R;
 
 
 /**
@@ -16,7 +17,7 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view= inflater.inflate(R.layout.login_fragment,container,false);
+        View view= inflater.inflate(R.layout.login_fragment, container, false);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

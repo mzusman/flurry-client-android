@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth;
+package com.mzusman.bluetooth.utils;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.pires.obd.commands.ObdCommand;
+import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.model.BtManager;
 import com.mzusman.bluetooth.model.Manager;
 
@@ -53,7 +54,7 @@ TextView label;
 	@Override public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
 		if(vi == null){
-			vi = inflater.inflate(R.layout.car_details,null);
+			vi = inflater.inflate(R.layout.car_details, null);
 		}
 
 		String paramter = parametersList.get(position);

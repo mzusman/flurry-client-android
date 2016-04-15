@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth;
+package com.mzusman.bluetooth.utils;
 
 /**
  * Created by mzeus on 4/11/16.

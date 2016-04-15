@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth;
+package com.mzusman.bluetooth.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.utils.Constants;
 
 /*
  * Class : FragmentChooseMangager.
@@ -20,13 +23,6 @@ public class FragmentChooseManager extends Fragment {
 
 	Fragment fragment = new FragmentDeviceList();
 
-	/**
-	 *
-	 * @param inflater
-	 * @param container
-	 * @param savedInstanceState
-	 * @return
-	 */
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.choose_fragment, container, false);
@@ -37,10 +33,12 @@ public class FragmentChooseManager extends Fragment {
 		btButton.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				Bundle btBundle = new Bundle();
-				btBundle.putString(Constants.MANAGER_TAG, Constants.BT_TAG);
+				btBundle.putString(Constants.MANAGER_TAG,
+								   Constants.BT_TAG); // making archive for the next fragment
+				// to know that we clicked on the BT button
 				fragment.setArguments(btBundle);
 				getActivity().getFragmentManager().beginTransaction()
-							 .replace(R.id.fragment_container, fragment, Constants.DETAILS_TAG);
+							 .replace(R.id.fragment_container, fragment, Constants.DETAILS_TAG).commit();
 
 			}
 		});
@@ -53,7 +51,7 @@ public class FragmentChooseManager extends Fragment {
 				fragment.setArguments(wifiBundle);
 				getActivity().getFragmentManager().beginTransaction()
 							 .replace(R.id.fragment_container, new FragmentDeviceList(),
-									  Constants.DETAILS_TAG);
+									  Constants.DETAILS_TAG).commit();
 
 			}
 		});

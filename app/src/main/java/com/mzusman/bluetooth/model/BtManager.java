@@ -11,12 +11,10 @@ import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
-import com.mzusman.bluetooth.Constants;
+import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by zusmanmo on 15/04/2016.
