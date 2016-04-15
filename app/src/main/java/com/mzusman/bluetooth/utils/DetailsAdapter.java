@@ -1,24 +1,15 @@
 package com.mzusman.bluetooth.utils;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.pires.obd.commands.ObdCommand;
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.model.BtManager;
-import com.mzusman.bluetooth.model.Manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 
 /*
  * Class : DetailsAdapter.
@@ -28,9 +19,10 @@ public class DetailsAdapter extends BaseAdapter {
 
 	ArrayList<String> parametersList;
 	private static LayoutInflater inflater = null;
-	Context context;
-TextView label;
+	Context  context;
+	TextView label;
 	TextView text;
+
 	public DetailsAdapter(ArrayList<String> list, Context context) {
 		this.parametersList = list;
 		this.context = context;
@@ -53,7 +45,7 @@ TextView label;
 
 	@Override public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
-		if(vi == null){
+		if (vi == null) {
 			vi = inflater.inflate(R.layout.car_details, null);
 		}
 
@@ -63,7 +55,6 @@ TextView label;
 		text = (TextView) vi.findViewById(R.id.text);
 		text.setText(paramter.split(",")[1]);
 		return vi;
-
 
 
 	}

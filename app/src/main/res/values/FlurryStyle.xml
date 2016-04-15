@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="flurry" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">#8177D9</item>
         <item name="android:text">Flurry</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">30dp</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="devices_style" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+
 
     </style>
+
 </resources>

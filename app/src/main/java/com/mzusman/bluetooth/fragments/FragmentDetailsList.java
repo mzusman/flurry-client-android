@@ -40,6 +40,7 @@ public class FragmentDetailsList extends Fragment {
 
 
 
+
 	public void writeToJson(JsonWriter jsonWriter, String string) throws IOException {
 
 

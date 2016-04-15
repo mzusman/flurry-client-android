@@ -28,13 +28,22 @@ public class FragmentDeviceList extends Fragment {
 
 	ArrayAdapter<String> adapter;
 
+	BTConnector btConnector ;
+//	WIFIConnector wifiConnector;
+
+
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
 												 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.device_list_frag, container, false);
-		final ListView          listOfDevices = (ListView) view.findViewById(R.id.device_list);
-		final ArrayList<String> devices       = new ArrayList<>();
-		((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Select Device");
-		adapter = new ArrayAdapter<String>(getActivity(), R.layout.device_name);
+		((AppCompatActivity) getActivity()).getSupportActionBar()
+										   .setTitle("Select Device");//change toolbar title
+
+
+		final ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);
+
+		final ArrayList<String> devicesArrayList = new ArrayList<>();
+
+		adapter = new ArrayAdapter<String>(getActivity(), R.layout.device_view);
 
 
 		listOfDevices.setAdapter(adapter);
@@ -57,6 +66,9 @@ public class FragmentDeviceList extends Fragment {
 
 		return view;
 	}
+
+
+
 
 
 	class BTConnector {
