@@ -8,14 +8,21 @@ import java.util.List;
 public class Model {
     Manager manager;
 
-    private static final Model instance = new Model();
+    private static Model instance = new Model();
 
     public static Model getInstance() {
         return instance;
     }
-    public Model(Manager manager){
+
+    public void init(Manager manager){
         this.manager = manager;
         manager.connect();
+    }
+    public void setManager(Manager manager){
+        init(manager);
+    }
+    public Manager getManager(){
+        return this.manager;
     }
     public List<String> getReading(int READINGS){
         return manager.getReadings(READINGS);
