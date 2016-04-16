@@ -1,5 +1,6 @@
 package com.mzusman.bluetooth.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +18,6 @@ public class Model {
 	public void setManager(Manager manager, String deviceAddress) {
 
 		this.manager = manager;
-//		manager.connect(deviceAddress);
 	}
 
 	public Manager getManager() {
@@ -25,7 +25,7 @@ public class Model {
 		return this.manager;
 	}
 
-	public List<String> getReading() {
+	public ArrayList<String> getReading() {
 
 		return manager.getReadings();
 	}

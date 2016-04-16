@@ -2,6 +2,7 @@ package com.mzusman.bluetooth.model;
 
 import com.github.pires.obd.commands.ObdCommand;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public interface Manager {
 
 	void connect(String deviceAddress);
 
-	List<String> getReadings();
+	ArrayList<String> getReadings();
 
 	void stop();
 

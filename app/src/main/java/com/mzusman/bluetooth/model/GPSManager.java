@@ -4,11 +4,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
  * Class : GPSManager.
  * Created by mzusman - morzusman@gmail.com on 4/16/16.
+ *
+ *
+ * GPS Listener is done through the main loop - so it doesnt interrupt our OBD readings
+ *
  */
 public class GPSManager implements Manager ,LocationListener{
 
@@ -19,7 +24,7 @@ public class GPSManager implements Manager ,LocationListener{
 	@Override public void connect(String deviceAddress) {
 	}
 
-	@Override public List<String> getReadings() {
+	@Override public ArrayList<String> getReadings() {
 		return null;
 	}
 
