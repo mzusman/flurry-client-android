@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 
 /**
  * Created by zusmanmo on 15/04/2016.
@@ -26,9 +24,10 @@ public class WifiManager implements Manager {
 	long              time     = System.currentTimeMillis();
 	Socket socket;
 
-	public WifiManager(Factory factory){
+	public WifiManager(Factory factory) {
 		factory.setCommandsFactory(commandsFactory);
 	}
+
 	@Override public void connect(String address) {
 		try {
 			socket = new Socket(address.split(",")[0], Integer.parseInt(address.split(",")[1]));
@@ -52,23 +51,15 @@ public class WifiManager implements Manager {
 	}
 
 	@Override public List<String> getReadings() {
-		FutureTask<List<String>> futureTask =
-				new FutureTask<List<String>>(new Callable<List<String>>() {
-					@Override public List<String> call() throws Exception {
-
-						return null;
-					}
-				});
-		futureTask.run();
 
 		if (readings.size() > 0) readings.clear();
 		try {
-			for (String string : commandsFactory.keySet()) {
-				ObdCommand obdCommand = commandsFactory.get(string);
+			for (String command : commandsFactory.keySet()) {
+				ObdCommand obdCommand = commandsFactory.get(command);
 
 				obdCommand.run(socket.getInputStream(), socket.getOutputStream());
-				readings.add(
-						string + "," + Long.toString(time) + "," + obdCommand.getFormattedResult());
+				readings.add(command + "," + Long.toString(time) + "," +
+							 obdCommand.getFormattedResult());
 			}
 
 			return readings;
@@ -93,10 +84,11 @@ public class WifiManager implements Manager {
 
 	@Override public String getReading(String READ) {
 
+		time = System.currentTimeMillis();
 		ObdCommand command = commandsFactory.get(READ);
 
 		try {
-			command.run(socket.getInputStream(),socket.getOutputStream());
+			command.run(socket.getInputStream(), socket.getOutputStream());
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -106,7 +98,7 @@ public class WifiManager implements Manager {
 		}
 
 
-		return command.getFormattedResult();
+		return READ + "," + Long.toString(time) + "," + command.getFormattedResult();
 	}
 
 }
