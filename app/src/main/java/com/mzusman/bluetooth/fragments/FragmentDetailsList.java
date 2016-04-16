@@ -33,7 +33,9 @@ import com.mzusman.bluetooth.model.WifiManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DetailsAdapter;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -48,8 +50,8 @@ public class FragmentDetailsList extends Fragment {
     private Activity activity;
     private DetailsAdapter detailsAdapter;
     private LocationListener locationListener;
-    private LocationManager locationManager;
-    private ActionBar actionBar;
+    private JsonWriter jsonWriter;
+    private FileOutputStream fileOutputStream;
 
     @Nullable
     @Override
@@ -64,7 +66,7 @@ public class FragmentDetailsList extends Fragment {
          * set action bar title
          */
         activity = getActivity();
-        actionBar = ((AppCompatActivity) activity).getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) activity).getSupportActionBar();
         if (actionBar != null)
             actionBar.setTitle("Loading");
 
@@ -95,8 +97,9 @@ public class FragmentDetailsList extends Fragment {
         locationInit();
         initThread();
         thread.start();
-        if (thread.isAlive())
+        if (thread.isAlive()) {
             actionBar.setTitle("Running");
+        }
 
         return view;
 
@@ -107,8 +110,7 @@ public class FragmentDetailsList extends Fragment {
      * and notify him about that . - > get the location listener ready
      */
     private void locationInit() {
-        locationManager =
-                (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new GPSManager();
         //check if there are permissions -
         if (ActivityCompat.checkSelfPermission(getActivity(),
@@ -144,23 +146,36 @@ public class FragmentDetailsList extends Fragment {
 
             @Override
             public void run() {
-                Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
-                readings = Model.getInstance().getReading();
+                try {
+                    initJsonWriting();//initates the json reading
 
-                while (!Thread.currentThread().isInterrupted()) {
+                    Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
+                    readings = Model.getInstance().getReading();//assigned to the Manager .
 
-                    readings.add(((GPSManager) locationListener).getReading(Constants.GPS_TAG));
-                    listView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            detailsAdapter.setArray(readings);
-                            detailsAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    while (!Thread.currentThread().isInterrupted()) {
+
+                        readings.add(((GPSManager) locationListener).getReading(Constants.GPS_TAG));
+
+                        writeToJson(readings);
+
+                        listView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                detailsAdapter.setArray(readings);
+                                detailsAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+
+                    endJsonWrite();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
+
 
     @Override
     public void onPause() {
@@ -172,15 +187,33 @@ public class FragmentDetailsList extends Fragment {
             e.printStackTrace();
         }
         super.onPause();
-
     }
 
 
-    public void writeToJson(JsonWriter jsonWriter, String string) throws IOException {
+    private void initJsonWriting() throws IOException {
+        fileOutputStream = activity.openFileOutput("data.json", Context.MODE_PRIVATE);
+        jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
+        jsonWriter.beginArray();
+    }
+
+
+    private void writeToJson(ArrayList<String> readings) throws IOException {
         jsonWriter.beginObject();
-        jsonWriter.name("time").value(string.split(",")[0]);
-        jsonWriter.name("value").value(string.split(",")[1]);
+        for (String str :
+                readings) {
+            String[] read = str.split(",");
+            jsonWriter.name("name").value(read[0]);
+            jsonWriter.name("time").value(read[1]);
+            jsonWriter.name("value").value(read[2]);
+        }
         jsonWriter.endObject();
+    }
+
+    private void endJsonWrite() throws IOException {
+        jsonWriter.endArray();
+        jsonWriter.close();
+        this.fileOutputStream.close();
+
     }
 
 

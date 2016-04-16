@@ -24,14 +24,14 @@ public class DetailsAdapter extends BaseAdapter {
     TextView value;
     TextView time;
 
-    public DetailsAdapter( Context context) {
+    public DetailsAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
     }
 
-    public void setArray(ArrayList<String> array){
+    public void setArray(ArrayList<String> array) {
         this.parametersList = array;
     }
 
@@ -58,12 +58,13 @@ public class DetailsAdapter extends BaseAdapter {
         }
 
         String paramter = parametersList.get(position);
+        String[] separated = paramter.split(",");
         name = (TextView) vi.findViewById(R.id.name);
-        name.setText(paramter.split(",")[0]);
+        name.setText(separated[0]);
         time = (TextView) vi.findViewById(R.id.time);
-        time.setText(paramter.split(",")[1]);
+        time.setText(separated[1]);
         value = (TextView) vi.findViewById(R.id.val);
-        value.setText(paramter.split(",")[2]);
+        value.setText(separated[2]);
         return vi;
 
 

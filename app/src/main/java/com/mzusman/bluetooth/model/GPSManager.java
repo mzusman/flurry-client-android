@@ -19,6 +19,7 @@ public class GPSManager implements Manager ,LocationListener{
 
 	double longitude = 0;
 	double latitude= 0;
+	long time = 0 ;
 
 
 	@Override public void connect(String deviceAddress) {
@@ -32,7 +33,8 @@ public class GPSManager implements Manager ,LocationListener{
 	}
 
 	@Override public String getReading(String READ) {
-		return READ +","+Double.toString(latitude)+","+Double.toString(longitude);
+		time = System.currentTimeMillis();
+		return READ +","+Long.toString(time)+","+Double.toString(latitude)+"|"+Double.toString(longitude);
 	}
 
 	@Override public void onLocationChanged(Location location) {
