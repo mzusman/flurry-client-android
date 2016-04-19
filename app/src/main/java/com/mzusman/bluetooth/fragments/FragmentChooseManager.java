@@ -11,14 +11,16 @@ import android.widget.Button;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.utils.Constants;
 
+import info.hoang8f.widget.FButton;
+
 /*
  * Class : FragmentChooseMangager.
  * Created by mzusman - morzusman@gmail.com on 4/15/16.
  */
 public class FragmentChooseManager extends Fragment {
 
-	Button btButton;
-	Button wifiButton;
+	FButton btButton;
+	FButton wifiButton;
 
 
 	Fragment fragment = new FragmentDeviceList();
@@ -27,8 +29,8 @@ public class FragmentChooseManager extends Fragment {
 												 Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.choose_fragment, container, false);
 
-		btButton = (Button) v.findViewById(R.id.bt);
-		wifiButton = (Button) v.findViewById(R.id.wifi);
+		btButton = (FButton) v.findViewById(R.id.bt);
+		wifiButton = (FButton) v.findViewById(R.id.wifi);
 
 		btButton.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {

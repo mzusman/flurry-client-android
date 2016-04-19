@@ -24,20 +24,29 @@ import android.widget.ListView;
 import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.model.DriverService;
 import com.mzusman.bluetooth.model.GPSManager;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.model.NetworkManager;
 import com.mzusman.bluetooth.model.WifiManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DetailsAdapter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.http.Path;
 
 /**
  * Created by amitmu on 04/15/2016.
@@ -81,8 +90,8 @@ public class FragmentDetailsList extends Fragment {
                 public void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory) {
                     commandsFactory.put(Constants.REQUEST_SPEED_READING, new SpeedCommand());
                     commandsFactory.put(Constants.REQUEST_RPM_READING, new RPMCommand());
-                    commandsFactory.put(Constants.REQUEST_THR_READING,
-                            new ThrottlePositionCommand());
+//                    commandsFactory.put(Constants.REQUEST_THR_READING,
+//                            new ThrottlePositionCommand());
                 }
             }), Constants.WIFI_ADDRESS);
 
@@ -154,6 +163,7 @@ public class FragmentDetailsList extends Fragment {
 
                     while (!Thread.currentThread().isInterrupted()) {
 
+                        readings = Model.getInstance().getReading();//assigned to the Manager .
                         readings.add(((GPSManager) locationListener).getReading(Constants.GPS_TAG));
 
                         writeToJson(readings);
@@ -165,12 +175,20 @@ public class FragmentDetailsList extends Fragment {
                                 detailsAdapter.notifyDataSetChanged();
                             }
                         });
+                        Thread.sleep(500);
                     }
 
                     endJsonWrite();
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    try {
+                        endJsonWrite();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -179,6 +197,9 @@ public class FragmentDetailsList extends Fragment {
 
     @Override
     public void onPause() {
+//        NetworkManager networkManager = new NetworkManager();
+//        networkManager.connect();
+//        networkManager.sendData();
         this.thread.interrupt();
         try {
             this.thread.join();
@@ -191,28 +212,45 @@ public class FragmentDetailsList extends Fragment {
 
 
     private void initJsonWriting() throws IOException {
-        fileOutputStream = activity.openFileOutput("data.json", Context.MODE_PRIVATE);
+        fileOutputStream = activity.openFileOutput("data2.json", Context.MODE_PRIVATE);
         jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
         jsonWriter.beginArray();
     }
 
 
     private void writeToJson(ArrayList<String> readings) throws IOException {
+
         jsonWriter.beginObject();
-        for (String str :
-                readings) {
-            String[] read = str.split(",");
-            jsonWriter.name("name").value(read[0]);
-            jsonWriter.name("time").value(read[1]);
-            jsonWriter.name("value").value(read[2]);
-        }
+
+//        String[] read = str.split(",");
+
+        jsonWriter.name("time").value(readings.get(0).split(",")[1]);
+        jsonWriter.name("speed").value(readings.get(0).split(",")[2]);
+        jsonWriter.name("rpm").value(readings.get(1).split(",")[2]);
+        jsonWriter.name("gps");
+        jsonWriter.beginObject();
+        jsonWriter.name("lat").value(readings.get(2).split(",")[1]);
+        jsonWriter.name("lon").value(readings.get(2).split(",")[2]);
+        jsonWriter.endObject();
         jsonWriter.endObject();
     }
+
 
     private void endJsonWrite() throws IOException {
         jsonWriter.endArray();
         jsonWriter.close();
         this.fileOutputStream.close();
+        File file= activity.getFileStreamPath("data2.json");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fileInputStream.read(data);
+        fileInputStream.close();
+        String str = new String(data, "UTF-8");
+        NetworkManager networkManager = new NetworkManager();
+        networkManager.connect();
+        networkManager.sendData(8,str);
+        Log.d(Constants.IO_TAG, "endJsonWrite:" +str);
+
 
     }
 

@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:wheel="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/name"
+            android:textSize="23dp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:hint="hello"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:id="@+id/name"
-        android:textSize="23dp"
-        android:textStyle="bold"
-        android:layout_height="wrap_content"
-        android:hint="hello"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:id="@+id/time"
-        android:textSize="23dp"
-        android:textStyle="bold"
-        android:layout_height="wrap_content"
-        android:hint="hello"/>
-
+            android:layout_width="wrap_content"
+            android:id="@+id/time"
+            android:textSize="23dp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:hint="hello"/>
 
 
     <TextView
-        android:id="@+id/val"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:paddingLeft="10dp"
-        android:hint="hello"/>
+            android:id="@+id/val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:paddingLeft="10dp"
+            android:hint="hello"/>
 
 
 </LinearLayout>

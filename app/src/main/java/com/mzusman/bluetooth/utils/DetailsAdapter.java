@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class DetailsAdapter extends BaseAdapter {
 
-    ArrayList<String> parametersList;
+    ArrayList<String> parametersList = new ArrayList<>();
     private static LayoutInflater inflater = null;
     Context context;
     TextView name;
