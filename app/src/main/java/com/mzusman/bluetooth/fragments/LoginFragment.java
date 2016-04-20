@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.activities.MainActivity;
+import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.model.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
 
@@ -52,10 +53,9 @@ public class LoginFragment extends Fragment {
     }
 
     public void getDriverID(String username, String drivername) {
-        NetworkManager networkManager = new NetworkManager();
 
         try {
-            networkManager.getDriverID(username, drivername, new Callback<String>() {
+            Model.getInstance().getNetworkManager().getDriverID(username, drivername, new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     LoginFragment.this.response = response.message();

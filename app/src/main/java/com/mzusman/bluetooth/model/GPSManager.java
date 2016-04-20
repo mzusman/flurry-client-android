@@ -34,7 +34,7 @@ public class GPSManager implements Manager ,LocationListener{
 
 	@Override public String getReading(String READ) {
 		time = System.currentTimeMillis();
-		return READ +","+Long.toString(time)+","+Double.toString(latitude)+"|"+Double.toString(longitude);
+		return READ +","+Long.toString(time)+","+Double.toString(latitude)+","+Double.toString(longitude);
 	}
 
 	@Override public void onLocationChanged(Location location) {

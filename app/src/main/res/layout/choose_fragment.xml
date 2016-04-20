@@ -29,18 +29,4 @@
             android:layout_above="@id/bt"
             android:layout_height="wrap_content"/>
 
-    <info.hoang8f.widget.FButton
-            android:id="@+id/wifi"
-            android:layout_below="@id/bt"
-            android:layout_width="150dp"
-            android:layout_centerHorizontal="true"
-            fbutton:shadowEnabled="true"
-            fbutton:buttonColor="@color/colorPrimary"
-            fbutton:shadowColor="@color/fbutton_color_asbestos"
-            fbutton:shadowHeight="6dp"
-            fbutton:cornerRadius="2dp"
-            fbutton:paddingStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_height="wrap_content"
-            android:text="@string/wifi"/>
 </RelativeLayout>

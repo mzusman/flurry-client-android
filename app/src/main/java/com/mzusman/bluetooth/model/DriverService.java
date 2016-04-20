@@ -17,7 +17,7 @@ public interface DriverService {
 
     @Headers("Content-Type: application/json")
     @POST("drivers/{id}/insert_driving_data/")
-    Call<String> createDrivingData(@Path("id") int ID, @Body String drivingData);
+    Call<Void> createDrivingData(@Path("id") int ID, @Body String drivingData);
 
     @Headers("Content-Type: application/json")
     @POST("users/")

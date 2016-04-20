@@ -33,8 +33,6 @@ public class FragmentChooseManager extends DialogFragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.choose_fragment, container, false);
 
-        btButton = (FButton) v.findViewById(R.id.bt);
-        wifiButton = (FButton) v.findViewById(R.id.wifi);
 
 
         return v;

@@ -54,17 +54,20 @@ public class DetailsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null) {
-            vi = inflater.inflate(R.layout.car_details, null);
+            vi = inflater.inflate(R.layout.detail_view, null);
         }
 
-        String paramter = parametersList.get(position);
-        String[] separated = paramter.split(",");
+        String parameter = parametersList.get(position);
+        String[] separated = parameter.split(",");
         name = (TextView) vi.findViewById(R.id.name);
         name.setText(separated[0]);
         time = (TextView) vi.findViewById(R.id.time);
         time.setText(separated[1]);
         value = (TextView) vi.findViewById(R.id.val);
-        value.setText(separated[2]);
+        if (separated.length > 3)
+            value.setText(separated[2] + ",\n" + separated[3]);
+        else value.setText(separated[2]);
+
         return vi;
 
 

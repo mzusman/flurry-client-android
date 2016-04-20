@@ -80,8 +80,8 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
-                wifiBtn.setMessage("Before You Click 'Ok', Please be 100% Sure You're Connected to the " +
-                        "ELM 327 's Wifi AP , else We w'ont be able to read the information. Thank You!")
+                wifiBtn.setMessage("Before You Click 'Ok'!!\nPlease be 100% sure you're connected to the " +
+                        "ELM 327's Wifi AP, else we won't be able to read the information.")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

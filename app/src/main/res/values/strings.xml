@@ -12,4 +12,5 @@
     <string name="login">Login</string>
     <string name="Thro">Thro: </string>
     <string name="add">add </string>
+    <string name="stop">Stop Reading!</string>
 </resources>

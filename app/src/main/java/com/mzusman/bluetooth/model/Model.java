@@ -7,6 +7,12 @@ import java.util.ArrayList;
  */
 public class Model {
     Manager manager;
+    NetworkManager networkManager;
+    GPSManager gpsManager;
+
+    public void setGpsManager(GPSManager gpsManager) {
+        this.gpsManager = gpsManager;
+    }
 
     private static Model instance = new Model();
 
@@ -23,9 +29,30 @@ public class Model {
 
         return this.manager;
     }
-    public ArrayList<String> getReading() {
-		return manager.getReadings();
 
+    int i = 0;
+
+    public ArrayList<String> getReading() {
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("Speed" + "," + i + "," + i);
+        strings.add("RPM" + "," + i + "," + i);
+        i++;
+        return strings;
+//		return manager.getReadings();
+
+    }
+
+    public NetworkManager getNetworkManager() {
+        if (networkManager == null)
+            networkManager = new NetworkManager();
+        return networkManager;
+    }
+
+    /*
+    @return - may return null if the setGpsManager was'nt invoked
+     */
+    public GPSManager getGpsManager() {
+        return gpsManager;
     }
 
     public String getRead(String READINGS) {
