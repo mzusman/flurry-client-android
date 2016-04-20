@@ -1,13 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <TextView
-        style="@style/flurry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingTop="10dp"/>
+    <ImageView android:layout_width="wrap_content"
+               android:layout_alignParentTop="true"
+               android:paddingTop="50dp"
+               android:src="@drawable/flurry"
+               android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_centerVertical="true"
+                  android:id="@+id/login_layout"
+                  android:paddingTop="100dp"
+                  android:layout_height="wrap_content" android:orientation="vertical">
+
+        <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                android:layout_width="match_parent"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:layout_height="wrap_content">
+
+            <EditText android:layout_width="match_parent"
+                      android:id="@+id/username_edit"
+                      android:textColor="@color/fbutton_color_asbestos"
+                      android:hint="@string/username"
+                      android:gravity="center"
+                      android:layout_height="wrap_content"
+            />
+        </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+        <com.wrapp.floatlabelededittext.FloatLabeledEditText
+                android:layout_width="match_parent"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:layout_height="wrap_content">
+
+        <EditText android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:hint="@string/driver_name"
+                  android:textColor="@color/fbutton_color_asbestos"
+                  android:layout_marginStart="50dp"
+                  android:layout_marginEnd="50dp"
+                  android:id="@+id/drivername_edit"
+                  android:layout_height="wrap_content"
+        />
+        </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+        <com.dd.processbutton.iml.ActionProcessButton
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                custom:pb_colorComplete="@color/green_complete"
+                custom:pb_colorNormal="@color/blue_normal"
+                custom:pb_colorPressed="@color/blue_pressed"
+                custom:pb_colorProgress="@color/purple_progress"
+                custom:pb_textComplete="Success"
+                custom:pb_textProgress="Loading"
+                custom:pb_textError="Error"
+                custom:pb_colorError="@color/red_error"
+                android:text="@string/login"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>

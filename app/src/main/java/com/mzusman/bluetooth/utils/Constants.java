@@ -18,6 +18,7 @@ public interface Constants {
 	final public static String BT_TAG = "BT";
 	final public static String WIFI_TAG = "WIFI";
 	final public static String GPS_TAG = "GPS";
+	final public static String USER_ID_TAG = "ID";
 	final public static String WIFI_ADDRESS = "192.168.0.10,35000";
 
 

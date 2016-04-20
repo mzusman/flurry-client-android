@@ -25,8 +25,15 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.github.pires:obd-java-api:1.0-RC14'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
     compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'info.hoang8f:fbutton:1.0.5'
+
     compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.github.d-max:spots-dialog:0.4@aar'
+
+
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
 }
