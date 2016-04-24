@@ -66,7 +66,6 @@ public class NetworkManager {
     }
 
     public void sendData(int driverID, String drivingData, Callback<Void> callback) {
-//        retrofit = this.builder.build();
         this.driverID = driverID;
         Log.d(Constants.IO_TAG, driverID + drivingData);
         Call<Void> call = driverService.createDrivingData(driverID, drivingData);
@@ -77,7 +76,6 @@ public class NetworkManager {
     public void regsiterUser(String username, String driverName, String password, Callback<UserCreditials> callback) throws IOException {
         UserRegister user = new UserRegister(username, driverName, password);
         Call<UserCreditials> call = driverService.registerDriver(user);
-        Log.d(Constants.IO_TAG, "getDriverID: " + call.request().toString() + " " + call.request().body().toString());
         call.enqueue(callback);
 
 
@@ -86,9 +84,6 @@ public class NetworkManager {
     public void loginUser( Callback<NetworkManager.UserCreditials> callback) {
 
         Call<UserCreditials> call = driverService.loginDriver();
-        Log.d(Constants.IO_TAG, "loginUser: " + call.request().headers().toString() );
-
-        Log.d(Constants.IO_TAG, "login:" + call.request().toString());
         call.enqueue(callback);
     }
 

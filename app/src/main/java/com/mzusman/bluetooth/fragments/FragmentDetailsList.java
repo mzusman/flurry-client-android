@@ -82,8 +82,6 @@ public class FragmentDetailsList extends Fragment {
 
         }
 
-        Log.d(Constants.IO_TAG, "onCreateView: UserID = " + driverID);
-
         listView = (ListView) view.findViewById(R.id.details);
         detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);
@@ -201,7 +199,6 @@ public class FragmentDetailsList extends Fragment {
                 errorEscape();
             }
         });
-//        Log.d(Constants.IO_TAG, "endJsonWrite:" + str);
     }
 
     private void onSentSuccess() {

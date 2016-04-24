@@ -51,12 +51,12 @@ public class WifiManager implements Manager {
     @Override
     public ArrayList<String> getReadings() {
 
+        time = System.currentTimeMillis();
         if (readings.size() > 0) readings.clear();
         try {
             for (String command : commandsFactory.keySet()) {
                 //moving throught all of the commands inside the pre setup command and execute them
                 ObdCommand obdCommand = commandsFactory.get(command);
-
                 obdCommand.run(socket.getInputStream(), socket.getOutputStream());
                 readings.add(command + "," + Long.toString(time) + "," +
                         obdCommand.getFormattedResult());
@@ -73,6 +73,7 @@ public class WifiManager implements Manager {
 
         return null;
     }
+
 
     @Override
     public void stop() {

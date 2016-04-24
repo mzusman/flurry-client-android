@@ -39,6 +39,7 @@ public class DetailsTask extends Thread {
     FileOutputStream fileOutputStream;
     LocationListener locationListener;
     SpotsDialog spotsDialog;
+    GPSManager gpsManager;
 
     /**
      * ListView in order to post it with the main loop
@@ -48,8 +49,22 @@ public class DetailsTask extends Thread {
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
         this.locationListener = locationListener;
-        this.spotsDialog = new SpotsDialog(activity, "Loading..");
+        showDialog("Loading...");
+        this.gpsManager = Model.getInstance().getGpsManager();
+    }
+
+    private void showDialog(String message) {
+        this.spotsDialog = new SpotsDialog(activity, message);
         this.spotsDialog.show();
+    }
+
+    private void disposeDialog() {
+        if (spotsDialog == null)
+            return;
+        if (spotsDialog.isShowing()) {
+            spotsDialog.dismiss();
+            spotsDialog = null;
+        }
     }
 
     /**
@@ -65,44 +80,23 @@ public class DetailsTask extends Thread {
                     ((AppCompatActivity) activity).getSupportActionBar().setTitle("Connecting to the device");
                 }
             });
-            /*
-            DONT FORGET TO UNCOMMENT
-             */
-//            Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
-
+            Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
             //get the readings from the manager
+            disposeDialog();
             readings = Model.getInstance().getReading();//assigned to the Manager .
-            if (spotsDialog.isShowing())
-                spotsDialog.dismiss();
             // while loop until the thread is being interrupted
-            GPSManager gpsManager = Model.getInstance().getGpsManager();
             while (!Thread.currentThread().isInterrupted()) {
-
-                /*
-                Readings from both GPS manager and Model's Manager
-                 */
-                readings = Model.getInstance().getReading();//assigned to the Manager .
-//                readings.add(((GPSManager) locationListener).getReading(Constants.GPS_TAG));
-                readings.add(gpsManager.getReading(Constants.GPS_TAG));
-
+                readings = readFromManagers();
                 writeToJson(readings);
-                /**
-                 * way to update the UI details from different thread than main loop
-                 */
                 listView.post(new Runnable() {
                     @Override
                     public void run() {
-                        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Reading...");
-                        detailsAdapter.setArray(readings);
-                        detailsAdapter.notifyDataSetChanged();
-
+                        updateListAndToolBar();
                     }
                 });
                 Thread.sleep(SLEEP_TIME);
             }
-
             endJsonWrite();
-
         } catch (IOException e) {
             e.printStackTrace();
             try {
@@ -119,6 +113,20 @@ public class DetailsTask extends Thread {
             }
         }
     }
+
+    synchronized void updateListAndToolBar() {
+        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Reading...");
+        detailsAdapter.setArray(readings);
+        detailsAdapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<String> readFromManagers() {
+        ArrayList<String> arrayList;
+        arrayList = Model.getInstance().getReading();//assigned to the Manager .
+        arrayList.add(gpsManager.getReading(Constants.GPS_TAG));
+        return arrayList;
+    }
+
 
     /**
      * three methods that are writing the data into a json
@@ -150,7 +158,7 @@ public class DetailsTask extends Thread {
          */
         jsonWriter.name(Constants.GPS_TAG);
         jsonWriter.beginObject();
-        String[] strings = readings.get(readings.size()-1).split(",");
+        String[] strings = readings.get(readings.size() - 1).split(",");
         jsonWriter.name("lat").value(strings[2]);
         jsonWriter.name("lon").value(strings[3]);
         jsonWriter.endObject();
@@ -170,12 +178,11 @@ public class DetailsTask extends Thread {
     waits till the thread will stop - shows loading dialog meanwhile
      */
     public void stopRunning() {
-        SpotsDialog dialog = new SpotsDialog(activity, "Stoping..");
-        dialog.show();
+        showDialog("Stopping...");
         this.interrupt();
         try {
             this.join();
-            dialog.dismiss();
+            disposeDialog();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -31,9 +31,7 @@ import java.util.Set;
 public class FragmentDeviceList extends Fragment {
 
 	DevicesAdapter devicesAdapter;
-
 	Connector connector;
-
 	ArrayList<String> devicesArrayList = new ArrayList<>();
 
 	@Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,16 +53,6 @@ public class FragmentDeviceList extends Fragment {
 
 		connector.initateConnections();
 
-//		if (devicesArrayList.size() == 0) {
-//			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//			builder.setMessage(R.string.no_devices)
-//				   .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//					   @Override public void onClick(DialogInterface dialog, int which) {
-//						   getActivity().finish();
-//					   }
-//				   }).show();
-//
-//		} else devicesAdapter.notifyDataSetChanged();
 
 		listOfDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override

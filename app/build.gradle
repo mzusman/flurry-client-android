@@ -29,7 +29,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'info.hoang8f:fbutton:1.0.5'
-
+    testCompile "org.mockito:mockito-core:1.+"
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
     compile 'com.github.d-max:spots-dialog:0.4@aar'

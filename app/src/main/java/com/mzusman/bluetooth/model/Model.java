@@ -30,15 +30,9 @@ public class Model {
         return this.manager;
     }
 
-    int i = 0;
 
     public ArrayList<String> getReading() {
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add("Speed" + "," + i + "," + i);
-        strings.add("RPM" + "," + i + "," + i);
-        i++;
-        return strings;
-//		return manager.getReadings();
+		return manager.getReadings();
 
     }
 

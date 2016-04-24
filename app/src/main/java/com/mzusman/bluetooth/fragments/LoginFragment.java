@@ -56,14 +56,11 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(Call<NetworkManager.UserCreditials> call, Response<NetworkManager.UserCreditials> response) {
                 LoginFragment.this.response = response.message();
-                Log.d(Constants.IO_TAG, "onResponse: " + call.request().toString());
-                Log.d(Constants.IO_TAG, "onResponse: " + response.raw().toString());
                 if (response.isSuccessful()) {
                     actionProcessButton.setProgress(100);
                     LoginFragment.this.id = (response.body().driver_id);
-                    Log.d(Constants.IO_TAG, "onResponse: " + id);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra("ID", id);
+                    intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);
                     getActivity().finish();
                 } else actionProcessButton.setProgress(-1);
@@ -71,18 +68,11 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<NetworkManager.UserCreditials> call, Throwable t) {
-//                actionProcessButton.setProgress(-1);
+                actionProcessButton.setProgress(-1);
             }
         });
 
 
-    }
-
-
-    private void flipCard() {
-        getFragmentManager().beginTransaction().setCustomAnimations(R.animator.card_flip_right_in, R.animator.card_flip_right_out
-                , R.animator.card_flip_left_in, R.animator.anim_flip_left_out).
-                replace(R.id.fragment_container_login, new FragmentChooseManager()).addToBackStack(null).commit();
     }
 
 
