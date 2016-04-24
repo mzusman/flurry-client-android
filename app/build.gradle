@@ -36,4 +36,5 @@ dependencies {
 
 
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'junit:junit:4.12'
 }

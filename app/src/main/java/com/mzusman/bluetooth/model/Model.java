@@ -43,8 +43,12 @@ public class Model {
     }
 
     public NetworkManager getNetworkManager() {
+        return networkManager;
+    }
+
+    public NetworkManager getNetworkManager(String username, String password) {
         if (networkManager == null)
-            networkManager = new NetworkManager();
+            networkManager = new NetworkManager(username,password);
         return networkManager;
     }
 

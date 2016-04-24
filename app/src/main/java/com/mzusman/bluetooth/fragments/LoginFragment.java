@@ -17,8 +17,6 @@ import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.model.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
 
-import java.io.IOException;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,14 +34,14 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login_fragment, container, false);
-        final EditText driverText = (EditText) view.findViewById(R.id.drivername_edit);
         final EditText userText = (EditText) view.findViewById(R.id.username_edit);
+        final EditText passText = (EditText) view.findViewById(R.id.password_edit);
         actionProcessButton = (ActionProcessButton) view.findViewById(R.id.btnLogin);
         actionProcessButton.setMode(ActionProcessButton.Mode.ENDLESS);
         actionProcessButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDriverID(userText.getText().toString(), driverText.getText().toString());
+                loginUser(userText.getText().toString(), passText.getText().toString());
                 actionProcessButton.setProgress(1);
 
             }
@@ -52,32 +50,30 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    public void getDriverID(String username, String drivername) {
+    public void loginUser(String username, String password) {
 
-        try {
-            Model.getInstance().getNetworkManager().getDriverID(username, drivername, new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    LoginFragment.this.response = response.message();
-                    if (response.isSuccessful()) {
-                        actionProcessButton.setProgress(100);
-                        LoginFragment.this.id = Integer.parseInt(response.body());
-                        Log.d(Constants.IO_TAG, "onResponse: " + id);
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.putExtra("ID", id);
-                        startActivity(intent);
-                        getActivity().finish();
-                    } else actionProcessButton.setProgress(-1);
-                }
+        Model.getInstance().getNetworkManager(username, password).loginUser(new Callback<NetworkManager.UserCreditials>() {
+            @Override
+            public void onResponse(Call<NetworkManager.UserCreditials> call, Response<NetworkManager.UserCreditials> response) {
+                LoginFragment.this.response = response.message();
+                Log.d(Constants.IO_TAG, "onResponse: " + call.request().toString());
+                Log.d(Constants.IO_TAG, "onResponse: " + response.raw().toString());
+                if (response.isSuccessful()) {
+                    actionProcessButton.setProgress(100);
+                    LoginFragment.this.id = (response.body().driver_id);
+                    Log.d(Constants.IO_TAG, "onResponse: " + id);
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("ID", id);
+                    startActivity(intent);
+                    getActivity().finish();
+                } else actionProcessButton.setProgress(-1);
+            }
 
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onFailure(Call<NetworkManager.UserCreditials> call, Throwable t) {
+//                actionProcessButton.setProgress(-1);
+            }
+        });
 
 
     }

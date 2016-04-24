@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.model;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -21,7 +22,9 @@ public interface DriverService {
 
     @Headers("Content-Type: application/json")
     @POST("users/")
-    Call<String> registerDriver(@Body NetworkManager.User  credentials);
+    Call<NetworkManager.UserCreditials> registerDriver(@Body NetworkManager.UserRegister  credentials);
 
 
+    @POST("user-log-in/")
+    Call<NetworkManager.UserCreditials> loginDriver();
 }

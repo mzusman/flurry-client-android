@@ -39,11 +39,12 @@
 
         <EditText android:layout_width="match_parent"
                   android:gravity="center"
-                  android:hint="@string/driver_name"
+                  android:hint="@string/password"
+                  android:inputType="textPassword"
                   android:textColor="@color/fbutton_color_asbestos"
                   android:layout_marginStart="50dp"
                   android:layout_marginEnd="50dp"
-                  android:id="@+id/drivername_edit"
+                  android:id="@+id/password_edit"
                   android:layout_height="wrap_content"
         />
         </com.wrapp.floatlabelededittext.FloatLabeledEditText>
