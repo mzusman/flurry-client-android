@@ -14,4 +14,6 @@
     <string name="add">add </string>
     <string name="stop">Stop Reading!</string>
     <string name="password">password</string>
+    <string name="register">Register</string>
+    <string name="name">name</string>
 </resources>

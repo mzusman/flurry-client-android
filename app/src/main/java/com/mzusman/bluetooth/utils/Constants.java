@@ -7,8 +7,12 @@ public interface Constants {
 
 
 	final public static int REQUEST_ENABLE_BT = 1;
+	final public static int GPS_MIN_TIME = 1000;
+	final public static int GPS_MIN_DISTANCE = 2;
 	final public static String  REQUEST_RPM_READING = "rpm";
+
 	final public static String  EXCEPTION_TAG = "EXP";
+	final public static String  REGISTER_TAG = "REGI";
 	final public static String  REQUEST_SPEED_READING = "speed";
 	final public static String  REQUEST_THR_READING = "thr";
 	final public static String IO_TAG = "IO";
@@ -21,6 +25,7 @@ public interface Constants {
 	final public static String GPS_TAG = "gps";
 	final public static String USER_ID_TAG = "ID";
 	final public static String WIFI_ADDRESS = "192.168.0.10,35000";
+	final public static String FILE_DATA = "data.json";
 
 
 }

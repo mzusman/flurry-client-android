@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,8 @@ import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.model.WifiManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DetailsAdapter;
+import com.mzusman.bluetooth.utils.DetailsTask;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,12 +47,18 @@ import retrofit2.Response;
 public class FragmentDetailsList extends Fragment {
 
     private int driverID;
+
     private ListView listView;
+
     private Activity activity;
+
     private DetailsAdapter detailsAdapter;
+
     private LocationListener locationListener;
+
     private DetailsTask detailsTask;
 
+    private SpotsDialog dialog;
 
     @Nullable
     @Override
@@ -93,9 +98,8 @@ public class FragmentDetailsList extends Fragment {
                 if (detailsTask.isAlive())
                     detailsTask.stopRunning();
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("In order to send the information to us , we need you to disconnect" +
-                        "from the device connection and connect back to 3G service or any other Wifi services." +
-                        "Click 'Send' as long as you're ready!").setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                builder.setMessage("Disconnect from the device connection and get back into 3G/4G services or any other Wifi services." +
+                        "Click 'Send' as soon as you're connected").setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -112,17 +116,6 @@ public class FragmentDetailsList extends Fragment {
         initThread();
 
         return view;
-
-    }
-
-    private void errorEscape() {
-        AlertDialog.Builder error = new AlertDialog.Builder(activity);
-        error.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                getActivity().finish();
-            }
-        }).setMessage("Error").show();
 
     }
 
@@ -153,8 +146,8 @@ public class FragmentDetailsList extends Fragment {
         }
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                5000,
-                10,
+                Constants.GPS_MIN_TIME,
+                Constants.GPS_MIN_DISTANCE,
                 locationListener);
 
         //sets the manager
@@ -166,26 +159,47 @@ public class FragmentDetailsList extends Fragment {
      * thread for recieving the information
      */
     private void initThread() {
-        detailsTask = new DetailsTask(locationListener, getActivity(), listView);
+        if (detailsTask == null)
+            detailsTask = new DetailsTask(locationListener, getActivity(), listView);
         detailsTask.start();
-
     }
 
-    private void sendRemote(final int driverID) throws IOException {
-        final SpotsDialog dialog = new SpotsDialog(getActivity(), "Sending..");
-        dialog.show();
-        File file = activity.getFileStreamPath("data2.json");
+    private String loadFromFile() throws IOException {
+        showDialog("Sending...");
+        File file = activity.getFileStreamPath(Constants.FILE_DATA);
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
         fileInputStream.read(data);
         fileInputStream.close();
-        String str = new String(data, "UTF-8");
 
-        Model.getInstance().getNetworkManager().sendData(driverID, str, new Callback<Void>() {
+        String str = new String(data, "UTF-8");
+        return str;
+
+    }
+
+    private void showDialog(String message) {
+        dialog = new SpotsDialog(getActivity(), message);
+        dialog.show();
+    }
+
+    private void dismissDialog() {
+        if (dialog == null)
+            return;
+        if (dialog.isShowing()) {
+
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
+
+
+    private void sendRemote(final int driverID) throws IOException {
+
+        String data = loadFromFile();
+        Model.getInstance().getNetworkManager().sendData(driverID, data, new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                dialog.dismiss();
-                Log.d(Constants.IO_TAG, "onResponse2222: " + response.code());
+                dismissDialog();
                 if (response.isSuccessful()) {
                     onSentSuccess();
                 } else errorEscape();
@@ -194,12 +208,22 @@ public class FragmentDetailsList extends Fragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
-                dialog.dismiss();
+                dismissDialog();
                 errorEscape();
             }
         });
     }
+
+    public void errorEscape() {
+        AlertDialog.Builder error = new AlertDialog.Builder(getActivity());
+        error.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finish();
+            }
+        }).setMessage("Error").show();
+    }
+
 
     private void onSentSuccess() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -223,7 +247,4 @@ public class FragmentDetailsList extends Fragment {
     }
 
 
-    public void setDetailsAdapter(DetailsAdapter detailsAdapter) {
-        this.detailsAdapter = detailsAdapter;
-    }
 }

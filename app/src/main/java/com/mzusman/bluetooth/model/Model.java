@@ -2,13 +2,11 @@ package com.mzusman.bluetooth.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by zusmanmo on 15/04/2016.
- */
 public class Model {
     Manager manager;
     NetworkManager networkManager;
     GPSManager gpsManager;
+
 
     public void setGpsManager(GPSManager gpsManager) {
         this.gpsManager = gpsManager;
@@ -32,17 +30,24 @@ public class Model {
 
 
     public ArrayList<String> getReading() {
-		return manager.getReadings();
+        return manager.getReadings();
 
     }
 
+
+    /**
+     * @return returns null if networkmanager was'nt created - use it only if networkmanager was
+     * used once
+     */
     public NetworkManager getNetworkManager() {
+        if (networkManager == null)
+            networkManager = new NetworkManager();
         return networkManager;
     }
 
-    public NetworkManager getNetworkManager(String username, String password) {
+    public NetworkManager setNetworkManager(String username, String password) {
         if (networkManager == null)
-            networkManager = new NetworkManager(username,password);
+            networkManager = new NetworkManager(username, password);
         return networkManager;
     }
 
@@ -54,7 +59,6 @@ public class Model {
     }
 
     public String getRead(String READINGS) {
-
         return manager.getReading(READINGS);
     }
 

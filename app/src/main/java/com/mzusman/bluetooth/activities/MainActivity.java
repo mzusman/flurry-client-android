@@ -19,7 +19,6 @@ import com.mzusman.bluetooth.utils.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
-    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
 }
 

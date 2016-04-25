@@ -26,21 +26,34 @@ public class NetworkManager {
     int driverID;
     DriverService driverService;
     private static Retrofit retrofit;
-    //            new Retrofit.Builder().
-//            addConverterFactory(GsonConverterFactory.create())
-//            .baseUrl("http://54.152.123.228/api/v1/flurry/").build();
     private static Retrofit.Builder builder = new Retrofit.Builder().
             addConverterFactory(GsonConverterFactory.create())
             .baseUrl("http://54.152.123.228/api/v1/flurry/");
 
+    //non auth constructor
+    public NetworkManager() {
+        retrofit = builder.build();
+        if (driverService == null)
+            driverService = retrofit.create(DriverService.class);
+        this.username = null;
+        this.password = null;
+    }
+
+
     public NetworkManager(String username, String password) {
-        connect(username, password);
+//        connect(username, password);
+        makeAuthorizationHeader(username, password);
         this.username = username;
         this.password = password;
     }
 
 
-    private void connect(String username, String password) {
+//    private void connect(String username, String password) {
+//
+//
+//    }
+
+    private void makeAuthorizationHeader(String username, String password) {
         String credentials = username + ":" + password;
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -54,22 +67,21 @@ public class NetworkManager {
                         .method(original.method(), original.body());
 
                 Request request = builderRequest.build();
-                Log.d(Constants.IO_TAG, "intercept: "+request.headers().toString());
+                Log.d(Constants.IO_TAG, "intercept: " + request.headers().toString());
                 return chain.proceed(request);
             }
         });
         OkHttpClient okHttpClient = builder.build();
         retrofit = this.builder.client(okHttpClient).build();
-        driverService = retrofit.create(DriverService.class);
+        if (driverService == null)
+            driverService = retrofit.create(DriverService.class);
 
 
     }
 
     public void sendData(int driverID, String drivingData, Callback<Void> callback) {
         this.driverID = driverID;
-        Log.d(Constants.IO_TAG, driverID + drivingData);
         Call<Void> call = driverService.createDrivingData(driverID, drivingData);
-        Log.d(Constants.IO_TAG, "sendData:" + call.request().toString());
         call.enqueue(callback);
     }
 
@@ -78,10 +90,14 @@ public class NetworkManager {
         Call<UserCreditials> call = driverService.registerDriver(user);
         call.enqueue(callback);
 
+        this.username = username;
+        this.password = password;
+        makeAuthorizationHeader(username, password);
+
 
     }
 
-    public void loginUser( Callback<NetworkManager.UserCreditials> callback) {
+    public void loginUser(Callback<NetworkManager.UserCreditials> callback) {
 
         Call<UserCreditials> call = driverService.loginDriver();
         call.enqueue(callback);
@@ -119,4 +135,15 @@ public class NetworkManager {
         }
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setDriverID(int driverID) {
+        this.driverID = driverID;
+    }
 }

@@ -103,9 +103,6 @@ public class FragmentDeviceList extends Fragment {
 	}
 
 
-	public void setConnector(Connector connector) {
-		this.connector = connector;
-	}
 
 	public void showDialog(String msg) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

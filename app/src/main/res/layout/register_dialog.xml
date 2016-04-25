@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:hint="@string/name"
+                  android:textColor="@color/fbutton_color_asbestos"
+                  android:singleLine="true"
+                  android:id="@+id/name_register_edit"
+                  android:layout_height="wrap_content"
+        />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:hint="@string/username"
+                  android:singleLine="true"
+                  android:textColor="@color/fbutton_color_asbestos"
+                  android:id="@+id/username_register_edit"
+                  android:layout_height="wrap_content"
+        />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText android:layout_width="match_parent"
+                  android:gravity="center"
+                  android:hint="@string/password"
+                  android:textColor="@color/fbutton_color_asbestos"
+                  android:singleLine="true"
+                  android:id="@+id/password_register_edit"
+                  android:layout_height="wrap_content"
+        />
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+    <Button android:layout_width="match_parent"
+            android:text="@string/register"
+            android:id="@+id/register_btn_register"
+            android:layout_height="match_parent"/>
+
+</LinearLayout>

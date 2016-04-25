@@ -42,9 +42,9 @@ public class WifiManager implements Manager {
                     .run(socket.getInputStream(), socket.getOutputStream());
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            Log.d(Constants.RUN_TAG, "getReadings Interrupt");
+
         }
+
 
     }
 

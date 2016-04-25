@@ -42,13 +42,14 @@ public class FragmentProfile extends Fragment {
         profileAdapter = new ProfileAdapter(getActivity(), profiles);
         listView.setAdapter(profileAdapter);
         //
-
-
         this.userId = getActivity().getIntent().getExtras().getInt(Constants.USER_ID_TAG);
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Previous Profiles");
 
 
+        //allows the fragment to get onTouchListener notifications
         setHasOptionsMenu(true);
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -80,8 +81,8 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
-                wifiBtn.setMessage("Before You Click 'Ok'!!\nPlease be 100% sure you're connected to the " +
-                        "ELM 327's Wifi AP, else we won't be able to read the information.")
+                wifiBtn.setMessage("Make sure you're connected to the " +
+                        "ELM 327's Wifi Access Point before we continue")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

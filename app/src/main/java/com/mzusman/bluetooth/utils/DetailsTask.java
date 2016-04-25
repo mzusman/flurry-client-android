@@ -1,16 +1,15 @@
-package com.mzusman.bluetooth.fragments;
+package com.mzusman.bluetooth.utils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.location.LocationListener;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.model.GPSManager;
 import com.mzusman.bluetooth.model.Model;
-import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.DetailsAdapter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,13 +43,13 @@ public class DetailsTask extends Thread {
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsTask(LocationListener locationListener, Activity activity, ListView listView) {
+    public DetailsTask(@NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView) {
         this.listView = listView;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
         this.locationListener = locationListener;
-        showDialog("Loading...");
         this.gpsManager = Model.getInstance().getGpsManager();
+        showDialog("Loading...");
     }
 
     private void showDialog(String message) {
@@ -67,17 +66,21 @@ public class DetailsTask extends Thread {
         }
     }
 
+    private void changeActivityToolBar(String message) {
+        ((AppCompatActivity) activity).getSupportActionBar().setTitle(message);
+    }
+
     /**
      * updates the activity's tool bar and the list view with strings that are given him from the
      * managers inside the model component
      */
     public void run() {
         try {
-            initJsonWriting();//initates the json reading
+            initJsonWriting();//initiates the json reading
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((AppCompatActivity) activity).getSupportActionBar().setTitle("Connecting to the device");
+                    changeActivityToolBar("Connecting to the device");
                 }
             });
             Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
@@ -88,6 +91,7 @@ public class DetailsTask extends Thread {
             while (!Thread.currentThread().isInterrupted()) {
                 readings = readFromManagers();
                 writeToJson(readings);
+                //run on the main thread to update the listview
                 listView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -97,30 +101,25 @@ public class DetailsTask extends Thread {
                 Thread.sleep(SLEEP_TIME);
             }
             endJsonWrite();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | InterruptedException e) {
             try {
                 endJsonWrite();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            try {
-                endJsonWrite();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
     }
 
-    synchronized void updateListAndToolBar() {
-        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Reading...");
+    synchronized private void updateListAndToolBar() {
+        changeActivityToolBar("Reading...");
         detailsAdapter.setArray(readings);
         detailsAdapter.notifyDataSetChanged();
     }
 
-    private ArrayList<String> readFromManagers() {
+    /**
+     * fills an anonymos array that assigned with data from the manager(whatever it be)
+     */
+
+    private synchronized ArrayList<String> readFromManagers() {
         ArrayList<String> arrayList;
         arrayList = Model.getInstance().getReading();//assigned to the Manager .
         arrayList.add(gpsManager.getReading(Constants.GPS_TAG));
@@ -132,7 +131,7 @@ public class DetailsTask extends Thread {
      * three methods that are writing the data into a json
      */
     private synchronized void initJsonWriting() throws IOException {
-        fileOutputStream = activity.openFileOutput("data2.json", Context.MODE_PRIVATE);
+        fileOutputStream = activity.openFileOutput(Constants.FILE_DATA, Context.MODE_PRIVATE);
         jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
         jsonWriter.beginArray();
     }
@@ -184,7 +183,6 @@ public class DetailsTask extends Thread {
             this.join();
             disposeDialog();
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
