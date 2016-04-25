@@ -57,9 +57,14 @@ public class WifiManager implements Manager {
             for (String command : commandsFactory.keySet()) {
                 //moving throught all of the commands inside the pre setup command and execute them
                 ObdCommand obdCommand = commandsFactory.get(command);
-                obdCommand.run(socket.getInputStream(), socket.getOutputStream());
-                readings.add(command + "," + Long.toString(time) + "," +
-                        obdCommand.getFormattedResult());
+                if (obdCommand == null)
+                    readings.add(command + "," + Long.toString(time) + "," +
+                            "0");
+                else {
+                    obdCommand.run(socket.getInputStream(), socket.getOutputStream());
+                    readings.add(command + "," + Long.toString(time) + "," +
+                            obdCommand.getFormattedResult());
+                }
             }
             return readings;
         } catch (InterruptedException e) {
@@ -90,6 +95,9 @@ public class WifiManager implements Manager {
 
         time = System.currentTimeMillis();
         ObdCommand command = commandsFactory.get(READ);
+
+        if (command == null)
+            return READ + "," + Long.toString(time) + "," + "0";
 
         try {
             command.run(socket.getInputStream(), socket.getOutputStream());
