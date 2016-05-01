@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.model;
+package com.mzusman.bluetooth.model.Managers;
 
 import android.util.Log;
 
@@ -8,6 +8,7 @@ import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
+import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
@@ -29,20 +30,23 @@ public class WifiManager implements Manager {
     }
 
     @Override
-    public void connect(String address) {
+    public void connect(String address) throws IOException {
         try {
             String[] addressStr = address.split(",");
             socket = new Socket(addressStr[0], Integer.parseInt(addressStr[1]));
 
-            //4 commands that are necessary for the obd2 api to configure itself
+
+            /* 4 commands that are necessary for the obd2 api to configure itself */
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
             new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
             new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
             new SelectProtocolCommand(ObdProtocols.AUTO)
                     .run(socket.getInputStream(), socket.getOutputStream());
 
-        } catch (IOException | InterruptedException e) {
 
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.d(Constants.RUN_TAG, "connect: interuptted");
         }
 
 
@@ -53,30 +57,28 @@ public class WifiManager implements Manager {
 
         time = System.currentTimeMillis();
         if (readings.size() > 0) readings.clear();
-        try {
-            for (String command : commandsFactory.keySet()) {
-                //moving throught all of the commands inside the pre setup command and execute them
-                ObdCommand obdCommand = commandsFactory.get(command);
-                if (obdCommand == null)
-                    readings.add(command + "," + Long.toString(time) + "," +
-                            "0");
-                else {
+        for (String command : commandsFactory.keySet()) {
+            //moving throught all of the commands inside the pre setup command and execute them
+            ObdCommand obdCommand = commandsFactory.get(command);
+            if (obdCommand == null)
+                readings.add(command + "," + Long.toString(time) + "," + "0");
+            else {
+                try {
                     obdCommand.run(socket.getInputStream(), socket.getOutputStream());
                     readings.add(command + "," + Long.toString(time) + "," +
                             obdCommand.getFormattedResult());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d(Constants.RUN_TAG, "getReadings Interrupt");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(Constants.IO_TAG, "getReadings IO Error");
                 }
             }
-            return readings;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.d(Constants.RUN_TAG, "getReadings Interrupt");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(Constants.IO_TAG, "getReadings IO Error");
         }
+        return readings;
 
 
-        return null;
     }
 
 

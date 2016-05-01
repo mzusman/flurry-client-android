@@ -1,14 +1,16 @@
 package com.mzusman.bluetooth.model;
 
+import com.mzusman.bluetooth.model.Managers.GpsManager;
+import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
+
 import java.util.ArrayList;
 
 public class Model {
     Manager manager;
     NetworkManager networkManager;
-    GPSManager gpsManager;
+    GpsManager gpsManager;
 
-
-    public void setGpsManager(GPSManager gpsManager) {
+    public void setGpsManager(GpsManager gpsManager) {
         this.gpsManager = gpsManager;
     }
 
@@ -19,7 +21,6 @@ public class Model {
     }
 
     public void setManager(Manager manager, String deviceAddress) {
-
         this.manager = manager;
     }
 
@@ -54,7 +55,7 @@ public class Model {
     /*
     @return - may return null if the setGpsManager was'nt invoked
      */
-    public GPSManager getGpsManager() {
+    public GpsManager getGpsManager() {
         return gpsManager;
     }
 

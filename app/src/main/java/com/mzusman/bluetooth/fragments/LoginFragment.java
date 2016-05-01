@@ -14,7 +14,7 @@ import com.dd.processbutton.iml.ActionProcessButton;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.activities.MainActivity;
 import com.mzusman.bluetooth.model.Model;
-import com.mzusman.bluetooth.model.NetworkManager;
+import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.RegisterDialog;
 

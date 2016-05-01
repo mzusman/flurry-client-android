@@ -1,21 +1,23 @@
-package com.mzusman.bluetooth.model;
+package com.mzusman.bluetooth.model.Managers;
 
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
+import com.mzusman.bluetooth.model.Manager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Class : GPSManager.
+ * Class : GpsManager.
  * Created by mzusman - morzusman@gmail.com on 4/16/16.
  *
  *
  * GPS Listener is done through the main loop - so it doesnt interrupt our OBD readings
  *
  */
-public class GPSManager implements Manager ,LocationListener{
+public class GpsManager implements Manager,LocationListener{
 
 	double longitude = 0;
 	double latitude= 0;

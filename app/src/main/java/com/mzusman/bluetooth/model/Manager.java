@@ -2,9 +2,9 @@ package com.mzusman.bluetooth.model;
 
 import com.github.pires.obd.commands.ObdCommand;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,22 +13,20 @@ import java.util.UUID;
 public interface Manager {
 
 
-	void connect(String deviceAddress);
+    interface Factory {
+        void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory);
+    }
 
-	ArrayList<String> getReadings();
+    HashMap<String, ObdCommand> commandsFactory = new HashMap<>();
 
-	void stop();
+    void connect(String deviceAddress) throws IOException;
 
-	String getReading(String READ);
+    ArrayList<String> getReadings();
 
+    void stop();
 
-	HashMap<String, ObdCommand> commandsFactory = new HashMap<>();
+    String getReading(String READ);
 
-
-	interface Factory {
-		void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory);
-	}
-
-	UUID uuid = UUID.fromString("667d60d3-981e-41c8-befc-ba931ebaa385");
+    UUID uuid = UUID.fromString("667d60d3-981e-41c8-befc-ba931ebaa385");
 
 }

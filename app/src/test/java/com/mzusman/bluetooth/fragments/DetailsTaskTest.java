@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.location.LocationListener;
 import android.widget.ListView;
 
-import com.mzusman.bluetooth.utils.DetailsTask;
+import com.mzusman.bluetooth.utils.DetailsThread;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -20,7 +20,7 @@ public class DetailsTaskTest {
         LocationListener locationListener = Mockito.mock(LocationListener.class);
         ListView listView = Mockito.mock(ListView.class);
 
-        DetailsTask task = new DetailsTask(locationListener,activity,listView);
+        DetailsThread task = new DetailsThread(locationListener,activity,listView);
         task.run();
 
     }

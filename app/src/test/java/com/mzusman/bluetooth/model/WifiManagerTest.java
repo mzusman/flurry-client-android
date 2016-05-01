@@ -2,6 +2,7 @@ package com.mzusman.bluetooth.model;
 
 import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
+import com.mzusman.bluetooth.model.Managers.WifiManager;
 
 import org.junit.Rule;
 import org.junit.Test;

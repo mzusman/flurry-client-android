@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.model;
+package com.mzusman.bluetooth.model.Managers;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,6 +11,7 @@ import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
 import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.enums.ObdProtocols;
+import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class BtManager implements Manager {
 	}
 
 
-	@Override public void connect(String deviceAddress) {
+	@Override public void connect(String deviceAddress) throws IOException{
 		try {
 			bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceAddress);
@@ -53,10 +54,6 @@ public class BtManager implements Manager {
 			new SelectProtocolCommand(ObdProtocols.AUTO)
 					.run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
 
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			Log.d(Constants.IO_TAG, "connect: IO Error");
 		}
 		catch (InterruptedException e) {
 			e.printStackTrace();

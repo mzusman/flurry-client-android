@@ -23,13 +23,13 @@ import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.model.GPSManager;
+import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Model;
-import com.mzusman.bluetooth.model.WifiManager;
+import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DetailsAdapter;
-import com.mzusman.bluetooth.utils.DetailsTask;
+import com.mzusman.bluetooth.utils.DetailsThread;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,7 +56,7 @@ public class FragmentDetailsList extends Fragment {
 
     private LocationListener locationListener;
 
-    private DetailsTask detailsTask;
+    private DetailsThread detailsTask;
 
     private SpotsDialog dialog;
 
@@ -70,7 +70,8 @@ public class FragmentDetailsList extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         this.activity = getActivity();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Getting Prepared");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Reader");
+
         /**
          * Build the factory out side of the manager class
          */
@@ -125,7 +126,7 @@ public class FragmentDetailsList extends Fragment {
      */
     private void locationInit() {
         LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new GPSManager();
+        locationListener = new GpsManager();
 
         //check if there are permissions -
         if (ActivityCompat.checkSelfPermission(getActivity(),
@@ -151,7 +152,7 @@ public class FragmentDetailsList extends Fragment {
                 locationListener);
 
         //sets the manager
-        Model.getInstance().setGpsManager((GPSManager) locationListener);
+        Model.getInstance().setGpsManager((GpsManager) locationListener);
 
     }
 
@@ -160,7 +161,7 @@ public class FragmentDetailsList extends Fragment {
      */
     private void initThread() {
         if (detailsTask == null)
-            detailsTask = new DetailsTask(locationListener, getActivity(), listView);
+            detailsTask = new DetailsThread(locationListener, getActivity(), listView);
         detailsTask.start();
     }
 
@@ -214,7 +215,7 @@ public class FragmentDetailsList extends Fragment {
         });
     }
 
-    public void errorEscape() {
+    void errorEscape() {
         AlertDialog.Builder error = new AlertDialog.Builder(getActivity());
         error.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
