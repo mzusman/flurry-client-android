@@ -31,17 +31,15 @@ public class WifiManager implements Manager {
 
     @Override
     public void connect(String address) throws IOException, InterruptedException {
-            String[] addressStr = address.split(",");
-            socket = new Socket(addressStr[0], Integer.parseInt(addressStr[1]));
+        String[] addressStr = address.split(",");
+        socket = new Socket(addressStr[0], Integer.parseInt(addressStr[1]));
 
             /* 4 commands that are necessary for the obd2 api to configure itself */
-            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
-            new SelectProtocolCommand(ObdProtocols.AUTO)
-                    .run(socket.getInputStream(), socket.getOutputStream());
-
-
+        new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+        new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+        new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+        new SelectProtocolCommand(ObdProtocols.AUTO)
+                .run(socket.getInputStream(), socket.getOutputStream());
 
 
     }
@@ -49,26 +47,22 @@ public class WifiManager implements Manager {
     @Override
     public ArrayList<String> getReadings() {
 
-        time = System.currentTimeMillis();
-        if (readings.size() > 0) readings.clear();
-        for (String command : commandsFactory.keySet()) {
-            //moving throught all of the commands inside the pre setup command and execute them
-            ObdCommand obdCommand = commandsFactory.get(command);
-            if (obdCommand == null)
-                readings.add(command + "," + Long.toString(time) + "," + "0");
-            else {
-                try {
-                    obdCommand.run(socket.getInputStream(), socket.getOutputStream());
-                    readings.add(command + "," + Long.toString(time) + "," +
-                            obdCommand.getFormattedResult());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Log.d(Constants.RUN_TAG, "getReadings Interrupt");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d(Constants.IO_TAG, "getReadings IO Error");
-                }
+        try {
+            time = System.currentTimeMillis();
+            if (readings.size() > 0) readings.clear();
+            for (String command : commandsFactory.keySet()) {
+                //moving throught all of the commands inside the pre setup command and execute them
+                ObdCommand obdCommand = commandsFactory.get(command);
+                obdCommand.run(socket.getInputStream(), socket.getOutputStream());
+                readings.add(command + "," + Long.toString(time) + "," +
+                        obdCommand.getFormattedResult());
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.d(Constants.RUN_TAG, "getReadings Interrupt");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(Constants.IO_TAG, "getReadings IO Error");
         }
         return readings;
 
@@ -94,7 +88,6 @@ public class WifiManager implements Manager {
 
         if (command == null)
             return READ + "," + Long.toString(time) + "," + "0";
-
         try {
             command.run(socket.getInputStream(), socket.getOutputStream());
         } catch (IOException | InterruptedException e) {

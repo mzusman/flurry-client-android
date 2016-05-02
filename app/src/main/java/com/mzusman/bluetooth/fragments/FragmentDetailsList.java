@@ -97,9 +97,9 @@ public class FragmentDetailsList extends Fragment {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                wakeLock.release();
                 if (detailsTask.isAlive())
                     detailsTask.stopRunning();
-                    wakeLock.release();
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Disconnect from the device connection and get back into 3G/4G services or any other Wifi services." +
                         "Click 'Send' as soon as you're connected").setPositiveButton("Send", new DialogInterface.OnClickListener() {
@@ -244,8 +244,6 @@ public class FragmentDetailsList extends Fragment {
                 }).setCancelable(false).show();
 
     }
-
-
 
 
 }

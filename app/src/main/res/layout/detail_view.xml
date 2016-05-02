@@ -7,7 +7,7 @@
     <TextView
             android:layout_width="wrap_content"
             android:id="@+id/name"
-            android:textSize="23dp"
+            android:textSize="23sp"
             android:textStyle="bold"
             android:layout_height="wrap_content"
             android:hint="hello"/>
@@ -15,7 +15,7 @@
     <TextView
             android:layout_width="wrap_content"
             android:id="@+id/time"
-            android:textSize="23dp"
+            android:textSize="23sp"
             android:textStyle="bold"
             android:layout_height="wrap_content"
             android:hint="hello"/>

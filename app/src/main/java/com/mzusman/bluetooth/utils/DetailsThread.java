@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.util.JsonWriter;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.model.Managers.GpsManager;
@@ -18,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import dmax.dialog.SpotsDialog;
 
@@ -42,6 +40,7 @@ public class DetailsThread extends Thread {
     private FileOutputStream fileOutputStream;
     private LocationListener locationListener;
     private SpotsDialog spotsDialog;
+    private boolean run = true;
 
     /**
      * ListView in order to post it with the main loop
@@ -77,6 +76,7 @@ public class DetailsThread extends Thread {
      * managers inside the model component
      */
     public void run() {
+        initJsonWriting();//initiates the json reading
         try {
             Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
         } catch (IOException e) {
@@ -87,12 +87,13 @@ public class DetailsThread extends Thread {
             disposeDialog();
             errorEscape("connection interrupted - try again");
         }
-        //get the readings from the manager
-        initJsonWriting();//initiates the json reading
+//        get the readings from the manager
         disposeDialog();
         // while loop until the thread is being interrupted
-        while (!Thread.currentThread().isInterrupted()) {
-            readings = (ArrayList<String>) readFromManagers();
+        readings = Model.getInstance().getReading();
+        while (run) {
+            readings = Model.getInstance().getReading();//assigned to the Manager .
+            readings.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
             writeToJson(readings);
             //run on the main thread to update the listview
             listView.post(new Runnable() {
@@ -103,7 +104,6 @@ public class DetailsThread extends Thread {
                 }
             });
             try {
-                if (!Thread.currentThread().isInterrupted())
                     Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 Log.d(Constants.RUN_TAG, "run: interrupted while sleeping");
@@ -126,21 +126,9 @@ public class DetailsThread extends Thread {
                         }).setMessage(message);
                 AlertDialog alertDialog = error.create();
                 alertDialog.show();
-                while (true) ;
             }
         });
-    }
-
-
-    /**
-     * fills an anonymos array that assigned with data from the manager(whatever it be)
-     */
-
-    private List<String> readFromManagers() {
-        ArrayList<String> arrayList;
-        arrayList = Model.getInstance().getReading();//assigned to the Manager .
-        arrayList.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
-        return arrayList;
+        while (true) ;
     }
 
 
@@ -154,7 +142,7 @@ public class DetailsThread extends Thread {
             jsonWriter.beginArray();
         } catch (IOException e) {
             e.printStackTrace();
-            errorEscape("failed to open a file ");
+//            errorEscape("failed to open a file ");
         }
     }
 
@@ -186,7 +174,7 @@ public class DetailsThread extends Thread {
             jsonWriter.endObject();
             jsonWriter.endObject();
         } catch (IOException e) {
-            errorEscape("failed to write to json - try again");
+//            errorEscape("failed to write to json - try again");
         }
     }
 
@@ -200,7 +188,7 @@ public class DetailsThread extends Thread {
             this.fileOutputStream.close();
         } catch (IOException e) {
             Log.d(Constants.IO_TAG, "endJsonWrite: cannot close");
-            errorEscape("failed to close the json");
+//            errorEscape("failed to close the json");
         }
     }
 
@@ -208,11 +196,11 @@ public class DetailsThread extends Thread {
     waits till the thread will stop - shows loading dialog meanwhile
      */
     public void stopRunning() {
-        showDialog("Stopping...");
-        this.interrupt();
+//        showDialog("Stopping...");
+        run = false;
         try {
             this.join();
-            disposeDialog();
+//            disposeDialog();
         } catch (InterruptedException e) {
         }
     }

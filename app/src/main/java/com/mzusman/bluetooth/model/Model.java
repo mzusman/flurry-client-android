@@ -30,8 +30,17 @@ public class Model {
     }
 
 
+//    int i = 0;
     public ArrayList<String> getReading() {
+//        ArrayList<String > strings = new ArrayList<>();
+//        double time = System.currentTimeMillis();
+//        for (int i = 0; i < 3; i++) {
+//            strings.add(i+","+time+","+i);
+//        }
+//
+//        return strings;
         return manager.getReadings();
+
 
     }
 

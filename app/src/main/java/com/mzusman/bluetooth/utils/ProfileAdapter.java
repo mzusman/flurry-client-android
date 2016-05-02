@@ -45,7 +45,7 @@ public class ProfileAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if(vi == null)
-            vi = inflater.inflate(R.layout.profile_list,parent,false);
+            vi = inflater.inflate(R.layout.profile_list,null,false);
         Profile profile = profiles.get(position);
         TextView date = (TextView) vi.findViewById(R.id.tv_date);
         TextView time = (TextView) vi.findViewById(R.id.tv_time);
