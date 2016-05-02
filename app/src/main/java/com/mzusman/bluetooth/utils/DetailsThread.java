@@ -5,10 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.LocationListener;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.JsonWriter;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.model.Managers.GpsManager;
@@ -33,7 +33,7 @@ import dmax.dialog.SpotsDialog;
 public class DetailsThread extends Thread {
 
 
-    final static int SLEEP_TIME = 1000;
+    private final static int SLEEP_TIME = 500;
     private ListView listView;
     private DetailsAdapter detailsAdapter;
     private Activity activity;
@@ -82,18 +82,14 @@ public class DetailsThread extends Thread {
         } catch (IOException e) {
             Log.d(Constants.IO_TAG, "run: IO exception - cannot connect");
             disposeDialog();
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    errorEscape("cannot connect device - try again");
-                }
-            });
-            while (true);
+            errorEscape("cannot connect device - try again");
+        } catch (InterruptedException e) {
+            disposeDialog();
+            errorEscape("connection interrupted - try again");
         }
         //get the readings from the manager
         initJsonWriting();//initiates the json reading
         disposeDialog();
-        readings = Model.getInstance().getReading();//assigned to the Manager .
         // while loop until the thread is being interrupted
         while (!Thread.currentThread().isInterrupted()) {
             readings = (ArrayList<String>) readFromManagers();
@@ -107,7 +103,8 @@ public class DetailsThread extends Thread {
                 }
             });
             try {
-                Thread.sleep(SLEEP_TIME);
+                if (!Thread.currentThread().isInterrupted())
+                    Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 Log.d(Constants.RUN_TAG, "run: interrupted while sleeping");
             }
@@ -116,16 +113,22 @@ public class DetailsThread extends Thread {
     }
 
 
-    void errorEscape(String message) {
-        AlertDialog.Builder error = new AlertDialog.Builder(activity).
-                setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
-                    }
-                }).setMessage(message);
-        AlertDialog alertDialog = error.create();
-        alertDialog.show();
+    void errorEscape(final String message) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder error = new AlertDialog.Builder(activity).
+                        setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                activity.finish();
+                            }
+                        }).setMessage(message);
+                AlertDialog alertDialog = error.create();
+                alertDialog.show();
+                while (true) ;
+            }
+        });
     }
 
 
@@ -151,6 +154,7 @@ public class DetailsThread extends Thread {
             jsonWriter.beginArray();
         } catch (IOException e) {
             e.printStackTrace();
+            errorEscape("failed to open a file ");
         }
     }
 
@@ -182,7 +186,7 @@ public class DetailsThread extends Thread {
             jsonWriter.endObject();
             jsonWriter.endObject();
         } catch (IOException e) {
-            Log.d(Constants.IO_TAG, "writeToJson: failed to write");
+            errorEscape("failed to write to json - try again");
         }
     }
 
@@ -196,6 +200,7 @@ public class DetailsThread extends Thread {
             this.fileOutputStream.close();
         } catch (IOException e) {
             Log.d(Constants.IO_TAG, "endJsonWrite: cannot close");
+            errorEscape("failed to close the json");
         }
     }
 

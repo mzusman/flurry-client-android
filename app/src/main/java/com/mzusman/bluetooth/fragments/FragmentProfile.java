@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
@@ -44,13 +45,13 @@ public class FragmentProfile extends Fragment {
         //
         this.userId = getActivity().getIntent().getExtras().getInt(Constants.USER_ID_TAG);
 
+        setHasOptionsMenu(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Previous Profiles");
 
 
         //allows the fragment to get onTouchListener notifications
-        setHasOptionsMenu(true);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 
     @Override
@@ -81,8 +82,7 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
-                wifiBtn.setMessage("Make sure you're connected to the " +
-                        "ELM 327's Wifi Access Point before we continue")
+                wifiBtn.setMessage("Connect to the OBD device's wifi access point before we continue")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

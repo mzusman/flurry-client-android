@@ -19,7 +19,7 @@ public interface Manager {
 
     HashMap<String, ObdCommand> commandsFactory = new HashMap<>();
 
-    void connect(String deviceAddress) throws IOException;
+    void connect(String deviceAddress) throws IOException, InterruptedException;
 
     ArrayList<String> getReadings();
 

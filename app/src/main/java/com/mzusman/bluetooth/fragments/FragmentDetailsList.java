@@ -9,10 +9,10 @@ import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +23,10 @@ import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Manager;
-import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
+import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.DetailsAdapter;
 import com.mzusman.bluetooth.utils.DetailsThread;
@@ -60,6 +60,8 @@ public class FragmentDetailsList extends Fragment {
 
     private SpotsDialog dialog;
 
+    PowerManager.WakeLock wakeLock;
+
     @Nullable
     @Override
 
@@ -70,7 +72,6 @@ public class FragmentDetailsList extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         this.activity = getActivity();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Reader");
 
         /**
          * Build the factory out side of the manager class
@@ -98,6 +99,7 @@ public class FragmentDetailsList extends Fragment {
             public void onClick(View v) {
                 if (detailsTask.isAlive())
                     detailsTask.stopRunning();
+                    wakeLock.release();
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Disconnect from the device connection and get back into 3G/4G services or any other Wifi services." +
                         "Click 'Send' as soon as you're connected").setPositiveButton("Send", new DialogInterface.OnClickListener() {
@@ -115,6 +117,9 @@ public class FragmentDetailsList extends Fragment {
 
         locationInit();
         initThread();
+        PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Constants.WAKE_LOG_TAG);
+        wakeLock.acquire();
 
         return view;
 
@@ -241,11 +246,6 @@ public class FragmentDetailsList extends Fragment {
     }
 
 
-    @Override
-    public void onPause() {
-        detailsTask.stopRunning();
-        super.onPause();
-    }
 
 
 }

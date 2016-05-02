@@ -30,11 +30,9 @@ public class WifiManager implements Manager {
     }
 
     @Override
-    public void connect(String address) throws IOException {
-        try {
+    public void connect(String address) throws IOException, InterruptedException {
             String[] addressStr = address.split(",");
             socket = new Socket(addressStr[0], Integer.parseInt(addressStr[1]));
-
 
             /* 4 commands that are necessary for the obd2 api to configure itself */
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
@@ -44,10 +42,6 @@ public class WifiManager implements Manager {
                     .run(socket.getInputStream(), socket.getOutputStream());
 
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.d(Constants.RUN_TAG, "connect: interuptted");
-        }
 
 
     }

@@ -1,5 +1,6 @@
 package com.mzusman.bluetooth.activities;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.fragments.FragmentDetailsList;
@@ -25,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(toolbar);
+
 
 
         Fragment fragmentProfile = new FragmentProfile();

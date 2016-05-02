@@ -43,8 +43,6 @@ public class FragmentDeviceList extends Fragment {
 		if (managerString.equals(Constants.BT_TAG)) connector = new BTConnector();
 
 
-		((AppCompatActivity) getActivity()).getSupportActionBar()
-										   .setTitle("Select Device");//change toolbar title
 
 
 		ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);

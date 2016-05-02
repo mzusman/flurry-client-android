@@ -54,7 +54,7 @@ public class DetailsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         if (vi == null) {
-            vi = inflater.inflate(R.layout.detail_view, null);
+            vi = inflater.inflate(R.layout.detail_view, parent);
         }
 
         String parameter = parametersList.get(position);

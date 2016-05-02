@@ -44,14 +44,13 @@ public class DevicesAdapter extends BaseAdapter {
 	@Override public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
 		if (vi == null) {
-			vi = inflater.inflate(R.layout.device_view, null);
+			vi = inflater.inflate(R.layout.device_view, parent);
 		}
 		TextView nameView     = (TextView) vi.findViewById(R.id.name);
 		TextView addressView  = (TextView) vi.findViewById(R.id.address);
 		String   stringToView = strings.get(position);
 		nameView.setText(stringToView.split(",")[0]);
 		addressView.setText(stringToView.split(",")[1]);
-
 
 		return vi;
 	}
