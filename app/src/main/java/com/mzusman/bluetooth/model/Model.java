@@ -60,6 +60,9 @@ public class Model {
             networkManager = new NetworkManager(username, password);
         return networkManager;
     }
+    public void setNetworkManager(NetworkManager networkManager){
+        this.networkManager = networkManager;
+    }
 
     /*
     @return - may return null if the setGpsManager was'nt invoked

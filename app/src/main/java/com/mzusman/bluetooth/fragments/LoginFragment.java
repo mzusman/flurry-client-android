@@ -13,8 +13,8 @@ import android.widget.EditText;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.activities.MainActivity;
-import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
+import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.RegisterDialog;
 
@@ -84,17 +84,24 @@ public class LoginFragment extends Fragment {
                 LoginFragment.this.response = response.message();
                 if (response.isSuccessful()) {
                     actionProcessButton.setProgress(100);
+                    actionProcessButton.setText(R.string.welc);
                     LoginFragment.this.id = (response.body().driver_id);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);
                     getActivity().finish();
-                } else actionProcessButton.setProgress(-1);
+                } else {
+                    actionProcessButton.setProgress(-1);
+                    actionProcessButton.setText(R.string.cred);
+                    Model.getInstance().setNetworkManager(null);
+                }
             }
 
             @Override
             public void onFailure(Call<NetworkManager.UserCreditials> call, Throwable t) {
                 actionProcessButton.setProgress(-1);
+                actionProcessButton.setText(R.string.try_again);
+                Model.getInstance().setNetworkManager(null);
             }
         });
 

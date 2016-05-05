@@ -78,6 +78,12 @@ public class NetworkManager {
 
 
     }
+    public void resetCredentials(){
+        this.username = null;
+        this.password = null;
+        this.driverService = null;
+        retrofit = null;
+    }
 
     public void sendData(int driverID, String drivingData, Callback<Void> callback) {
         this.driverID = driverID;

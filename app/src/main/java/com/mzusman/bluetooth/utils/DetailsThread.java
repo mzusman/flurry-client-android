@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.ListView;
@@ -31,6 +32,7 @@ import dmax.dialog.SpotsDialog;
 public class DetailsThread extends Thread {
 
 
+    final DetailsThread.Event event;
     private final static int SLEEP_TIME = 500;
     private ListView listView;
     private DetailsAdapter detailsAdapter;
@@ -50,7 +52,9 @@ public class DetailsThread extends Thread {
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
         this.locationListener = locationListener;
+        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Details");
         showDialog("Loading...");
+        event = new Event() ;
     }
 
     private void showDialog(String message) {
@@ -67,9 +71,11 @@ public class DetailsThread extends Thread {
         }
     }
 
-//    private void changeActivityToolBar(String message) {
-//        ((AppCompatActivity) activity).getSupportActionBar().setTitle(message);
-//    }
+    class Event {
+        void onEvent(){
+            tryConnectToObd();
+        }
+    }
 
     /**
      * updates the activity's tool bar and the list view with strings that are given him from the
@@ -77,20 +83,12 @@ public class DetailsThread extends Thread {
      */
     public void run() {
         initJsonWriting();//initiates the json reading
-        try {
-            Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
-        } catch (IOException e) {
-            Log.d(Constants.IO_TAG, "run: IO exception - cannot connect");
-            disposeDialog();
-            errorEscape("cannot connect device - try again");
-        } catch (InterruptedException e) {
-            disposeDialog();
-            errorEscape("connection interrupted - try again");
-        }
+        tryConnectToObd();
 //        get the readings from the manager
         disposeDialog();
         // while loop until the thread is being interrupted
-        readings = Model.getInstance().getReading();
+//        readings = Model.getInstance().getReading();
+        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Loading");
         while (run) {
             readings = Model.getInstance().getReading();//assigned to the Manager .
             readings.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
@@ -104,12 +102,60 @@ public class DetailsThread extends Thread {
                 }
             });
             try {
-                    Thread.sleep(SLEEP_TIME);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 Log.d(Constants.RUN_TAG, "run: interrupted while sleeping");
             }
         }
         endJsonWrite();
+    }
+
+    void tryConnectToObd() {
+        try {
+            Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
+        } catch (IOException e) {
+            Log.d(Constants.IO_TAG, "run: IO exception - cannot connect");
+            disposeDialog();
+            tryAgainDialog();
+            synchronized (event) {
+                try {
+                    event.wait();
+                } catch (InterruptedException e1) {//ignored
+                    e1.printStackTrace();
+                }
+                event.onEvent();
+            }
+//            callBack = null;
+        } catch (InterruptedException e) {
+            disposeDialog();
+            tryAgainDialog();
+        }
+    }
+
+    void tryAgainDialog() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        synchronized (event) {
+                            event.notify();
+                        }
+                        showDialog("Connecting..");
+                    }
+                }).setCancelable(false).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        run = false;
+                        activity.finish();
+                    }
+                }).setMessage("Unable to connect to the OBD device, Click 'Ok' to try again").show();
+            }
+        });
+
+
     }
 
 
@@ -142,7 +188,6 @@ public class DetailsThread extends Thread {
             jsonWriter.beginArray();
         } catch (IOException e) {
             e.printStackTrace();
-//            errorEscape("failed to open a file ");
         }
     }
 
@@ -196,11 +241,11 @@ public class DetailsThread extends Thread {
     waits till the thread will stop - shows loading dialog meanwhile
      */
     public void stopRunning() {
-//        showDialog("Stopping...");
+        showDialog("Stopping...");
         run = false;
         try {
             this.join();
-//            disposeDialog();
+            disposeDialog();
         } catch (InterruptedException e) {
         }
     }

@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
@@ -47,24 +46,23 @@ public class FragmentProfile extends Fragment {
 
         setHasOptionsMenu(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Previous Profiles");
-
-
         //allows the fragment to get onTouchListener notifications
-
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        MenuInflater menuInflater = getActivity().getMenuInflater();
-        menuInflater.inflate(R.menu.profile_menu, menu);
+        if (!menu.hasVisibleItems()) {
+            MenuInflater menuInflater = getActivity().getMenuInflater();
+            menuInflater.inflate(R.menu.profile_menu, menu);
+        }
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         AlertDialog.Builder addBtn = new AlertDialog.Builder(getActivity());
-        addBtn.setMessage("Choose which device manager you would like to use:")
+        addBtn.setMessage(R.string.choose_msg)
                 .setNegativeButton("Bluetooth", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -82,7 +80,7 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
-                wifiBtn.setMessage("Connect to the OBD device's wifi access point before we continue")
+                wifiBtn.setMessage(R.string.wifi_msg)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -95,9 +93,9 @@ public class FragmentProfile extends Fragment {
                                         .replace(R.id.fragment_container, fragment,
                                                 Constants.DETAILS_TAG).commit();
                             }
-                        }).create().show();
+                        }).setCancelable(false).create().show();
             }
-        }).create().show();
+        }).setCancelable(false).create().show();
         return super.onOptionsItemSelected(item);
     }
 }

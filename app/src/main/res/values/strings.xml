@@ -16,4 +16,10 @@
     <string name="password">password</string>
     <string name="register">Register</string>
     <string name="name">name</string>
+    <string name="wifi_msg">Connect to the OBD device\'s wifi access point before we continue</string>
+    <string name="choose_msg">Choose which device manager you would like to use:</string>
+    <string name="dsc_wifi_msg">Disconnect from the device connection and get back into 3G services or any other Wifi services Click \'Send\' as soon as you\'re connected</string>
+    <string name="welc">Welcome</string>
+    <string name="try_again">Cannot Connect</string>
+    <string name="cred">Bad Credentials</string>
 </resources>

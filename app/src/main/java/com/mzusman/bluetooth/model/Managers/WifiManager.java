@@ -12,7 +12,9 @@ import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 
 /**
@@ -24,6 +26,7 @@ public class WifiManager implements Manager {
     ArrayList<String> readings = new ArrayList<>();
     long time = System.currentTimeMillis();
     Socket socket;
+    private static int TIME_OUT_VALUE = 5000;
 
     public WifiManager(Factory factory) {
         factory.setCommandsFactory(commandsFactory);
@@ -32,15 +35,19 @@ public class WifiManager implements Manager {
     @Override
     public void connect(String address) throws IOException, InterruptedException {
         String[] addressStr = address.split(",");
-        socket = new Socket(addressStr[0], Integer.parseInt(addressStr[1]));
+        socket = new Socket();
+        SocketAddress socketAddress = new InetSocketAddress(addressStr[0], Integer.parseInt(addressStr[1]));
+        socket.connect(socketAddress, TIME_OUT_VALUE);
+
 
             /* 4 commands that are necessary for the obd2 api to configure itself */
-        new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-        new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-        new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
-        new SelectProtocolCommand(ObdProtocols.AUTO)
-                .run(socket.getInputStream(), socket.getOutputStream());
-
+        if (socket.isConnected()) {
+            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+            new SelectProtocolCommand(ObdProtocols.AUTO)
+                    .run(socket.getInputStream(), socket.getOutputStream());
+        }
 
     }
 
@@ -51,7 +58,7 @@ public class WifiManager implements Manager {
             time = System.currentTimeMillis();
             if (readings.size() > 0) readings.clear();
             for (String command : commandsFactory.keySet()) {
-                //moving throught all of the commands inside the pre setup command and execute them
+                //moving through all of the commands inside the pre setup command and execute them
                 ObdCommand obdCommand = commandsFactory.get(command);
                 obdCommand.run(socket.getInputStream(), socket.getOutputStream());
                 readings.add(command + "," + Long.toString(time) + "," +

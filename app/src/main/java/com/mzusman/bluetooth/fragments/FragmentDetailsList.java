@@ -97,12 +97,10 @@ public class FragmentDetailsList extends Fragment {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wakeLock.release();
                 if (detailsTask.isAlive())
                     detailsTask.stopRunning();
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("Disconnect from the device connection and get back into 3G/4G services or any other Wifi services." +
-                        "Click 'Send' as soon as you're connected").setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -111,15 +109,12 @@ public class FragmentDetailsList extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                }).show();
+                }).setCancelable(false).show();
             }
         });
 
         locationInit();
         initThread();
-        PowerManager powerManager = (PowerManager) getActivity().getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, Constants.WAKE_LOG_TAG);
-        wakeLock.acquire();
 
         return view;
 
