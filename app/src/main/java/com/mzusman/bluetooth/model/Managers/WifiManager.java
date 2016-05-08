@@ -62,7 +62,7 @@ public class WifiManager implements Manager {
                 ObdCommand obdCommand = commandsFactory.get(command);
                 obdCommand.run(socket.getInputStream(), socket.getOutputStream());
                 readings.add(command + "," + Long.toString(time) + "," +
-                        obdCommand.getFormattedResult());
+                        obdCommand.getCalculatedResult());
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -89,7 +89,6 @@ public class WifiManager implements Manager {
 
     @Override
     public String getReading(String READ) {
-
         time = System.currentTimeMillis();
         ObdCommand command = commandsFactory.get(READ);
 

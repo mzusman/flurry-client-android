@@ -14,9 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.github.pires.obd.commands.ObdCommand;
@@ -72,6 +74,7 @@ public class FragmentDetailsList extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         this.activity = getActivity();
+        setHasOptionsMenu(true);
 
         /**
          * Build the factory out side of the manager class
@@ -86,38 +89,53 @@ public class FragmentDetailsList extends Fragment {
                     commandsFactory.put(Constants.REQUEST_RPM_READING, new RPMCommand());
                 }
             }), Constants.WIFI_ADDRESS);
-
         }
 
         listView = (ListView) view.findViewById(R.id.details);
         detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);
 
-        Button stopBtn = (Button) view.findViewById(R.id.stop_btn);
-        stopBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (detailsTask.isAlive())
-                    detailsTask.stopRunning();
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            sendRemote(driverID);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).setCancelable(false).show();
-            }
-        });
-
         locationInit();
         initThread();
 
         return view;
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!menu.hasVisibleItems()) {
+            MenuInflater menuInflater = getActivity().getMenuInflater();
+            menuInflater.inflate(R.menu.details_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (detailsTask.isAlive())
+                    detailsTask.stopRunning(new DetailsThread.Callback() {
+                        @Override
+                        public void ThreadDidStop() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try {
+                                        sendRemote(driverID);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).setCancelable(false).show();
+                        }
+                    });
+                return true;
+            }
+        });
+        return true;
     }
 
     /**
@@ -180,6 +198,7 @@ public class FragmentDetailsList extends Fragment {
 
     private void showDialog(String message) {
         dialog = new SpotsDialog(getActivity(), message);
+        dialog.setCancelable(false);
         dialog.show();
     }
 

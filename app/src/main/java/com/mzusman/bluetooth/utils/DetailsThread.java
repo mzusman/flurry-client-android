@@ -54,11 +54,12 @@ public class DetailsThread extends Thread {
         this.locationListener = locationListener;
         ((AppCompatActivity) activity).getSupportActionBar().setTitle("Details");
         showDialog("Loading...");
-        event = new Event() ;
+        event = new Event();
     }
 
     private void showDialog(String message) {
         this.spotsDialog = new SpotsDialog(activity, message);
+        this.spotsDialog.setCancelable(false);
         this.spotsDialog.show();
     }
 
@@ -72,7 +73,7 @@ public class DetailsThread extends Thread {
     }
 
     class Event {
-        void onEvent(){
+        void onEvent() {
             tryConnectToObd();
         }
     }
@@ -240,14 +241,31 @@ public class DetailsThread extends Thread {
     /*
     waits till the thread will stop - shows loading dialog meanwhile
      */
-    public void stopRunning() {
+    public void stopRunning(final Callback callback) {
         showDialog("Stopping...");
-        run = false;
-        try {
-            this.join();
-            disposeDialog();
-        } catch (InterruptedException e) {
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    run = false;
+                    DetailsThread.this.join();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            disposeDialog();
+                            callback.ThreadDidStop();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public interface Callback {
+        void ThreadDidStop();
+
     }
 
 
