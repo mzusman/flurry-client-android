@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.model;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Model {
@@ -31,7 +32,7 @@ public class Model {
 
 
 //    int i = 0;
-    public ArrayList<String> getReading() {
+    public ArrayList<String> getReading() throws IOException {
 //        ArrayList<String > strings = new ArrayList<>();
 //        double time = System.currentTimeMillis();
 //        for (int i = 0; i < 3; i++) {

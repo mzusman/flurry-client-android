@@ -89,9 +89,19 @@ public class DetailsThread extends Thread {
         disposeDialog();
         // while loop until the thread is being interrupted
 //        readings = Model.getInstance().getReading();
-        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Loading");
+//        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Loading");
+        try {
+            sleep(SLEEP_TIME);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (run) {
-            readings = Model.getInstance().getReading();//assigned to the Manager .
+            try {
+                readings = Model.getInstance().getReading();//assigned to the Manager .
+            } catch (IOException e) {
+                tryConnectToObd();
+                disposeDialog();
+            }
             readings.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
             writeToJson(readings);
             //run on the main thread to update the listview
@@ -115,7 +125,6 @@ public class DetailsThread extends Thread {
         try {
             Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
         } catch (IOException e) {
-            Log.d(Constants.IO_TAG, "run: IO exception - cannot connect");
             disposeDialog();
             tryAgainDialog();
             synchronized (event) {
@@ -219,8 +228,7 @@ public class DetailsThread extends Thread {
             jsonWriter.name("lon").value(strings[3]);
             jsonWriter.endObject();
             jsonWriter.endObject();
-        } catch (IOException e) {
-//            errorEscape("failed to write to json - try again");
+        } catch (IOException ignored) {
         }
     }
 

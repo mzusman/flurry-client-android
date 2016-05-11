@@ -21,7 +21,7 @@ public interface Manager {
 
     void connect(String deviceAddress) throws IOException, InterruptedException;
 
-    ArrayList<String> getReadings();
+    ArrayList<String> getReadings() throws IOException;
 
     void stop();
 

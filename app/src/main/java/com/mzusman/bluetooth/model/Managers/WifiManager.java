@@ -52,7 +52,7 @@ public class WifiManager implements Manager {
     }
 
     @Override
-    public ArrayList<String> getReadings() {
+    public ArrayList<String> getReadings() throws IOException {
 
         try {
             time = System.currentTimeMillis();
@@ -67,9 +67,6 @@ public class WifiManager implements Manager {
         } catch (InterruptedException e) {
             e.printStackTrace();
             Log.d(Constants.RUN_TAG, "getReadings Interrupt");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(Constants.IO_TAG, "getReadings IO Error");
         }
         return readings;
 
