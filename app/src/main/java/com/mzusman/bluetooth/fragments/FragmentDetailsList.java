@@ -198,7 +198,6 @@ public class FragmentDetailsList extends Fragment {
         byte[] data = new byte[(int) file.length()];
         fileInputStream.read(data);
         fileInputStream.close();
-
         return new String(data, "UTF-8");
 
     }
@@ -213,7 +212,6 @@ public class FragmentDetailsList extends Fragment {
         if (dialog == null)
             return;
         if (dialog.isShowing()) {
-
             dialog.dismiss();
             dialog = null;
         }

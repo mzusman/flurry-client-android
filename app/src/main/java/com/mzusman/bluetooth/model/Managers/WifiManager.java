@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.model.Managers;
 import android.util.Log;
 
 import com.github.pires.obd.commands.ObdCommand;
+import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;

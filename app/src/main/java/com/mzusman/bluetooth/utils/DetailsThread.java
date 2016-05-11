@@ -64,7 +64,7 @@ public class DetailsThread extends Thread {
         this.spotsDialog.show();
     }
 
-    private void disposeDialog() {
+    private synchronized void disposeDialog() {
         if (spotsDialog == null)
             return;
         if (spotsDialog.isShowing()) {
@@ -164,24 +164,6 @@ public class DetailsThread extends Thread {
 
     }
 
-
-    void errorEscape(final String message) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder error = new AlertDialog.Builder(activity).
-                        setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                activity.finish();
-                            }
-                        }).setMessage(message);
-                AlertDialog alertDialog = error.create();
-                alertDialog.show();
-            }
-        });
-        while (true) ;
-    }
 
 
     /**
