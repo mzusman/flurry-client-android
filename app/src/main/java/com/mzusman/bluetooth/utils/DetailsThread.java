@@ -32,6 +32,7 @@ import dmax.dialog.SpotsDialog;
 public class DetailsThread extends Thread {
 
 
+    Callback callback;
     final DetailsThread.Event event;
     private final static int SLEEP_TIME = 500;
     private ListView listView;
@@ -85,11 +86,7 @@ public class DetailsThread extends Thread {
     public void run() {
         initJsonWriting();//initiates the json reading
         tryConnectToObd();
-//        get the readings from the manager
         disposeDialog();
-        // while loop until the thread is being interrupted
-//        readings = Model.getInstance().getReading();
-//        ((AppCompatActivity) activity).getSupportActionBar().setTitle("Loading");
         try {
             sleep(SLEEP_TIME);
         } catch (InterruptedException e) {
@@ -135,7 +132,6 @@ public class DetailsThread extends Thread {
                 }
                 event.onEvent();
             }
-//            callBack = null;
         } catch (InterruptedException e) {
             disposeDialog();
             tryAgainDialog();
@@ -228,6 +224,7 @@ public class DetailsThread extends Thread {
             jsonWriter.name("lon").value(strings[3]);
             jsonWriter.endObject();
             jsonWriter.endObject();
+            jsonWriter.flush();
         } catch (IOException ignored) {
         }
     }
@@ -249,19 +246,21 @@ public class DetailsThread extends Thread {
     /*
     waits till the thread will stop - shows loading dialog meanwhile
      */
-    public void stopRunning(final Callback callback) {
+    public void stopRunning(Callback callback) {
+        this.callback = callback;
         showDialog("Stopping...");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    run = false;
-                    DetailsThread.this.join();
+                    DetailsThread.this.run = false;
+                    if (DetailsThread.this.isAlive())
+                        DetailsThread.this.join();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            disposeDialog();
-                            callback.ThreadDidStop();
+                            DetailsThread.this.disposeDialog();
+                            DetailsThread.this.callback.ThreadDidStop();
                         }
                     });
                 } catch (InterruptedException e) {

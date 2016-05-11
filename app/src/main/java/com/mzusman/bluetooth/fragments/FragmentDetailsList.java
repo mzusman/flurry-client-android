@@ -24,6 +24,7 @@ import android.widget.ListView;
 import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
@@ -43,9 +44,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by amitmu on 04/15/2016.
- */
 public class FragmentDetailsList extends Fragment {
 
     private int driverID;
@@ -54,15 +52,12 @@ public class FragmentDetailsList extends Fragment {
 
     private Activity activity;
 
-    private DetailsAdapter detailsAdapter;
-
     private LocationListener locationListener;
 
     private DetailsThread detailsTask;
 
     private SpotsDialog dialog;
 
-    PowerManager.WakeLock wakeLock;
 
     @Nullable
     @Override
@@ -87,12 +82,13 @@ public class FragmentDetailsList extends Fragment {
                 public void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory) {
                     commandsFactory.put(Constants.REQUEST_SPEED_READING, new SpeedCommand());
                     commandsFactory.put(Constants.REQUEST_RPM_READING, new RPMCommand());
+                    commandsFactory.put(Constants.REQUEST_THR_READING, new ThrottlePositionCommand());
                 }
             }), Constants.WIFI_ADDRESS);
         }
 
         listView = (ListView) view.findViewById(R.id.details);
-        detailsAdapter = new DetailsAdapter(activity);
+        DetailsAdapter detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);
 
         locationInit();
@@ -115,27 +111,39 @@ public class FragmentDetailsList extends Fragment {
         item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if (detailsTask.isAlive())
-                    detailsTask.stopRunning(new DetailsThread.Callback() {
-                        @Override
-                        public void ThreadDidStop() {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                            builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        sendRemote(driverID);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).setCancelable(false).show();
-                        }
-                    });
+                detailsTask.stopRunning(new DetailsThread.Callback() {
+                    @Override
+                    public void ThreadDidStop() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendRemote(driverID);
+                            }
+                        }).setCancelable(false).show();
+                    }
+                });
                 return true;
             }
         });
         return true;
+    }
+
+    void sendAgain() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        builder.setCancelable(false).setMessage("Cannot connect").setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sendRemote(driverID);
+            }
+        })
+                .setNegativeButton("Cencel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        getActivity().finish();
+                    }
+                }).show();
     }
 
     /**
@@ -191,8 +199,7 @@ public class FragmentDetailsList extends Fragment {
         fileInputStream.read(data);
         fileInputStream.close();
 
-        String str = new String(data, "UTF-8");
-        return str;
+        return new String(data, "UTF-8");
 
     }
 
@@ -213,35 +220,31 @@ public class FragmentDetailsList extends Fragment {
     }
 
 
-    private void sendRemote(final int driverID) throws IOException {
+    private void sendRemote(final int driverID) {
 
-        String data = loadFromFile();
+        String data = null;
+        try {
+            data = loadFromFile();
+        } catch (IOException e) {
+            //ignored
+            e.printStackTrace();
+        }
         Model.getInstance().getNetworkManager().sendData(driverID, data, new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 dismissDialog();
                 if (response.isSuccessful()) {
                     onSentSuccess();
-                } else errorEscape();
+                } else sendAgain();
 
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 dismissDialog();
-                errorEscape();
+                sendAgain();
             }
         });
-    }
-
-    void errorEscape() {
-        AlertDialog.Builder error = new AlertDialog.Builder(getActivity());
-        error.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                getActivity().finish();
-            }
-        }).setMessage("Error").show();
     }
 
 
