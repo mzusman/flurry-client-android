@@ -9,10 +9,10 @@ import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,6 +75,7 @@ public class FragmentDetailsList extends Fragment {
          * Build the factory out side of the manager class
          */
         driverID = getArguments().getInt(Constants.USER_ID_TAG);
+        Log.d("TAG", "onResponse: id:" + driverID);
         String manager = getArguments().getString(Constants.MANAGER_TAG);
         if (manager.equals(Constants.WIFI_TAG)) {
             Model.getInstance().setManager(new WifiManager(new Manager.Factory() {
@@ -171,15 +172,12 @@ public class FragmentDetailsList extends Fragment {
             }).setMessage("Please Enable Location Services").show();
 
         }
-
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 Constants.GPS_MIN_TIME,
                 Constants.GPS_MIN_DISTANCE,
                 locationListener);
-
         //sets the manager
         Model.getInstance().setGpsManager((GpsManager) locationListener);
-
     }
 
     /**
@@ -199,7 +197,6 @@ public class FragmentDetailsList extends Fragment {
         fileInputStream.read(data);
         fileInputStream.close();
         return new String(data, "UTF-8");
-
     }
 
     private void showDialog(String message) {
@@ -218,13 +215,11 @@ public class FragmentDetailsList extends Fragment {
     }
 
 
-    private void sendRemote(final int driverID) {
-
+    private void sendRemote(int driverID) {
         String data = null;
         try {
             data = loadFromFile();
         } catch (IOException e) {
-            //ignored
             e.printStackTrace();
         }
         Model.getInstance().getNetworkManager().sendData(driverID, data, new Callback<Void>() {

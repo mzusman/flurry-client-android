@@ -41,17 +41,12 @@ public class NetworkManager {
 
 
     public NetworkManager(String username, String password) {
-//        connect(username, password);
         makeAuthorizationHeader(username, password);
         this.username = username;
         this.password = password;
     }
 
 
-//    private void connect(String username, String password) {
-//
-//
-//    }
 
     private void makeAuthorizationHeader(String username, String password) {
         String credentials = username + ":" + password;

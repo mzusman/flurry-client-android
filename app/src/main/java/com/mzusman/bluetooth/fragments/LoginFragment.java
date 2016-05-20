@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class LoginFragment extends Fragment {
                     public void onResponse(Call call, Response response) {
                         LoginFragment.this.id = ((NetworkManager.UserCreditials) response.body()).driver_id;
                         Intent intent = new Intent(getActivity(), MainActivity.class);
+                        Log.d("TAG", "onResponse: id:"+LoginFragment.this.id);
                         intent.putExtra(Constants.USER_ID_TAG, id);
                         startActivity(intent);
                         getActivity().finish();
@@ -86,6 +88,7 @@ public class LoginFragment extends Fragment {
                     actionProcessButton.setProgress(100);
                     actionProcessButton.setText(R.string.welc);
                     LoginFragment.this.id = (response.body().driver_id);
+                    Log.d("TAG", "onResponse: id:"+LoginFragment.this.id);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);
