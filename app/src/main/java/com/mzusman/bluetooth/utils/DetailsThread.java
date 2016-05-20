@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.utils.adapters.DetailsAdapter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,16 +45,19 @@ public class DetailsThread extends Thread {
     private FileOutputStream fileOutputStream;
     private LocationListener locationListener;
     private SpotsDialog spotsDialog;
+    private TextView textView;
     private boolean run = true;
+    private long time = 0;
 
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(@NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView) {
+    public DetailsThread(@NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView, TextView timeView) {
         this.listView = listView;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
         this.locationListener = locationListener;
+        this.textView = timeView;
         ((AppCompatActivity) activity).getSupportActionBar().setTitle("Details");
         showDialog("Loading...");
         event = new Event();
@@ -94,6 +99,7 @@ public class DetailsThread extends Thread {
         }
         while (run) {
             try {
+                time = System.currentTimeMillis();
                 readings = Model.getInstance().getReading();//assigned to the Manager .
             } catch (IOException e) {
                 tryConnectToObd();
@@ -107,6 +113,7 @@ public class DetailsThread extends Thread {
                 public void run() {
                     detailsAdapter.setArray(readings);
                     detailsAdapter.notifyDataSetChanged();
+                    textView.setText("time: " + Long.toString(time));
                 }
             });
             try {
@@ -165,7 +172,6 @@ public class DetailsThread extends Thread {
     }
 
 
-
     /**
      * three methods that are writing the data into a json
      */
@@ -186,7 +192,7 @@ public class DetailsThread extends Thread {
     private void writeToJson(ArrayList<String> readings) {
         try {
             jsonWriter.beginObject();
-            jsonWriter.name("time").value(readings.get(0).split(",")[1]);
+            jsonWriter.name("time").value(time);
             /**
              * through all of the reading and write them to the json ,
              * all of the parameters are splitted by ',' -> name,time,value.
@@ -194,7 +200,7 @@ public class DetailsThread extends Thread {
             String[] reads;
             for (String read : readings) {
                 reads = read.split(",");
-                jsonWriter.name(reads[0]).value(reads[2]);
+                jsonWriter.name(reads[0]).value(reads[1]);
             }
             /**
              * gps reading - separated with latitude and longitude
@@ -202,8 +208,8 @@ public class DetailsThread extends Thread {
             jsonWriter.name(Constants.GPS_TAG);
             jsonWriter.beginObject();
             String[] strings = readings.get(readings.size() - 1).split(",");
-            jsonWriter.name("lat").value(strings[2]);
-            jsonWriter.name("lon").value(strings[3]);
+            jsonWriter.name("lat").value(strings[1]);
+            jsonWriter.name("lon").value(strings[2]);
             jsonWriter.endObject();
             jsonWriter.endObject();
             jsonWriter.flush();

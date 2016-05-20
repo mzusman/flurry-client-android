@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.utils;
+package com.mzusman.bluetooth.utils.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import android.widget.ListView;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.utils.Connector;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.DevicesAdapter;
+import com.mzusman.bluetooth.utils.adapters.DevicesAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

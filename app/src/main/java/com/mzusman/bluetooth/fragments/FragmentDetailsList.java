@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.SpeedCommand;
@@ -31,8 +32,8 @@ import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.DetailsAdapter;
 import com.mzusman.bluetooth.utils.DetailsThread;
+import com.mzusman.bluetooth.utils.adapters.DetailsAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,6 +58,8 @@ public class FragmentDetailsList extends Fragment {
     private DetailsThread detailsTask;
 
     private SpotsDialog dialog;
+
+    private TextView timeView;
 
 
     @Nullable
@@ -91,6 +94,7 @@ public class FragmentDetailsList extends Fragment {
         listView = (ListView) view.findViewById(R.id.details);
         DetailsAdapter detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);
+        timeView = (TextView) view.findViewById(R.id.time);
 
         locationInit();
         initThread();
@@ -109,22 +113,16 @@ public class FragmentDetailsList extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        detailsTask.stopRunning(new DetailsThread.Callback() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                detailsTask.stopRunning(new DetailsThread.Callback() {
+            public void ThreadDidStop() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
-                    public void ThreadDidStop() {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                        builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendRemote(driverID);
-                            }
-                        }).setCancelable(false).show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendRemote(driverID);
                     }
-                });
-                return true;
+                }).setCancelable(false).show();
             }
         });
         return true;
@@ -132,7 +130,7 @@ public class FragmentDetailsList extends Fragment {
 
     void sendAgain() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-        builder.setCancelable(false).setMessage("Cannot connect").setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+        builder.setCancelable(false).setMessage("Cannot connect to the cloud, Please try again.").setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendRemote(driverID);
@@ -185,7 +183,7 @@ public class FragmentDetailsList extends Fragment {
      */
     private void initThread() {
         if (detailsTask == null)
-            detailsTask = new DetailsThread(locationListener, getActivity(), listView);
+            detailsTask = new DetailsThread(locationListener, getActivity(), listView, timeView);
         detailsTask.start();
     }
 

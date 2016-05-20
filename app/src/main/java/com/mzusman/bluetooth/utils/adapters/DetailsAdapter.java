@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.utils;
+package com.mzusman.bluetooth.utils.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -61,15 +61,11 @@ public class DetailsAdapter extends BaseAdapter {
         String[] separated = parameter.split(",");
         name = (TextView) vi.findViewById(R.id.name);
         name.setText(separated[0]);
-        time = (TextView) vi.findViewById(R.id.time);
-        time.setText(separated[1]);
         value = (TextView) vi.findViewById(R.id.val);
-        if (separated.length > 3)
-            value.setText(separated[2] + ",\n" + separated[3]);
-        else value.setText(separated[2]);
-
+        if (separated.length > 2)
+            value.setText(separated[1] + ",\n" + separated[2]);
+        else value.setText(separated[1]);
         return vi;
-
 
     }
 }

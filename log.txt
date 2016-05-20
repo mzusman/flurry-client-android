@@ -1465,7 +1465,7 @@ D/ConnectivityService(  634): notifyType LOST for NetworkAgentInfo [MOBILE (LTE)
 D/Nat464Xlat(  634): requiresClat: netType=0, connected=false, hasIPv4Address=true
 E/AndroidRuntime( 3302): FATAL EXCEPTION: main
 E/AndroidRuntime( 3302): Process: com.mzusman.bluetooth, PID: 3302
-E/AndroidRuntime( 3302): java.lang.IllegalStateException: The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes. [in ListView(2131558524, class android.widget.ListView) with Adapter(class com.mzusman.bluetooth.utils.DetailsAdapter)]
+E/AndroidRuntime( 3302): java.lang.IllegalStateException: The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes. [in ListView(2131558524, class android.widget.ListView) with Adapter(class com.mzusman.bluetooth.utils.adapters.DetailsAdapter)]
 E/AndroidRuntime( 3302): 	at android.widget.ListView.layoutChildren(ListView.java:1562)
 E/AndroidRuntime( 3302): 	at android.widget.AbsListView$CheckForTap.run(AbsListView.java:3264)
 E/AndroidRuntime( 3302): 	at android.os.Handler.handleCallback(Handler.java:739)
@@ -1970,7 +1970,7 @@ E/NetlinkEvent(  303): NetlinkEvent::FindParam(): Parameter 'TIME_NS' not found
 E/NetdConnector(  634): Error handling '613 IfaceClass idle (null)': java.lang.NumberFormatException: Invalid int: "(null)"
 E/AndroidRuntime( 4333): FATAL EXCEPTION: main
 E/AndroidRuntime( 4333): Process: com.mzusman.bluetooth, PID: 4333
-E/AndroidRuntime( 4333): java.lang.IllegalStateException: The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes. [in ListView(2131558524, class android.widget.ListView) with Adapter(class com.mzusman.bluetooth.utils.DetailsAdapter)]
+E/AndroidRuntime( 4333): java.lang.IllegalStateException: The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes. [in ListView(2131558524, class android.widget.ListView) with Adapter(class com.mzusman.bluetooth.utils.adapters.DetailsAdapter)]
 E/AndroidRuntime( 4333): 	at android.widget.ListView.layoutChildren(ListView.java:1562)
 E/AndroidRuntime( 4333): 	at android.widget.AbsListView$CheckForTap.run(AbsListView.java:3264)
 E/AndroidRuntime( 4333): 	at android.os.Handler.handleCallback(Handler.java:739)

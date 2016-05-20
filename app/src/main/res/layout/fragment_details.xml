@@ -4,6 +4,18 @@
               android:layout_width="match_parent"
               android:keepScreenOn="true"
               android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:id="@+id/time"
+            android:clickable="false"
+            android:focusable="false"
+            android:textSize="23sp"
+            android:textColor="@android:color/black"
+            android:layout_height="wrap_content"/>
+
+
     <ListView
             android:layout_width="match_parent"
             android:clickable="false"

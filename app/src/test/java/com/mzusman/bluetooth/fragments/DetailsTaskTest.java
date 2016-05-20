@@ -20,7 +20,7 @@ public class DetailsTaskTest {
         LocationListener locationListener = Mockito.mock(LocationListener.class);
         ListView listView = Mockito.mock(ListView.class);
 
-        DetailsThread task = new DetailsThread(locationListener,activity,listView);
+        DetailsThread task = new DetailsThread(locationListener,activity,listView, timeView);
         task.run();
 
     }
