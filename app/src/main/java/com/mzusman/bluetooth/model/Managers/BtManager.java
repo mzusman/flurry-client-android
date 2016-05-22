@@ -11,6 +11,7 @@ import com.mzusman.bluetooth.commands.protocol.LineFeedOffCommand;
 import com.mzusman.bluetooth.commands.protocol.SelectProtocolCommand;
 import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
+import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
 
@@ -46,14 +47,23 @@ public class BtManager implements Manager {
             bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid);
             bluetoothSocket.connect();
 
-            new EchoOffCommand()
-                    .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
-            new LineFeedOffCommand()
-                    .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
-            new TimeoutCommand(125)
-                    .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
-            new SelectProtocolCommand(ObdProtocols.AUTO)
-                    .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+            try {
+
+                new EchoOffCommand()
+                        .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+                new LineFeedOffCommand()
+                        .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+                new TimeoutCommand(125)
+                        .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+                new SelectProtocolCommand(ObdProtocols.AUTO)
+                        .run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (ResponseException e) {
+                e.printStackTrace();
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -88,6 +98,12 @@ public class BtManager implements Manager {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(Constants.IO_TAG, "getReadings IO Error");
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (ResponseException e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -106,24 +122,24 @@ public class BtManager implements Manager {
 
     @Override
     public String getReading(String READ) {
-        try {
-            time = System.currentTimeMillis();
+//        try {
+        time = System.currentTimeMillis();
 
-            ObdCommand command = commandsFactory.get(READ);
+        ObdCommand command = commandsFactory.get(READ);
 
-            if (command == null) return null;
+        if (command == null) return null;
 
-            command.run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
-            return READ + "," + Long.toString(time) + "," + command.getFormattedResult();
+//            command.run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
+        return READ + "," + Long.toString(time) + "," + command.getFormattedResult();
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-        return null;
+//            return null;
     }
 
 }

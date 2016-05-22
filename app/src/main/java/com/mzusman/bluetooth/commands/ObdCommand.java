@@ -8,7 +8,6 @@ import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.exceptions.StoppedException;
 import com.mzusman.bluetooth.exceptions.UnableToConnectException;
-import com.mzusman.bluetooth.exceptions.UnknownErrorException;
 import com.mzusman.bluetooth.exceptions.UnsupportedCommandException;
 
 import java.io.IOException;
@@ -33,7 +32,6 @@ public abstract class ObdCommand {
             MisunderstoodCommandException.class,
             NoDataException.class,
             StoppedException.class,
-            UnknownErrorException.class,
             UnsupportedCommandException.class
     };
     protected ArrayList<Integer> buffer = null;
@@ -80,7 +78,7 @@ public abstract class ObdCommand {
      * @throws java.lang.InterruptedException if any.
      */
     public void run(InputStream in, OutputStream out) throws IOException,
-            InterruptedException {
+            InterruptedException, IllegalAccessException, ResponseException, InstantiationException {
         start = System.currentTimeMillis();
         sendCommand(out);
         readResult(in);
@@ -129,13 +127,12 @@ public abstract class ObdCommand {
      * @param in a {@link java.io.InputStream} object.
      * @throws java.io.IOException if any.
      */
-    protected void readResult(InputStream in) throws IOException {
+    protected void readResult(InputStream in) throws IOException, IllegalAccessException, InstantiationException, ResponseException {
         readRawData(in);
-        error = checkForErrors();
-        if (!error) {
-            fillBuffer();
-            performCalculations();
-        }
+        checkForErrors();
+        fillBuffer();
+        performCalculations();
+
     }
 
     /**
@@ -207,20 +204,14 @@ public abstract class ObdCommand {
         rawData = rawData.replaceAll("\\s", "");//removes all [ \t\n\x0B\f\r]
     }
 
-    boolean checkForErrors() {
+    boolean checkForErrors() throws ResponseException, IllegalAccessException, InstantiationException {
         for (Class<? extends ResponseException> errorClass : ERROR_CLASSES) {
             ResponseException messageError;
 
-            try {
-                messageError = errorClass.newInstance();
-                messageError.setCommand(this.cmd);
-            } catch (InstantiationException ignored) {
-                return true;
-            } catch (IllegalAccessException ignored) {
-                return true;
-            }
+            messageError = errorClass.newInstance();
+            messageError.setCommand(this.cmd);
             if (messageError.isError(rawData)) {
-                return true;
+                throw messageError;
             }
         }
         return false;

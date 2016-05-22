@@ -6,6 +6,7 @@ import com.mzusman.bluetooth.commands.protocol.LineFeedOffCommand;
 import com.mzusman.bluetooth.commands.protocol.SelectProtocolCommand;
 import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
+import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
@@ -26,7 +27,7 @@ public class WifiManager implements Manager {
     ArrayList<String> readings = new ArrayList<>();
     long time = System.currentTimeMillis();
     Socket socket;
-    private static int TIME_OUT_VALUE = 10000;
+    private static int TIME_OUT_VALUE = 5000;
     Logger logger = Log4jHelper.getLogger("WifiManager");
 
     public WifiManager(Factory factory) {
@@ -43,11 +44,19 @@ public class WifiManager implements Manager {
 
             /* 4 commands that are necessary for the obd2 api to configure itself */
         if (socket.isConnected()) {
-            new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-            new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-            new TimeoutCommand(75).run(socket.getInputStream(), socket.getOutputStream());
-            new SelectProtocolCommand(ObdProtocols.AUTO)
-                    .run(socket.getInputStream(), socket.getOutputStream());
+            try {
+                new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+                new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+                new TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream());
+                new SelectProtocolCommand(ObdProtocols.AUTO)
+                        .run(socket.getInputStream(), socket.getOutputStream());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (ResponseException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -55,19 +64,34 @@ public class WifiManager implements Manager {
     @Override
     public ArrayList<String> getReadings() throws IOException {
 
-        try {
-            time = System.currentTimeMillis();
-            if (readings.size() > 0) readings.clear();
-            for (String command : commandsFactory.keySet()) {
-                //moving through all of the commands inside the pre setup command and execute them
-                ObdCommand obdCommand = commandsFactory.get(command);
+        time = System.currentTimeMillis();
+        if (readings.size() > 0) readings.clear();
+        for (String command : commandsFactory.keySet()) {
+            //moving through all of the commands inside the pre setup command and execute them
+            ObdCommand obdCommand = commandsFactory.get(command);
+            try {
                 obdCommand.run(socket.getInputStream(), socket.getOutputStream());
-                readings.add(command + "," +
-                        obdCommand.getCalculatedResult());
+            } catch (InterruptedException e) {
+                logger.debug("getReadings Interrupt\n" + e.getMessage());
+                readings.add(command + ",-1");
+                continue;
+            } catch (IllegalAccessException e) {
+                logger.debug("getReadings illegalAcceess\n" + e.getMessage());
+                readings.add(command + ",-1");
+                continue;
+            } catch (InstantiationException e) {
+                logger.debug("getReadings InstanitaionException\n" + e.getMessage());
+                readings.add(command + ",-1");
+                continue;
+            } catch (ResponseException e) {
+                logger.debug("getReadings Response\n" + e.getMessage());
+                readings.add(command + ",-1");
+                continue;
             }
-        } catch (InterruptedException e) {
-            logger.debug("getReadings Interrupt\n" + e.getMessage());
+            readings.add(command + "," +
+                    obdCommand.getCalculatedResult());
         }
+
         return readings;
 
 
@@ -91,11 +115,11 @@ public class WifiManager implements Manager {
 
         if (command == null)
             return READ + "," + Long.toString(time) + "," + "0";
-        try {
-            command.run(socket.getInputStream(), socket.getOutputStream());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            command.run(socket.getInputStream(), socket.getOutputStream());
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return READ + "," + command.getFormattedResult();
     }
 

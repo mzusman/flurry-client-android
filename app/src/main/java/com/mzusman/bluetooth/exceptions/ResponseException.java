@@ -1,11 +1,12 @@
 package com.mzusman.bluetooth.exceptions;
+
 /**
  * Generic message error
  *
  * @author pires
  * @version $Id: $Id
  */
-public class ResponseException extends RuntimeException {
+public class ResponseException extends Exception {
 
     private String message;
 
@@ -27,7 +28,7 @@ public class ResponseException extends RuntimeException {
     /**
      * <p>Constructor for ResponseException.</p>
      *
-     * @param message a {@link java.lang.String} object.
+     * @param message    a {@link java.lang.String} object.
      * @param matchRegex a boolean.
      */
     protected ResponseException(String message, boolean matchRegex) {
@@ -63,7 +64,9 @@ public class ResponseException extends RuntimeException {
         this.command = command;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         return "Error running " + command + ", response: " + response;
