@@ -1,6 +1,7 @@
 package com.mzusman.bluetooth.model;
 
-import com.github.pires.obd.commands.ObdCommand;
+
+import com.mzusman.bluetooth.commands.ObdCommand;
 
 import java.io.IOException;
 import java.util.ArrayList;

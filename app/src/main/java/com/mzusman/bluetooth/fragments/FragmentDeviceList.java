@@ -16,9 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.utils.Connector;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.adapters.DevicesAdapter;
+import com.mzusman.bluetooth.utils.types.Connector;
 
 import java.util.ArrayList;
 import java.util.List;

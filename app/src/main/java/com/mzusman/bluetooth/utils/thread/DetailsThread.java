@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.utils;
+package com.mzusman.bluetooth.utils.thread;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,13 +8,16 @@ import android.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.JsonWriter;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.adapters.DetailsAdapter;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+
+import org.apache.log4j.Logger;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,6 +49,7 @@ public class DetailsThread extends Thread {
     private LocationListener locationListener;
     private SpotsDialog spotsDialog;
     private TextView textView;
+    private Logger log = Log4jHelper.getLogger("Details Thread");
     private boolean run = true;
     private long time = 0;
 
@@ -95,7 +99,7 @@ public class DetailsThread extends Thread {
         try {
             sleep(SLEEP_TIME);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.debug("run: interrupted while sleeping\n" + e.getMessage());
         }
         while (run) {
             try {
@@ -119,7 +123,7 @@ public class DetailsThread extends Thread {
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
-                Log.d(Constants.RUN_TAG, "run: interrupted while sleeping");
+                log.debug("run: interrupted while sleeping");
             }
         }
         endJsonWrite();
@@ -129,6 +133,7 @@ public class DetailsThread extends Thread {
         try {
             Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
         } catch (IOException e) {
+            log.debug("try to connect to obd:" + e.getMessage());
             disposeDialog();
             tryAgainDialog();
             synchronized (event) {
@@ -140,6 +145,7 @@ public class DetailsThread extends Thread {
                 event.onEvent();
             }
         } catch (InterruptedException e) {
+            log.debug("interrupted:" + e.getMessage());
             disposeDialog();
             tryAgainDialog();
         }
@@ -181,7 +187,7 @@ public class DetailsThread extends Thread {
             jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
             jsonWriter.beginArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
         }
     }
 
@@ -213,7 +219,8 @@ public class DetailsThread extends Thread {
             jsonWriter.endObject();
             jsonWriter.endObject();
             jsonWriter.flush();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.debug(e.getMessage());
         }
     }
 
@@ -226,8 +233,7 @@ public class DetailsThread extends Thread {
             jsonWriter.close();
             this.fileOutputStream.close();
         } catch (IOException e) {
-            Log.d(Constants.IO_TAG, "endJsonWrite: cannot close");
-//            errorEscape("failed to close the json");
+            log.debug(e.getMessage());
         }
     }
 
@@ -252,7 +258,7 @@ public class DetailsThread extends Thread {
                         }
                     });
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.debug(e.getMessage());
                 }
             }
         }).start();

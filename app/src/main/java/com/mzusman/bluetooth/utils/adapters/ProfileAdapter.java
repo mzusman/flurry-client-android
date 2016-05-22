@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.utils.Profile;
+import com.mzusman.bluetooth.utils.model.Profile;
 
 import java.util.ArrayList;
 

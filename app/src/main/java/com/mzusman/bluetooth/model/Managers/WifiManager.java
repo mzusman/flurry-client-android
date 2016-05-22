@@ -1,16 +1,15 @@
 package com.mzusman.bluetooth.model.Managers;
 
-import android.util.Log;
-
-import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.commands.SpeedCommand;
-import com.github.pires.obd.commands.protocol.EchoOffCommand;
-import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
-import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
-import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.enums.ObdProtocols;
+import com.mzusman.bluetooth.commands.ObdCommand;
+import com.mzusman.bluetooth.commands.protocol.EchoOffCommand;
+import com.mzusman.bluetooth.commands.protocol.LineFeedOffCommand;
+import com.mzusman.bluetooth.commands.protocol.SelectProtocolCommand;
+import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
+import com.mzusman.bluetooth.enums.ObdProtocols;
 import com.mzusman.bluetooth.model.Manager;
-import com.mzusman.bluetooth.utils.Constants;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -27,7 +26,8 @@ public class WifiManager implements Manager {
     ArrayList<String> readings = new ArrayList<>();
     long time = System.currentTimeMillis();
     Socket socket;
-    private static int TIME_OUT_VALUE = 5000;
+    private static int TIME_OUT_VALUE = 10000;
+    Logger logger = Log4jHelper.getLogger("WifiManager");
 
     public WifiManager(Factory factory) {
         factory.setCommandsFactory(commandsFactory);
@@ -45,7 +45,7 @@ public class WifiManager implements Manager {
         if (socket.isConnected()) {
             new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
             new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-            new TimeoutCommand(125).run(socket.getInputStream(), socket.getOutputStream());
+            new TimeoutCommand(75).run(socket.getInputStream(), socket.getOutputStream());
             new SelectProtocolCommand(ObdProtocols.AUTO)
                     .run(socket.getInputStream(), socket.getOutputStream());
         }
@@ -66,8 +66,7 @@ public class WifiManager implements Manager {
                         obdCommand.getCalculatedResult());
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.d(Constants.RUN_TAG, "getReadings Interrupt");
+            logger.debug("getReadings Interrupt\n" + e.getMessage());
         }
         return readings;
 
@@ -97,7 +96,7 @@ public class WifiManager implements Manager {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        return READ + "," + Long.toString(time) + "," + command.getFormattedResult();
+        return READ + "," + command.getFormattedResult();
     }
 
 }

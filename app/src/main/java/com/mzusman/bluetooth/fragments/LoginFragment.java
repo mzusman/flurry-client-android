@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,10 @@ import com.mzusman.bluetooth.activities.MainActivity;
 import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.RegisterDialog;
+import com.mzusman.bluetooth.utils.dialogs.RegisterDialog;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+
+import org.apache.log4j.Logger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +34,7 @@ public class LoginFragment extends Fragment {
     String response;
     int id;
     Button registerButton;
+    Logger log = Log4jHelper.getLogger("LoginFragment");
 
     @Nullable
     @Override
@@ -59,7 +62,7 @@ public class LoginFragment extends Fragment {
                     public void onResponse(Call call, Response response) {
                         LoginFragment.this.id = ((NetworkManager.UserCreditials) response.body()).driver_id;
                         Intent intent = new Intent(getActivity(), MainActivity.class);
-                        Log.d("TAG", "onResponse: id:"+LoginFragment.this.id);
+                        log.debug("onResponse: id:" + LoginFragment.this.id);
                         intent.putExtra(Constants.USER_ID_TAG, id);
                         startActivity(intent);
                         getActivity().finish();
@@ -88,7 +91,7 @@ public class LoginFragment extends Fragment {
                     actionProcessButton.setProgress(100);
                     actionProcessButton.setText(R.string.welc);
                     LoginFragment.this.id = (response.body().driver_id);
-                    Log.d("TAG", "onResponse: id:"+LoginFragment.this.id);
+                    log.debug("onResponse: id:" + LoginFragment.this.id);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,18 +21,21 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.commands.SpeedCommand;
-import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.commands.ObdCommand;
+import com.mzusman.bluetooth.commands.SpeedCommand;
+import com.mzusman.bluetooth.commands.engine.RPMCommand;
+import com.mzusman.bluetooth.commands.engine.ThrottlePositionCommand;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.DetailsThread;
 import com.mzusman.bluetooth.utils.adapters.DetailsAdapter;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+import com.mzusman.bluetooth.utils.thread.DetailsThread;
+
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,6 +50,8 @@ import retrofit2.Response;
 public class FragmentDetailsList extends Fragment {
 
     private int driverID;
+
+    Logger log = Log4jHelper.getLogger("DetailsListFragment");
 
     private ListView listView;
 
@@ -78,7 +82,7 @@ public class FragmentDetailsList extends Fragment {
          * Build the factory out side of the manager class
          */
         driverID = getArguments().getInt(Constants.USER_ID_TAG);
-        Log.d("TAG", "onResponse: id:" + driverID);
+        log.debug("onResponse: id:" + driverID);
         String manager = getArguments().getString(Constants.MANAGER_TAG);
         if (manager.equals(Constants.WIFI_TAG)) {
             Model.getInstance().setManager(new WifiManager(new Manager.Factory() {
@@ -116,6 +120,7 @@ public class FragmentDetailsList extends Fragment {
         detailsTask.stopRunning(new DetailsThread.Callback() {
             @Override
             public void ThreadDidStop() {
+                log.debug("stop running");
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
@@ -164,6 +169,7 @@ public class FragmentDetailsList extends Fragment {
             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    log.debug("check if there are location permissions");
                     getActivity().finish();
 
                 }
@@ -184,6 +190,7 @@ public class FragmentDetailsList extends Fragment {
     private void initThread() {
         if (detailsTask == null)
             detailsTask = new DetailsThread(locationListener, getActivity(), listView, timeView);
+        log.debug("start detailsThread");
         detailsTask.start();
     }
 
@@ -218,11 +225,12 @@ public class FragmentDetailsList extends Fragment {
         try {
             data = loadFromFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
         }
         Model.getInstance().getNetworkManager().sendData(driverID, data, new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                log.debug("send data success");
                 dismissDialog();
                 if (response.isSuccessful()) {
                     onSentSuccess();
@@ -232,6 +240,7 @@ public class FragmentDetailsList extends Fragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                log.debug("send data fail");
                 dismissDialog();
                 sendAgain();
             }

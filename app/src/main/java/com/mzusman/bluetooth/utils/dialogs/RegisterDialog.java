@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.utils;
+package com.mzusman.bluetooth.utils.dialogs;
 
 import android.app.DialogFragment;
 import android.os.Bundle;

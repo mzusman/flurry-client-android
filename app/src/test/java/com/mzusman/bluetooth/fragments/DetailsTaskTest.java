@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.location.LocationListener;
 import android.widget.ListView;
 
-import com.mzusman.bluetooth.utils.DetailsThread;
+import com.mzusman.bluetooth.utils.thread.DetailsThread;
 
 import org.junit.Test;
 import org.mockito.Mockito;

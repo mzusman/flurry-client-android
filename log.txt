@@ -1768,7 +1768,7 @@ E/AndroidRuntime( 3832): 	at com.github.pires.obd.commands.ObdCommand.readResult
 E/AndroidRuntime( 3832): 	at com.github.pires.obd.commands.ObdCommand.run(ObdCommand.java:77)
 E/AndroidRuntime( 3832): 	at com.mzusman.bluetooth.model.Managers.WifiManager.getReadings(WifiManager.java:67)
 E/AndroidRuntime( 3832): 	at com.mzusman.bluetooth.model.Model.getReading(Model.java:34)
-E/AndroidRuntime( 3832): 	at com.mzusman.bluetooth.utils.DetailsThread.run(DetailsThread.java:96)
+E/AndroidRuntime( 3832): 	at com.mzusman.bluetooth.utils.thread.DetailsThread.run(DetailsThread.java:96)
 W/ActivityManager(  634):   Force finishing activity com.mzusman.bluetooth/.activities.MainActivity
 W/InputMethodManagerService(  634): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@c4be6e8 attribute=null, token = android.os.BinderProxy@22b7c3fe
 W/ActivityManager(  634): Activity pause timeout for ActivityRecord{34168e03 u0 com.mzusman.bluetooth/.activities.MainActivity t770 f}

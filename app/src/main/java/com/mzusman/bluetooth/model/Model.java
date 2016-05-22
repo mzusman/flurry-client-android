@@ -32,12 +32,14 @@ public class Model {
 
 
 //    int i = 0;
+
     public ArrayList<String> getReading() throws IOException {
-//        ArrayList<String > strings = new ArrayList<>();
+//        ArrayList<String> strings = new ArrayList<>();
 //        double time = System.currentTimeMillis();
-//        for (int i = 0; i < 3; i++) {
-//            strings.add(i+","+time+","+i);
-//        }
+//        strings.add(i + "," + i);
+//        strings.add(i + "," + i);
+//        strings.add(i + "," + i);
+//        i++;
 //
 //        return strings;
         return manager.getReadings();
@@ -61,7 +63,8 @@ public class Model {
             networkManager = new NetworkManager(username, password);
         return networkManager;
     }
-    public void setNetworkManager(NetworkManager networkManager){
+
+    public void setNetworkManager(NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
 
