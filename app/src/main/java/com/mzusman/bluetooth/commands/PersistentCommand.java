@@ -1,6 +1,7 @@
 
 package com.mzusman.bluetooth.commands;
 
+import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public abstract class PersistentCommand extends ObdCommand {
      * {@inheritDoc}
      */
     @Override
-    protected void readResult(InputStream in) throws IOException, IllegalAccessException, ResponseException, InstantiationException {
+    protected void readResult(InputStream in) throws IOException, IllegalAccessException, ResponseException, InstantiationException, NonNumericResponseException {
         super.readResult(in);
         String key = getClass().getSimpleName();
         knownValues.put(key, rawData);
@@ -73,7 +74,7 @@ public abstract class PersistentCommand extends ObdCommand {
      * {@inheritDoc}
      */
     @Override
-    public void run(InputStream in, OutputStream out) throws IOException, InterruptedException, IllegalAccessException, InstantiationException, ResponseException {
+    public void run(InputStream in, OutputStream out) throws IOException, InterruptedException, IllegalAccessException, InstantiationException, ResponseException, NonNumericResponseException {
         String key = getClass().getSimpleName();
         if (knownValues.containsKey(key)) {
             rawData = knownValues.get(key);

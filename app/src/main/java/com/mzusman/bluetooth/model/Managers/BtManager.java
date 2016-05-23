@@ -11,6 +11,7 @@ import com.mzusman.bluetooth.commands.protocol.LineFeedOffCommand;
 import com.mzusman.bluetooth.commands.protocol.SelectProtocolCommand;
 import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
+import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
@@ -63,6 +64,8 @@ public class BtManager implements Manager {
                 e.printStackTrace();
             } catch (ResponseException e) {
                 e.printStackTrace();
+            } catch (NonNumericResponseException e) {
+                e.printStackTrace();
             }
 
         } catch (InterruptedException e) {
@@ -103,6 +106,8 @@ public class BtManager implements Manager {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (ResponseException e) {
+            e.printStackTrace();
+        } catch (NonNumericResponseException e) {
             e.printStackTrace();
         }
 

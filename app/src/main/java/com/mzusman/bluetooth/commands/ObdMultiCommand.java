@@ -1,6 +1,7 @@
 
 package com.mzusman.bluetooth.commands;
 
+import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class ObdMultiCommand {
      * @throws java.lang.InterruptedException if any.
      */
     public void sendCommands(InputStream in, OutputStream out)
-            throws IOException, InterruptedException, IllegalAccessException, InstantiationException, ResponseException {
+            throws IOException, InterruptedException, IllegalAccessException, InstantiationException, ResponseException, NonNumericResponseException {
         for (ObdCommand command : commands)
             command.run(in, out);
     }

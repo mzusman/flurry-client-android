@@ -6,6 +6,7 @@ import com.mzusman.bluetooth.commands.protocol.LineFeedOffCommand;
 import com.mzusman.bluetooth.commands.protocol.SelectProtocolCommand;
 import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
+import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
@@ -50,12 +51,8 @@ public class WifiManager implements Manager {
                 new TimeoutCommand(100).run(socket.getInputStream(), socket.getOutputStream());
                 new SelectProtocolCommand(ObdProtocols.AUTO)
                         .run(socket.getInputStream(), socket.getOutputStream());
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (ResponseException e) {
-                e.printStackTrace();
+            } catch (IllegalAccessException | InstantiationException | NonNumericResponseException | ResponseException ignored) {
+                logger.debug(ignored.getMessage());
             }
         }
 
@@ -66,6 +63,7 @@ public class WifiManager implements Manager {
 
         time = System.currentTimeMillis();
         if (readings.size() > 0) readings.clear();
+        readingloop:
         for (String command : commandsFactory.keySet()) {
             //moving through all of the commands inside the pre setup command and execute them
             ObdCommand obdCommand = commandsFactory.get(command);
@@ -74,19 +72,23 @@ public class WifiManager implements Manager {
             } catch (InterruptedException e) {
                 logger.debug("getReadings Interrupt\n" + e.getMessage());
                 readings.add(command + ",-1");
-                continue;
+                continue readingloop;
             } catch (IllegalAccessException e) {
                 logger.debug("getReadings illegalAcceess\n" + e.getMessage());
                 readings.add(command + ",-1");
-                continue;
+                continue readingloop;
             } catch (InstantiationException e) {
                 logger.debug("getReadings InstanitaionException\n" + e.getMessage());
                 readings.add(command + ",-1");
-                continue;
+                continue readingloop;
             } catch (ResponseException e) {
                 logger.debug("getReadings Response\n" + e.getMessage());
                 readings.add(command + ",-1");
-                continue;
+                continue readingloop;
+            } catch (NonNumericResponseException e) {
+                logger.debug("getReadings NonNumeric\n" + e.getMessage());
+                readings.add(command + ",-1");
+                continue readingloop;
             }
             readings.add(command + "," +
                     obdCommand.getCalculatedResult());

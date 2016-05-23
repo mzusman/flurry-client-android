@@ -5,7 +5,8 @@ package com.mzusman.bluetooth.exceptions;
  * Created by mzusman - morzusman@gmail.com on 5/22/16.
  */
 public class UnkownException extends ResponseException {
-    protected UnkownException(String message) {
+
+    protected UnkownException() {
         super("ERROR");
     }
 }

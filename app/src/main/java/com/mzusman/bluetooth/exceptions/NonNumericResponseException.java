@@ -6,7 +6,7 @@ package com.mzusman.bluetooth.exceptions;
  * @author pires
  * @version $Id: $Id
  */
-public class NonNumericResponseException extends RuntimeException {
+public class NonNumericResponseException extends Exception {
 
     /**
      * <p>Constructor for NonNumericResponseException.</p>

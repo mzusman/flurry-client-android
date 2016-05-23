@@ -8,6 +8,7 @@ import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
 import com.mzusman.bluetooth.exceptions.StoppedException;
 import com.mzusman.bluetooth.exceptions.UnableToConnectException;
+import com.mzusman.bluetooth.exceptions.UnkownException;
 import com.mzusman.bluetooth.exceptions.UnsupportedCommandException;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ public abstract class ObdCommand {
             BusInitException.class,
             MisunderstoodCommandException.class,
             NoDataException.class,
+            UnkownException.class,
             StoppedException.class,
             UnsupportedCommandException.class
     };
@@ -78,7 +80,7 @@ public abstract class ObdCommand {
      * @throws java.lang.InterruptedException if any.
      */
     public void run(InputStream in, OutputStream out) throws IOException,
-            InterruptedException, IllegalAccessException, ResponseException, InstantiationException {
+            InterruptedException, IllegalAccessException, ResponseException, InstantiationException, NonNumericResponseException {
         start = System.currentTimeMillis();
         sendCommand(out);
         readResult(in);
@@ -127,7 +129,7 @@ public abstract class ObdCommand {
      * @param in a {@link java.io.InputStream} object.
      * @throws java.io.IOException if any.
      */
-    protected void readResult(InputStream in) throws IOException, IllegalAccessException, InstantiationException, ResponseException {
+    protected void readResult(InputStream in) throws IOException, IllegalAccessException, InstantiationException, ResponseException, NonNumericResponseException {
         readRawData(in);
         checkForErrors();
         fillBuffer();
@@ -144,7 +146,7 @@ public abstract class ObdCommand {
     /**
      * <p>fillBuffer.</p>
      */
-    protected void fillBuffer() {
+    protected void fillBuffer() throws NonNumericResponseException {
         rawData = rawData.replaceAll("\\s", ""); //removes all [ \t\n\x0B\f\r]
         rawData = rawData.replaceAll("(BUS INIT)|(BUSINIT)|(\\.)", "");
 
