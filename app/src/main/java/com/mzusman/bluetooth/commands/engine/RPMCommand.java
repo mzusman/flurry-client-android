@@ -23,38 +23,47 @@ public class RPMCommand extends ObdCommand {
 
     /**
      * Copy ctor.
-     *
      */
     public RPMCommand(RPMCommand other) {
         super(other);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void performCalculations() {
         // ignore first two bytes [41 0C] of the response((A*256)+B)/4
         rpm = (buffer.get(2) * 256 + buffer.get(3)) / 4;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormattedResult() {
         return String.format("%d%s", rpm, getResultUnit());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCalculatedResult() {
         return String.valueOf(rpm);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResultUnit() {
         return "RPM";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return AvailableCommandNames.ENGINE_RPM.getValue();

@@ -23,9 +23,7 @@ import android.widget.TextView;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.commands.ObdCommand;
-import com.mzusman.bluetooth.commands.SpeedCommand;
-import com.mzusman.bluetooth.commands.engine.RPMCommand;
-import com.mzusman.bluetooth.commands.engine.ThrottlePositionCommand;
+import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
@@ -88,9 +86,12 @@ public class FragmentDetailsList extends Fragment {
             Model.getInstance().setManager(new WifiManager(new Manager.Factory() {
                 @Override
                 public void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory) {
-                    commandsFactory.put(Constants.REQUEST_SPEED_READING, new SpeedCommand());
-                    commandsFactory.put(Constants.REQUEST_RPM_READING, new RPMCommand());
-                    commandsFactory.put(Constants.REQUEST_THR_READING, new ThrottlePositionCommand());
+                    for (int i = 0; i < AvailableCommandNames.values().length; i++) {
+                        AvailableCommandNames command = AvailableCommandNames.values()[i];
+                        if (command.isSelected()) {
+                            commandsFactory.put(AvailableCommandNames.values()[i].getValue(), command.getCommand());
+                        }
+                    }
                 }
             }), Constants.WIFI_ADDRESS);
         }

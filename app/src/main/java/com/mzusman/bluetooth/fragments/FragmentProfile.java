@@ -15,9 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.adapters.ProfileAdapter;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 import com.mzusman.bluetooth.utils.model.Profile;
+
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 
@@ -30,6 +34,7 @@ public class FragmentProfile extends Fragment {
     int userId;
     ListView listView;
     ProfileAdapter profileAdapter;
+    Logger log = Log4jHelper.getLogger("ProfileFragment");
 
     @Nullable
     @Override
@@ -61,41 +66,70 @@ public class FragmentProfile extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        AlertDialog.Builder addBtn = new AlertDialog.Builder(getActivity());
-        addBtn.setMessage(R.string.choose_msg)
-                .setNegativeButton("Bluetooth", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Bundle btBundle = new Bundle();
-                        btBundle.putString(Constants.MANAGER_TAG,
-                                Constants.BT_TAG); // making archive for the next fragment
-                        btBundle.putInt(Constants.USER_ID_TAG, userId);
-                        // to know that we clicked on the BT button
-                        Fragment fragment = new FragmentDeviceList();
-                        fragment.setArguments(btBundle);
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, fragment, Constants.DETAILS_TAG).commit();
-                    }
-                }).setPositiveButton("Wifi", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
-                wifiBtn.setMessage(R.string.wifi_msg)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Bundle wifiBundle = new Bundle();
-                                Fragment fragment = new FragmentDetailsList();
-                                wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
-                                wifiBundle.putInt(Constants.USER_ID_TAG, userId);
-                                fragment.setArguments(wifiBundle);
-                                getFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, fragment,
-                                                Constants.DETAILS_TAG).commit();
-                            }
-                        }).setCancelable(false).create().show();
+        if (item.getItemId() == (R.id.profile_add_btn)) {
+            AlertDialog.Builder addBtn = new AlertDialog.Builder(getActivity());
+            addBtn.setMessage(R.string.choose_msg)
+                    .setNegativeButton("Bluetooth", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Bundle btBundle = new Bundle();
+                            btBundle.putString(Constants.MANAGER_TAG,
+                                    Constants.BT_TAG); // making archive for the next fragment
+                            btBundle.putInt(Constants.USER_ID_TAG, userId);
+                            // to know that we clicked on the BT button
+                            Fragment fragment = new FragmentDeviceList();
+                            fragment.setArguments(btBundle);
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, fragment, Constants.DETAILS_TAG).commit();
+                        }
+                    }).setPositiveButton("Wifi", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
+                    wifiBtn.setMessage(R.string.wifi_msg)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Bundle wifiBundle = new Bundle();
+                                    Fragment fragment = new FragmentDetailsList();
+                                    wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
+                                    wifiBundle.putInt(Constants.USER_ID_TAG, userId);
+                                    fragment.setArguments(wifiBundle);
+                                    getFragmentManager().beginTransaction()
+                                            .replace(R.id.fragment_container, fragment,
+                                                    Constants.DETAILS_TAG).commit();
+                                }
+                            }).setCancelable(false).create().show();
+                }
+            }).setCancelable(false).create().show();
+        } else if (item.getItemId() == R.id.options) {
+            final boolean[] selectedCommands = new boolean[AvailableCommandNames.values().length];
+            CharSequence[] items = new CharSequence[AvailableCommandNames.values().length];
+            for (int i = 0; i < AvailableCommandNames.values().length; i++) {
+                items[i] = AvailableCommandNames.values()[i].getValue();
+                if (AvailableCommandNames.values()[i].isSelected())
+                    selectedCommands[i] = true;
             }
-        }).setCancelable(false).create().show();
+            AlertDialog.Builder optionBtn = new AlertDialog.Builder(getActivity());
+            optionBtn.setTitle("Select Commands").setMultiChoiceItems(items, selectedCommands, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+                }
+            }).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    for (int i = 0; i < AvailableCommandNames.values().length; i++) {
+                        AvailableCommandNames.values()[i].setSelected(selectedCommands[i]);
+                        if (selectedCommands[i])
+                            log.debug("selected " + AvailableCommandNames.values()[i].getValue());
+                    }
+                    dialog.dismiss();
+                }
+            }).setCancelable(false).create();
+            optionBtn.show();
+
+        }
         return super.onOptionsItemSelected(item);
     }
 }

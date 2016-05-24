@@ -2,9 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
 >
+    <item android:id="@+id/options"
+          app:showAsAction="always"
+          android:title="@string/options">
+
+    </item>
 
     <item app:showAsAction="always"
-          android:id="@+id/stop_btn"
+          android:id="@+id/profile_add_btn"
           android:icon="@android:drawable/ic_menu_add"
           android:title="@string/add">
 
