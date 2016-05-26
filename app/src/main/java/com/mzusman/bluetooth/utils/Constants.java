@@ -12,12 +12,7 @@ public class Constants {
     final public static int REQUEST_ENABLE_BT = 1;
     final public static int GPS_MIN_TIME = 5000;
     final public static int GPS_MIN_DISTANCE = 10;
-    final public static String REQUEST_RPM_READING = "rpm";
-    final public static String EXCEPTION_TAG = "EXP";
-    final public static String REGISTER_TAG = "REGI";
-    final public static String REQUEST_SPEED_READING = "speed";
-    final public static String WAKE_LOG_TAG = "speed";
-    final public static String REQUEST_THR_READING = "thr";
+    final public static String REGISTER_TAG = "REGISTER";
     final public static String IO_TAG = "IO";
     final public static String RUN_TAG = "TH";
     final public static String DETAILS_TAG = "DETAILS";

@@ -233,9 +233,7 @@ public class FragmentDetailsList extends Fragment {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 log.debug("send data success");
                 dismissDialog();
-                if (response.isSuccessful()) {
-                    onSentSuccess();
-                } else sendAgain();
+                onSentSuccess();
 
             }
 

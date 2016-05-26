@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mzusman.bluetooth.R;
-import com.mzusman.bluetooth.utils.model.Profile;
 
 import java.util.ArrayList;
 
@@ -16,25 +15,29 @@ import java.util.ArrayList;
  * Class : .
  * Created by mzusman - morzusman@gmail.com on 4/20/16.
  */
-public class ProfileAdapter extends BaseAdapter{
-    ArrayList<Profile> profiles;
-    private static LayoutInflater inflater ;
+public class ProfileAdapter extends BaseAdapter {
+    private static LayoutInflater inflater;
     Context context;
+    ArrayList<String> tabs;
 
-    public ProfileAdapter(Context context, ArrayList<Profile> profiles){
+    public ProfileAdapter(Context context) {
         this.context = context;
-        this.profiles = profiles;
+        tabs = new ArrayList<>();
+        tabs.add("Wifi");
+        tabs.add("Bluetooth");
+        tabs.add("Options");
+        tabs.add("View Data");
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return profiles.size();
+        return tabs.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return profiles.get(position);
+        return tabs.get(position);
     }
 
     @Override
@@ -45,15 +48,11 @@ public class ProfileAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
-        if(vi == null)
-            vi = inflater.inflate(R.layout.profile_list,null,false);
-        Profile profile = profiles.get(position);
-        TextView date = (TextView) vi.findViewById(R.id.tv_date);
-        TextView time = (TextView) vi.findViewById(R.id.tv_time);
-        time.setText(profile.getTime());
-        date.setText(profile.getDate());
-
-
+        if (vi == null)
+            vi = inflater.inflate(R.layout.adapter_profile, null, false);
+        String s = tabs.get(position);
+        TextView textView = (TextView) vi.findViewById(R.id.tab_tv);
+        textView.setText(s);
         return vi;
     }
 }

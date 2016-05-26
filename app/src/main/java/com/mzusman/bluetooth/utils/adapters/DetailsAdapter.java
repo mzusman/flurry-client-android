@@ -1,6 +1,7 @@
 package com.mzusman.bluetooth.utils.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,10 +63,21 @@ public class DetailsAdapter extends BaseAdapter {
         name = (TextView) vi.findViewById(R.id.name);
         name.setText(separated[0]);
         value = (TextView) vi.findViewById(R.id.val);
-        if (separated.length > 2)
-            value.setText(separated[1] + ",\n" + separated[2]);
-        else value.setText(separated[1]);
+
+        if (separated.length > 2) {
+            StringBuilder setText = new StringBuilder();
+            setText.append(separated[1]).append(",\n").append(separated[2]);
+            value.setText(setText.toString());
+        } else
+            value.setText(separated[1]);
+
+        if (value.getText().equals("0.0,\n0.0") || value.getText().equals("-1")) {
+            vi.setBackgroundColor(Color.argb(170, 180, 20, 20));
+        } else vi.setBackgroundColor(Color.argb(170, 20, 180, 20));
+
+
         return vi;
 
     }
+
 }
