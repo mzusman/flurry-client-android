@@ -36,7 +36,8 @@
                 android:layout_weight=".5"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+        />
 
         <ImageButton
                 android:id="@+id/data_ib"

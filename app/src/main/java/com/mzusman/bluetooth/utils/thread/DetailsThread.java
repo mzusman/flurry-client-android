@@ -11,6 +11,8 @@ import android.util.JsonWriter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.fragments.FragmentProfile;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
@@ -168,7 +170,9 @@ public class DetailsThread extends Thread {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         run = false;
-                        activity.finish();
+                        activity.getFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new FragmentProfile(),
+                                        Constants.DETAILS_TAG).commit();
                     }
                 }).setMessage("Unable to connect to the OBD device, Click 'Ok' to try again").show();
             }

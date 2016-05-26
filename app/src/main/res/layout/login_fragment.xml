@@ -2,18 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:custom="http://schemas.android.com/apk/res-auto"
                 android:orientation="vertical" android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/fbutton_color_clouds">
 
     <ImageView android:layout_width="wrap_content"
-               android:layout_alignParentTop="true"
                android:paddingTop="20dp"
                android:src="@drawable/flurry"
-               android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"
+               android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+               android:id="@+id/imageView"/>
 
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_centerVertical="true"
                   android:id="@+id/login_layout"
-                  android:layout_height="wrap_content" android:orientation="vertical">
+                  android:layout_height="wrap_content" android:orientation="vertical"
+                  android:weightSum="1"
+                  android:layout_below="@+id/imageView" android:layout_alignParentStart="true"
+                  android:layout_marginTop="49dp">
 
         <com.wrapp.floatlabelededittext.FloatLabeledEditText
                 android:layout_width="match_parent"
@@ -23,7 +27,6 @@
 
             <EditText android:layout_width="match_parent"
                       android:id="@+id/username_edit"
-                      android:textColor="@color/fbutton_color_asbestos"
                       android:hint="@string/username"
                       android:singleLine="true"
                       android:gravity="center"
@@ -37,18 +40,17 @@
                 android:layout_marginEnd="50dp"
                 android:layout_height="wrap_content">
 
+        </com.wrapp.floatlabelededittext.FloatLabeledEditText>
         <EditText android:layout_width="match_parent"
                   android:gravity="center"
                   android:singleLine="true"
                   android:hint="@string/password"
                   android:inputType="textPassword"
-                  android:textColor="@color/fbutton_color_asbestos"
                   android:layout_marginStart="50dp"
                   android:layout_marginEnd="50dp"
                   android:id="@+id/password_edit"
                   android:layout_height="wrap_content"
         />
-        </com.wrapp.floatlabelededittext.FloatLabeledEditText>
         <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
@@ -67,7 +69,6 @@
                 custom:pb_textError="Error"
                 custom:pb_colorError="@color/red_error"
                 android:text="@string/login"
-                android:layout_gravity="center"
                 android:layout_height="wrap_content"/>
 
         <Button android:layout_width="match_parent"
@@ -75,7 +76,8 @@
                 android:layout_marginStart="100dp"
                 android:layout_marginEnd="100dp"
                 android:id="@+id/register_btn"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" android:background="@color/colorPrimary"
+        />
 
     </LinearLayout>
 

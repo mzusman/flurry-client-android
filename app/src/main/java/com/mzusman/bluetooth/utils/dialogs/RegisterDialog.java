@@ -1,6 +1,5 @@
 package com.mzusman.bluetooth.utils.dialogs;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,13 +13,14 @@ import com.mzusman.bluetooth.model.Model;
 
 import java.io.IOException;
 
+import fr.tvbarthel.lib.blurdialogfragment.BlurDialogFragment;
 import retrofit2.Callback;
 
 /*
  * Class : RegisterDialog.
  * Created by mzusman - morzusman@gmail.com on 4/25/16.
  */
-public class RegisterDialog extends DialogFragment {
+public class RegisterDialog extends BlurDialogFragment {
 
     static Callback callback;
 
