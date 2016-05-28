@@ -21,21 +21,24 @@ public abstract class PercentageObdCommand extends ObdCommand {
 
     /**
      * <p>Constructor for PercentageObdCommand.</p>
-     *
-     * @param other a {@link com.github.pires.obd.commands.PercentageObdCommand} object.
      */
     public PercentageObdCommand(PercentageObdCommand other) {
         super(other);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void performCalculations() {
         // ignore first two bytes [hh hh] of the response
-        percentage = (buffer.get(2) * 100.0f) / 255.0f;
+        if (buffer.size() >= 3)
+            percentage = (buffer.get(2) * 100.0f) / 255.0f;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormattedResult() {
         return String.format("%.1f%s", percentage, getResultUnit());
@@ -50,13 +53,17 @@ public abstract class PercentageObdCommand extends ObdCommand {
         return percentage;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResultUnit() {
         return "%";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCalculatedResult() {
         return String.valueOf(percentage);

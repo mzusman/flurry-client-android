@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.fragments.FragmentDetailsList;
 import com.mzusman.bluetooth.fragments.FragmentProfile;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
@@ -54,11 +55,13 @@ public class DetailsThread extends Thread {
     private Logger log = Log4jHelper.getLogger("Details Thread");
     private boolean run = true;
     private long time = 0;
+    private FragmentDetailsList.CallBack fragcallBack;
 
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(@NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView, TextView timeView) {
+    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, @NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView, TextView timeView) {
+        this.fragcallBack = fragcallBack;
         this.listView = listView;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
@@ -85,8 +88,11 @@ public class DetailsThread extends Thread {
     }
 
     class Event {
+        boolean finish = false;
+
         void onEvent() {
-            tryConnectToObd();
+            if (!finish)
+                tryConnectToObd();
         }
     }
 
@@ -111,6 +117,8 @@ public class DetailsThread extends Thread {
                 tryConnectToObd();
                 disposeDialog();
             }
+            if (event.finish)
+                break;
             readings.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
             writeToJson(readings);
             //run on the main thread to update the listview
@@ -158,26 +166,37 @@ public class DetailsThread extends Thread {
             @Override
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        synchronized (event) {
-                            event.notify();
-                        }
-                        showDialog("Connecting..");
-                    }
-                }).setCancelable(false).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        run = false;
-                        activity.getFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new FragmentProfile(),
-                                        Constants.DETAILS_TAG).commit();
-                    }
-                }).setMessage("Unable to connect to the OBD device, Click 'Ok' to try again").show();
-            }
-        });
 
+                CharSequence[] items = {"Try Again(OBD)", "Send Cloud(3G)", "Cancel"};
+                if (time == 0)
+                    items = new CharSequence[]{"Try Again(OBD)", "Cancel"};
+                final CharSequence[] finalItems = items;
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (finalItems[which].equals("Try Again(OBD)")) {
+                            synchronized (event) {
+                                event.notify();
+                            }
+                            showDialog("Connecting..");
+                        } else if (finalItems[which].equals("Send Cloud(3G)")) {
+                            event.finish = true;
+                            synchronized (event) {
+                                event.notify();
+                            }
+                            DetailsThread.this.fragcallBack.onStop();
+                        } else if (finalItems[which].equals("Cancel")) {
+                            run = false;
+                            activity.getFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new FragmentProfile(),
+                                            Constants.DETAILS_TAG).commit();
+                        }
+                    }
+                }).setTitle("Unable to connect").show();
+
+            }
+
+        });
 
     }
 

@@ -118,6 +118,11 @@ public class FragmentDetailsList extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        stopRunning();
+        return true;
+    }
+
+    private void stopRunning() {
         detailsTask.stopRunning(new DetailsThread.Callback() {
             @Override
             public void ThreadDidStop() {
@@ -131,7 +136,6 @@ public class FragmentDetailsList extends Fragment {
                 }).setCancelable(false).show();
             }
         });
-        return true;
     }
 
     void sendAgain() {
@@ -185,12 +189,19 @@ public class FragmentDetailsList extends Fragment {
         Model.getInstance().setGpsManager((GpsManager) locationListener);
     }
 
+    public class CallBack {
+        public void onStop() {
+            stopRunning();
+        }
+    }
+
     /**
      * thread for recieving the information
      */
     private void initThread() {
+        CallBack callBack = new CallBack();
         if (detailsTask == null)
-            detailsTask = new DetailsThread(locationListener, getActivity(), listView, timeView);
+            detailsTask = new DetailsThread(callBack, locationListener, getActivity(), listView, timeView);
         log.debug("start detailsThread");
         detailsTask.start();
     }

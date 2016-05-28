@@ -23,17 +23,19 @@ public class SpeedCommand extends ObdCommand implements SystemOfUnits {
     /**
      * Copy ctor.
      *
-     * @param other a {@link com.github.pires.obd.commands.SpeedCommand} object.
      */
     public SpeedCommand(SpeedCommand other) {
         super(other);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void performCalculations() {
         // Ignore first two bytes [hh hh] of the response.
-        metricSpeed = buffer.get(2);
+        if (buffer.size() >= 3)
+            metricSpeed = buffer.get(2);
     }
 
     /**
@@ -73,19 +75,25 @@ public class SpeedCommand extends ObdCommand implements SystemOfUnits {
                 : String.format("%d%s", getMetricSpeed(), getResultUnit());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCalculatedResult() {
         return useImperialUnits ? String.valueOf(getImperialUnit()) : String.valueOf(getMetricSpeed());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResultUnit() {
         return useImperialUnits ? "mph" : "km/h";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return AvailableCommandNames.SPEED.getValue();

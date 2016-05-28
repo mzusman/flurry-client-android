@@ -25,18 +25,20 @@ public class DistanceMILOnCommand extends ObdCommand
 
     /**
      * Copy ctor.
-     *
      */
     public DistanceMILOnCommand(
             DistanceMILOnCommand other) {
         super(other);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void performCalculations() {
         // ignore first two bytes [01 31] of the response
-        km = buffer.get(2) * 256 + buffer.get(3);
+        if (buffer.size() >= 4)
+            km = buffer.get(2) * 256 + buffer.get(3);
     }
 
     /**
@@ -49,19 +51,25 @@ public class DistanceMILOnCommand extends ObdCommand
                 : String.format("%d%s", km, getResultUnit());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCalculatedResult() {
         return useImperialUnits ? String.valueOf(getImperialUnit()) : String.valueOf(km);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResultUnit() {
         return useImperialUnits ? "m" : "km";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float getImperialUnit() {
         return km * 0.621371192F;
@@ -76,7 +84,9 @@ public class DistanceMILOnCommand extends ObdCommand
         return km;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return AvailableCommandNames.DISTANCE_TRAVELED_MIL_ON
