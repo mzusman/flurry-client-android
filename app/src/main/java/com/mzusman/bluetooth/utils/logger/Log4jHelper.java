@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
  * Created by mzusman - morzusman@gmail.com on 5/21/16.
  */
 public class Log4jHelper {
+    public final static String logFileName = "flurry.log";
     private final static LogConfigurator CONFIGURATOR = new LogConfigurator();
 
     static {
@@ -20,7 +21,7 @@ public class Log4jHelper {
     }
 
     private static void configureLog4j() {
-        String filename = Environment.getExternalStorageDirectory() + "/flurry.log";
+        String filename = Environment.getExternalStorageDirectory() + "/" + logFileName;
         Log.d("TAG", filename);
         String filepattern = "%d - [%c] - %p : %m%n";
         int maxBackupSize = 10;

@@ -5,12 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -22,6 +21,8 @@ import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
 import org.apache.log4j.Logger;
 
+import java.io.File;
+
 /*
  * Class : .
  * Created by mzusman - morzusman@gmail.com on 4/20/16.
@@ -29,14 +30,14 @@ import org.apache.log4j.Logger;
 public class FragmentProfile extends Fragment {
 
     int userId;
-    ListView listView;
-    ProfileAdapter profileAdapter;
     Logger log = Log4jHelper.getLogger("ProfileFragment");
+    static private String emailTo = "mor.zusmann@gmail.com";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        setHasOptionsMenu(true);
 
         // initialize the profiles array and list view
         //
@@ -120,11 +121,32 @@ public class FragmentProfile extends Fragment {
             }
         });
 
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose Action");
         //allows the fragment to get onTouchListener notifications
         return view;
     }
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!menu.hasVisibleItems()) {
+            MenuInflater menuInflater = getActivity().getMenuInflater();
+            menuInflater.inflate(R.menu.profile_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent email = new Intent(Intent.ACTION_SEND);
+        File logFile = new File(Environment.getExternalStorageDirectory(), Log4jHelper.logFileName);
+        Uri path = Uri.fromFile(logFile);
+        email.setType("message/rfc822");
+        email.putExtra(Intent.EXTRA_EMAIL, emailTo);
+        email.putExtra(Intent.EXTRA_SUBJECT, "log from " + userId);
+        email.putExtra(Intent.EXTRA_STREAM, path);
+        startActivity(Intent.createChooser(email, "Send email"));
+        return true;
+    }
 }
 

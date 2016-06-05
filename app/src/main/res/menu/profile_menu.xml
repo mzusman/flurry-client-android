@@ -4,15 +4,9 @@
 >
     <item android:id="@+id/options"
           app:showAsAction="always"
-          android:title="@string/options">
+          android:title="send logs">
 
     </item>
 
-    <item app:showAsAction="always"
-          android:id="@+id/profile_add_btn"
-          android:icon="@android:drawable/ic_menu_add"
-          android:title="@string/add">
-
-    </item>
 
 </menu>

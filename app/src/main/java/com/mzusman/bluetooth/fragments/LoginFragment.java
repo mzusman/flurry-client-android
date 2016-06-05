@@ -1,12 +1,14 @@
 package com.mzusman.bluetooth.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -45,8 +47,10 @@ public class LoginFragment extends Fragment {
         actionProcessButton = (ActionProcessButton) view.findViewById(R.id.btnLogin);
         actionProcessButton.setMode(ActionProcessButton.Mode.ENDLESS);
         actionProcessButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 loginUser(userText.getText().toString(), passText.getText().toString());
                 actionProcessButton.setProgress(1);
 
@@ -78,6 +82,15 @@ public class LoginFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void hideKeyboard() {
+        View v = getActivity().getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
     }
 
 

@@ -55,13 +55,13 @@ public class DetailsThread extends Thread {
     private Logger log = Log4jHelper.getLogger("Details Thread");
     private boolean run = true;
     private long time = 0;
-    private FragmentDetailsList.CallBack fragcallBack;
+    private FragmentDetailsList.CallBack fragCallBack;
 
     /**
      * ListView in order to post it with the main loop
      */
     public DetailsThread(FragmentDetailsList.CallBack fragcallBack, @NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView, TextView timeView) {
-        this.fragcallBack = fragcallBack;
+        this.fragCallBack = fragcallBack;
         this.listView = listView;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
@@ -87,7 +87,7 @@ public class DetailsThread extends Thread {
         }
     }
 
-    class Event {
+    private class Event {
         boolean finish = false;
 
         void onEvent() {
@@ -139,7 +139,7 @@ public class DetailsThread extends Thread {
         endJsonWrite();
     }
 
-    void tryConnectToObd() {
+    private void tryConnectToObd() {
         try {
             Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
         } catch (IOException e) {
@@ -161,7 +161,7 @@ public class DetailsThread extends Thread {
         }
     }
 
-    void tryAgainDialog() {
+    private void tryAgainDialog() {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -184,7 +184,7 @@ public class DetailsThread extends Thread {
                             synchronized (event) {
                                 event.notify();
                             }
-                            DetailsThread.this.fragcallBack.onStop();
+                            DetailsThread.this.fragCallBack.onStop();
                         } else if (finalItems[which].equals("Cancel")) {
                             run = false;
                             activity.getFragmentManager().beginTransaction()
@@ -192,7 +192,7 @@ public class DetailsThread extends Thread {
                                             Constants.DETAILS_TAG).commit();
                         }
                     }
-                }).setTitle("Unable to connect").show();
+                }).setTitle("Unable to connect,\nChoose an Action:").setCancelable(false).show();
 
             }
 
