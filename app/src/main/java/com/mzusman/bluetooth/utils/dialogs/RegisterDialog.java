@@ -45,7 +45,7 @@ public class RegisterDialog extends BlurDialogFragment {
             @Override
             public void onClick(View v) {
                 try {
-                    Model.getInstance().getNetworkManager().regsiterUser(username.getText().toString(),
+                    Model.getInstance().getNetworkManager().registerUser(username.getText().toString(),
                             name.getText().toString(), password.getText().toString(), callback);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -31,20 +31,9 @@ public class Model {
     }
 
 
-//    int i = 0;
 
     public ArrayList<String> getReading() throws IOException {
-//        ArrayList<String> strings = new ArrayList<>();
-//        double time = System.currentTimeMillis();
-//        strings.add(i + "," + i);
-//        strings.add(i + "," + i);
-//        strings.add(i + "," + i);
-//        i++;
-//
-//        return strings;
         return manager.getReadings();
-
-
     }
 
 

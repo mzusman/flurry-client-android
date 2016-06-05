@@ -1,6 +1,7 @@
 package com.mzusman.bluetooth.commands;
 
 
+import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.exceptions.BusInitException;
 import com.mzusman.bluetooth.exceptions.MisunderstoodCommandException;
 import com.mzusman.bluetooth.exceptions.NoDataException;

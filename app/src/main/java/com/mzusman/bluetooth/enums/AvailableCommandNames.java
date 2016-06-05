@@ -4,8 +4,16 @@ package com.mzusman.bluetooth.enums;
 import com.mzusman.bluetooth.commands.ObdCommand;
 import com.mzusman.bluetooth.commands.SpeedCommand;
 import com.mzusman.bluetooth.commands.control.DistanceMILOnCommand;
+import com.mzusman.bluetooth.commands.engine.AbsEngineLoad;
+import com.mzusman.bluetooth.commands.engine.AcceleratorDPositionCommand;
+import com.mzusman.bluetooth.commands.engine.AcceleratorEPositionCommand;
+import com.mzusman.bluetooth.commands.engine.AcceleratorFPositionCommand;
 import com.mzusman.bluetooth.commands.engine.AcceleratorPositionCommand;
+import com.mzusman.bluetooth.commands.engine.CalculatedEngineLoad;
 import com.mzusman.bluetooth.commands.engine.RPMCommand;
+import com.mzusman.bluetooth.commands.engine.RelativeThrottlePositionCommand;
+import com.mzusman.bluetooth.commands.engine.ThrottlePositionBCommand;
+import com.mzusman.bluetooth.commands.engine.ThrottlePositionCCommand;
 import com.mzusman.bluetooth.commands.engine.ThrottlePositionCommand;
 import com.mzusman.bluetooth.commands.protocol.DescribeProtocolNumberCommand;
 
@@ -21,8 +29,17 @@ public enum AvailableCommandNames {
     ACCELERATOR_POS("accelerator", new AcceleratorPositionCommand(), true),
     SPEED("speed", new SpeedCommand(), true),
     THROTTLE_POS("throttle", new ThrottlePositionCommand(), true),
+    RELATIVE_THROTTLE_POS("rel_throttle", new RelativeThrottlePositionCommand(), true),
     DISTANCE_TRAVELED_MIL_ON("traveled", new DistanceMILOnCommand(), false),
-    DESCRIBE_PROTOCOL_NUMBER("protocol", new DescribeProtocolNumberCommand(), false);
+    DESCRIBE_PROTOCOL_NUMBER("protocol", new DescribeProtocolNumberCommand(), false),
+    CALCULATED_ENGINE_LOAD("load", new CalculatedEngineLoad(), true),
+    ABS_ENGINE_LOAD("abs_load", new AbsEngineLoad(), true),
+    THROTTLE_C_POS("throttle_c", new ThrottlePositionCCommand(), true),
+    ACCELERATOR_D_POS("accelerator_d", new AcceleratorDPositionCommand(), true),
+    ACCELERATOR_E_POS("accelerator_e", new AcceleratorEPositionCommand(), true),
+    ACCELERATOR_F_POS("accelerator_f", new AcceleratorFPositionCommand(), true),
+    THROTTLE_B_POS("throttle_b", new ThrottlePositionBCommand(), true);
+
 
     private final String value;
     private final ObdCommand command;

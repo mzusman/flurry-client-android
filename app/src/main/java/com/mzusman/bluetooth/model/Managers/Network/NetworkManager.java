@@ -47,7 +47,6 @@ public class NetworkManager {
     }
 
 
-
     private void makeAuthorizationHeader(String username, String password) {
         String credentials = username + ":" + password;
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
@@ -68,12 +67,10 @@ public class NetworkManager {
         });
         OkHttpClient okHttpClient = builder.build();
         retrofit = this.builder.client(okHttpClient).build();
-        if (driverService == null)
-            driverService = retrofit.create(DriverService.class);
-
-
+        driverService = retrofit.create(DriverService.class);
     }
-    public void resetCredentials(){
+
+    public void resetCredentials() {
         this.username = null;
         this.password = null;
         this.driverService = null;
@@ -86,7 +83,7 @@ public class NetworkManager {
         call.enqueue(callback);
     }
 
-    public void regsiterUser(String username, String driverName, String password, Callback<UserCreditials> callback) throws IOException {
+    public void registerUser(String username, String driverName, String password, Callback<UserCreditials> callback) throws IOException {
         UserRegister user = new UserRegister(username, driverName, password);
         Call<UserCreditials> call = driverService.registerDriver(user);
         call.enqueue(callback);
