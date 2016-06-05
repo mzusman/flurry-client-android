@@ -125,6 +125,7 @@ public class DetailsThread extends Thread {
             listView.post(new Runnable() {
                 @Override
                 public void run() {
+                    detailsAdapter.clean();
                     detailsAdapter.setArray(readings);
                     detailsAdapter.notifyDataSetChanged();
                     textView.setText("time: " + Long.toString(time));

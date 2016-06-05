@@ -19,7 +19,6 @@
     <ListView
             android:layout_width="match_parent"
             android:clickable="false"
-            android:focusable="false"
             android:layout_height="wrap_content"
             android:id="@+id/details">
     </ListView>

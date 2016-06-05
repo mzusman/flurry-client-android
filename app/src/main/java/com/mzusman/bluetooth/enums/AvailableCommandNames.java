@@ -33,12 +33,12 @@ public enum AvailableCommandNames {
     DISTANCE_TRAVELED_MIL_ON("traveled", new DistanceMILOnCommand(), false),
     DESCRIBE_PROTOCOL_NUMBER("protocol", new DescribeProtocolNumberCommand(), false),
     CALCULATED_ENGINE_LOAD("load", new CalculatedEngineLoad(), true),
-    ABS_ENGINE_LOAD("abs_load", new AbsEngineLoad(), true),
-    THROTTLE_C_POS("throttle_c", new ThrottlePositionCCommand(), true),
+    ABS_ENGINE_LOAD("abs_load", new AbsEngineLoad(), false),
+    THROTTLE_C_POS("throttle_c", new ThrottlePositionCCommand(), false),
     ACCELERATOR_D_POS("accelerator_d", new AcceleratorDPositionCommand(), true),
-    ACCELERATOR_E_POS("accelerator_e", new AcceleratorEPositionCommand(), true),
-    ACCELERATOR_F_POS("accelerator_f", new AcceleratorFPositionCommand(), true),
-    THROTTLE_B_POS("throttle_b", new ThrottlePositionBCommand(), true);
+    ACCELERATOR_E_POS("accelerator_e", new AcceleratorEPositionCommand(), false),
+    ACCELERATOR_F_POS("accelerator_f", new AcceleratorFPositionCommand(), false),
+    THROTTLE_B_POS("throttle_b", new ThrottlePositionBCommand(), false);
 
 
     private final String value;

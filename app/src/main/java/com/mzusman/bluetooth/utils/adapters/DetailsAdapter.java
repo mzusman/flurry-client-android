@@ -31,6 +31,9 @@ public class DetailsAdapter extends BaseAdapter {
 
 
     }
+    public void clean(){
+        this.parametersList.clear();
+    }
 
     public void setArray(ArrayList<String> array) {
         this.parametersList = array;

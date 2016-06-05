@@ -11,12 +11,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.adapters.ProfileAdapter;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
 import org.apache.log4j.Logger;
@@ -31,7 +29,6 @@ public class FragmentProfile extends Fragment {
 
     int userId;
     Logger log = Log4jHelper.getLogger("ProfileFragment");
-    static private String emailTo = "mor.zusmann@gmail.com";
 
     @Nullable
     @Override
@@ -114,14 +111,12 @@ public class FragmentProfile extends Fragment {
         data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://54.152.123.228/api/v1/flurry/data-drivers/" + userId;
+                String url = "http://54.152.123.228/api/v1/flurry/drivers/" + userId + "/";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
             }
         });
-
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose Action");
         //allows the fragment to get onTouchListener notifications
         return view;
@@ -142,6 +137,7 @@ public class FragmentProfile extends Fragment {
         File logFile = new File(Environment.getExternalStorageDirectory(), Log4jHelper.logFileName);
         Uri path = Uri.fromFile(logFile);
         email.setType("message/rfc822");
+        String emailTo = "morzusman@gmail.com";
         email.putExtra(Intent.EXTRA_EMAIL, emailTo);
         email.putExtra(Intent.EXTRA_SUBJECT, "log from " + userId);
         email.putExtra(Intent.EXTRA_STREAM, path);
