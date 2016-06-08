@@ -6,6 +6,7 @@ import android.util.Log;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -65,6 +66,7 @@ public class NetworkManager {
                 return chain.proceed(request);
             }
         });
+        builder.readTimeout(60, TimeUnit.SECONDS).connectTimeout(60,TimeUnit.SECONDS);
         OkHttpClient okHttpClient = builder.build();
         retrofit = this.builder.client(okHttpClient).build();
         driverService = retrofit.create(DriverService.class);
