@@ -20,6 +20,8 @@ public interface Manager {
 
     HashMap<String, ObdCommand> commandsFactory = new HashMap<>();
 
+    boolean isConnected();
+
     void connect(String deviceAddress) throws IOException, InterruptedException;
 
     ArrayList<String> getReadings() throws IOException;
@@ -29,5 +31,6 @@ public interface Manager {
     String getReading(String READ);
 
     UUID uuid = UUID.fromString("667d60d3-981e-41c8-befc-ba931ebaa385");
+
 
 }

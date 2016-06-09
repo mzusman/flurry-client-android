@@ -136,9 +136,8 @@ public class FragmentProfile extends Fragment {
         Intent email = new Intent(Intent.ACTION_SEND);
         File logFile = new File(Environment.getExternalStorageDirectory(), Log4jHelper.logFileName);
         Uri path = Uri.fromFile(logFile);
-        email.setType("message/rfc822");
-        String emailTo = "morzusman@gmail.com";
-        email.putExtra(Intent.EXTRA_EMAIL, emailTo);
+        email.setType("text/html");
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"mor.zusmann@gmail.com"});
         email.putExtra(Intent.EXTRA_SUBJECT, "log from " + userId);
         email.putExtra(Intent.EXTRA_STREAM, path);
         startActivity(Intent.createChooser(email, "Send email"));

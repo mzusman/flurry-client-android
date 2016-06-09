@@ -23,16 +23,10 @@ public class DetailsAdapter extends BaseAdapter {
     Context context;
     TextView name;
     TextView value;
-    TextView time;
 
     public DetailsAdapter(Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-
-    }
-    public void clean(){
-        this.parametersList.clear();
     }
 
     public void setArray(ArrayList<String> array) {

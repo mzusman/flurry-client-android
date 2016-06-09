@@ -41,6 +41,11 @@ public class BtManager implements Manager {
 
 
     @Override
+    public boolean isConnected() {
+        return false;
+    }
+
+    @Override
     public void connect(String deviceAddress) throws IOException {
         try {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

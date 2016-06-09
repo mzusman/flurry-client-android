@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.fragments.FragmentDetailsList;
 import com.mzusman.bluetooth.fragments.FragmentProfile;
+import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
@@ -40,37 +41,31 @@ import dmax.dialog.SpotsDialog;
 public class DetailsThread extends Thread {
 
 
-    Callback callback;
-    final DetailsThread.Event event;
+    private Callback callback;
+    private final DetailsThread.Event event;
     private final static int SLEEP_TIME = 500;
-    private ListView listView;
     private DetailsAdapter detailsAdapter;
     private Activity activity;
     private ArrayList<String> readings;
-    private JsonWriter jsonWriter;
-    private FileOutputStream fileOutputStream;
-    private LocationListener locationListener;
     private SpotsDialog spotsDialog;
     private TextView textView;
     private Logger log = Log4jHelper.getLogger("Details Thread");
-    private boolean run = true;
+    private volatile boolean run = true;
     private long time = 0;
     private FragmentDetailsList.CallBack fragCallBack;
 
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, @NonNull LocationListener locationListener, @NonNull Activity activity, @NonNull ListView listView, TextView timeView) {
+    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, @NonNull Activity activity, TextView timeView) {
         this.fragCallBack = fragcallBack;
-        this.listView = listView;
         this.activity = activity;
-        this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
-        this.locationListener = locationListener;
         this.textView = timeView;
         ((AppCompatActivity) activity).getSupportActionBar().setTitle("Details");
         showDialog("Loading...");
         event = new Event();
     }
+
 
     private void showDialog(String message) {
         this.spotsDialog = new SpotsDialog(activity, message);
@@ -78,7 +73,7 @@ public class DetailsThread extends Thread {
         this.spotsDialog.show();
     }
 
-    private synchronized void disposeDialog() {
+    private void disposeDialog() {
         if (spotsDialog == null)
             return;
         if (spotsDialog.isShowing()) {
@@ -88,11 +83,11 @@ public class DetailsThread extends Thread {
     }
 
     private class Event {
-        boolean finish = false;
+        volatile boolean finish = false;
 
-        void onEvent() {
+        void onEvent() throws IOException, InterruptedException {
             if (!finish)
-                tryConnectToObd();
+                readings = Model.getInstance().getReading();
         }
     }
 
@@ -101,50 +96,33 @@ public class DetailsThread extends Thread {
      * managers inside the model component
      */
     public void run() {
-        initJsonWriting();//initiates the json reading
-        tryConnectToObd();
-        disposeDialog();
-        try {
-            sleep(SLEEP_TIME);
-        } catch (InterruptedException e) {
-            log.debug("run: interrupted while sleeping\n" + e.getMessage());
-        }
         while (run) {
-            try {
-                time = System.currentTimeMillis();
-                readings = Model.getInstance().getReading();//assigned to the Manager .
-            } catch (IOException e) {
-                tryConnectToObd();
-                disposeDialog();
-            }
+            getConnectionReadings();
             if (event.finish)
                 break;
-            readings.add(((GpsManager) locationListener).getReading(Constants.GPS_TAG));
-            writeToJson(readings);
-            //run on the main thread to update the listview
-            listView.post(new Runnable() {
+            time = System.currentTimeMillis();
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    detailsAdapter.clean();
+                    disposeDialog();
                     detailsAdapter.setArray(readings);
                     detailsAdapter.notifyDataSetChanged();
                     textView.setText("time: " + Long.toString(time));
                 }
             });
+            Model.getInstance().writeToFile(readings, time);
             try {
                 Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException e) {
-                log.debug("run: interrupted while sleeping");
+            } catch (InterruptedException ignored) {
             }
         }
-        endJsonWrite();
+        Model.getInstance().endJsonWrite();
     }
 
-    private void tryConnectToObd() {
+    private void getConnectionReadings() {
         try {
-            Model.getInstance().getManager().connect(Constants.WIFI_ADDRESS);
+            readings = Model.getInstance().getReading();
         } catch (IOException e) {
-            log.debug("try to connect to obd:" + e.getMessage());
             disposeDialog();
             tryAgainDialog();
             synchronized (event) {
@@ -153,21 +131,25 @@ public class DetailsThread extends Thread {
                 } catch (InterruptedException e1) {//ignored
                     e1.printStackTrace();
                 }
-                event.onEvent();
+                try {
+                    event.onEvent();
+                } catch (IOException e1) {
+                    getConnectionReadings();
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
-        } catch (InterruptedException e) {
-            log.debug("interrupted:" + e.getMessage());
-            disposeDialog();
-            tryAgainDialog();
+            getConnectionReadings();
+        } catch (InterruptedException ignored) {
         }
     }
+
 
     private void tryAgainDialog() {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
                 CharSequence[] items = {"Try Again(OBD)", "Send Cloud(3G)", "Cancel"};
                 if (time == 0)
                     items = new CharSequence[]{"Try Again(OBD)", "Cancel"};
@@ -177,9 +159,9 @@ public class DetailsThread extends Thread {
                     public void onClick(DialogInterface dialog, int which) {
                         if (finalItems[which].equals("Try Again(OBD)")) {
                             synchronized (event) {
+                                showDialog("Connecting..");
                                 event.notify();
                             }
-                            showDialog("Connecting..");
                         } else if (finalItems[which].equals("Send Cloud(3G)")) {
                             event.finish = true;
                             synchronized (event) {
@@ -201,65 +183,6 @@ public class DetailsThread extends Thread {
 
     }
 
-
-    /**
-     * three methods that are writing the data into a json
-     */
-    private void initJsonWriting() {
-        try {
-            fileOutputStream = activity.openFileOutput(Constants.FILE_DATA, Context.MODE_PRIVATE);
-            jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
-            jsonWriter.beginArray();
-        } catch (IOException e) {
-            log.debug(e.getMessage());
-        }
-    }
-
-    /**
-     * writing to Json - hard coded to time-speed-rpm-gps
-     */
-
-    private void writeToJson(ArrayList<String> readings) {
-        try {
-            jsonWriter.beginObject();
-            jsonWriter.name("time").value(time);
-            /**
-             * through all of the reading and write them to the json ,
-             * all of the parameters are splitted by ',' -> name,time,value.
-             */
-            String[] reads;
-            for (String read : readings) {
-                reads = read.split(",");
-                jsonWriter.name(reads[0]).value(reads[1]);
-            }
-            /**
-             * gps reading - separated with latitude and longitude
-             */
-            jsonWriter.name(Constants.GPS_TAG);
-            jsonWriter.beginObject();
-            String[] strings = readings.get(readings.size() - 1).split(",");
-            jsonWriter.name("lat").value(strings[1]);
-            jsonWriter.name("lon").value(strings[2]);
-            jsonWriter.endObject();
-            jsonWriter.endObject();
-            jsonWriter.flush();
-        } catch (IOException e) {
-            log.debug(e.getMessage());
-        }
-    }
-
-    /**
-     * this method is crucial . it writes down the json and ends the json array
-     */
-    private void endJsonWrite() {
-        try {
-            jsonWriter.endArray();
-            jsonWriter.close();
-            this.fileOutputStream.close();
-        } catch (IOException e) {
-            log.debug(e.getMessage());
-        }
-    }
 
     /*
     waits till the thread will stop - shows loading dialog meanwhile
@@ -290,7 +213,6 @@ public class DetailsThread extends Thread {
 
     public interface Callback {
         void ThreadDidStop();
-
     }
 
 

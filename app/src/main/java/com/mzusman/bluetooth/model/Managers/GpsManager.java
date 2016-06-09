@@ -20,6 +20,13 @@ public class GpsManager implements Manager, LocationListener {
 
     double longitude = 0;
     double latitude = 0;
+    boolean status;
+
+    @Override
+    public boolean isConnected() {
+        return status;
+
+    }
 
     @Override
     public void connect(String deviceAddress) {
@@ -52,11 +59,11 @@ public class GpsManager implements Manager, LocationListener {
 
     @Override
     public void onProviderEnabled(String provider) {
-
+        status = true;
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-
+        status = false;
     }
 }

@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -102,7 +104,6 @@ public class FragmentDetailsList extends Fragment {
         timeView = (TextView) view.findViewById(R.id.time);
 
         locationInit();
-        initThread();
 
         return view;
 
@@ -186,7 +187,31 @@ public class FragmentDetailsList extends Fragment {
                 Constants.GPS_MIN_DISTANCE,
                 locationListener);
         //sets the manager
-        Model.getInstance().setGpsManager((GpsManager) locationListener);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        } else initThread();
+    }
+
+    private void buildAlertMessageNoGps() {
+        new AlertDialog.Builder(getActivity()).
+                setMessage("Your GPS seems to be disabled, please enable it")
+                .setCancelable(false)
+                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new FragmentProfile(),
+                                        Constants.DETAILS_TAG).commit();
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new FragmentProfile(),
+                                Constants.DETAILS_TAG).commit();
+            }
+        }). create().show();
     }
 
     public class CallBack {
@@ -201,7 +226,7 @@ public class FragmentDetailsList extends Fragment {
     private void initThread() {
         CallBack callBack = new CallBack();
         if (detailsTask == null)
-            detailsTask = new DetailsThread(callBack, locationListener, getActivity(), listView, timeView);
+            detailsTask = new DetailsThread(callBack, getActivity(), timeView);
         log.debug("start detailsThread");
         detailsTask.start();
     }
