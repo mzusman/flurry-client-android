@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -27,7 +28,6 @@ import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.commands.ObdCommand;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
-import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.adapters.DetailsAdapter;
@@ -56,8 +56,6 @@ public class FragmentDetailsList extends Fragment {
 
     private Activity activity;
 
-    private LocationListener locationListener;
-
     private DetailsThread detailsTask;
 
     private SpotsDialog dialog;
@@ -71,8 +69,6 @@ public class FragmentDetailsList extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         this.activity = getActivity();
         setHasOptionsMenu(true);
@@ -89,11 +85,8 @@ public class FragmentDetailsList extends Fragment {
         DetailsAdapter detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);
         timeView = (TextView) view.findViewById(R.id.time);
-
         locationInit();
-
         return view;
-
     }
 
     @Override
@@ -115,8 +108,14 @@ public class FragmentDetailsList extends Fragment {
             @Override
             public void ThreadDidStop() {
                 log.debug("stop running");
+                int message = R.string.dsc_wifi_msg;
+                //check if connected to the wifi
+                WifiManager wifi = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+                wifi.setWifiEnabled(false);
+                if (wifi.isWifiEnabled())
+                    message = R.string.dsc_wifi_msg_con;
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage(R.string.dsc_wifi_msg).setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                builder.setMessage(message).setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         sendRemote(driverID);
@@ -132,9 +131,7 @@ public class FragmentDetailsList extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendRemote(driverID);
-            }
-        })
-                .setNegativeButton("Cencel", new DialogInterface.OnClickListener() {
+            } }) .setNegativeButton("Cencel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -190,7 +187,7 @@ public class FragmentDetailsList extends Fragment {
     private void initThread() {
         CallBack callBack = new CallBack();
         if (detailsTask == null)
-            detailsTask = new DetailsThread(callBack,listView, getActivity(), timeView);
+            detailsTask = new DetailsThread(callBack, listView, getActivity(), timeView);
         log.debug("start detailsThread");
         detailsTask.start();
     }
@@ -233,7 +230,6 @@ public class FragmentDetailsList extends Fragment {
                 log.debug("send data success");
                 dismissDialog();
                 onSentSuccess();
-
             }
 
             @Override

@@ -62,9 +62,7 @@ public class DetailsAdapter extends BaseAdapter {
         value = (TextView) vi.findViewById(R.id.val);
 
         if (separated.length > 2) {
-            StringBuilder setText = new StringBuilder();
-            setText.append(separated[1]).append(",\n").append(separated[2]);
-            value.setText(setText.toString());
+            value.setText(separated[1] + ",\n" + separated[2]);
         } else
             value.setText(separated[1]);
 
