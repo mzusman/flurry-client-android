@@ -190,7 +190,7 @@ public class FragmentDetailsList extends Fragment {
     private void initThread() {
         CallBack callBack = new CallBack();
         if (detailsTask == null)
-            detailsTask = new DetailsThread(callBack, getActivity(), timeView);
+            detailsTask = new DetailsThread(callBack,listView, getActivity(), timeView);
         log.debug("start detailsThread");
         detailsTask.start();
     }

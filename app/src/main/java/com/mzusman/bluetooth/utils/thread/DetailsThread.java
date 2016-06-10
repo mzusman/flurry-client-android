@@ -56,9 +56,10 @@ public class DetailsThread extends Thread {
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, @NonNull Activity activity, TextView timeView) {
+    public DetailsThread(FragmentDetailsList.CallBack fragcallBack,ListView listView, @NonNull Activity activity, TextView timeView) {
         this.fragCallBack = fragcallBack;
         this.activity = activity;
+        this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
         this.textView = timeView;
         ((AppCompatActivity) activity).getSupportActionBar().setTitle("Details");
         showDialog("Loading...");
