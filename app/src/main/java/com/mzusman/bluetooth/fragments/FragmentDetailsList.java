@@ -155,6 +155,7 @@ public class FragmentDetailsList extends Fragment {
         } else initThread();
     }
 
+
     private void buildAlertMessageNoGps() {
         new AlertDialog.Builder(getActivity()).
                 setMessage("Your GPS seems to be disabled, please enable it")

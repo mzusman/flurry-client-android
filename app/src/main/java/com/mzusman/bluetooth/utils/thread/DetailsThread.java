@@ -86,7 +86,7 @@ public class DetailsThread extends Thread {
 
         void onEvent() throws IOException, InterruptedException {
             if (!finish)
-                readings = Model.getInstance().getReading();
+                getConnectionReadings();
         }
     }
 
@@ -120,7 +120,7 @@ public class DetailsThread extends Thread {
 
     private void getConnectionReadings() {
         try {
-            readings = Model.getInstance().getReading();
+            readings = Model.getInstance().getReading(activity);
         } catch (IOException e) {
             disposeDialog();
             tryAgainDialog();

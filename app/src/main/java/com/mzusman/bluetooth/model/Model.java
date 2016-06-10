@@ -1,6 +1,7 @@
 package com.mzusman.bluetooth.model;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -16,6 +17,7 @@ import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Network.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+import com.mzusman.bluetooth.utils.thread.DetailsThread;
 
 import org.apache.log4j.Logger;
 
@@ -88,31 +90,39 @@ public class Model {
         return this.manager;
     }
 
-    public ArrayList<String> getReading() throws IOException, InterruptedException {
+    public ArrayList<String> getReading(Activity activity) throws IOException, InterruptedException {
 
         if (!manager.isConnected()) {
             manager.connect(Constants.WIFI_ADDRESS);
         }
         if (gpsManager == null) {
-            startGpsRequests();
+            startGpsRequests(activity);
         }
 
         ArrayList<String> list = (ArrayList<String>) manager.getReadings();
-        list.add(gpsManager.getReading(Constants.GPS_TAG));
+        if (gpsManager != null)
+            list.add(gpsManager.getReading(Constants.GPS_TAG));
         return list;
     }
 
-    private void startGpsRequests() {
-        gpsManager = new GpsManager();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.
-                checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                Constants.GPS_MIN_TIME,
-                Constants.GPS_MIN_DISTANCE,
-                gpsManager);
+    private void startGpsRequests(Activity activity) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                gpsManager = new GpsManager();
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.
+                        checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        Constants.GPS_MIN_TIME,
+                        Constants.GPS_MIN_DISTANCE,
+                        gpsManager);
+
+            }
+        });
 
     }
 
