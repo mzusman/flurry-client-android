@@ -8,7 +8,6 @@ import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
 import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
-import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
 import org.apache.log4j.Logger;
@@ -31,9 +30,8 @@ public class WifiManager implements Manager {
     private static int TIME_OUT_VALUE = 5000;
     private Logger logger = Log4jHelper.getLogger("WifiManager");
 
+    public WifiManager() {
 
-    public WifiManager(Factory factory) {
-        factory.setCommandsFactory(commandsFactory);
     }
 
     @Override
@@ -55,6 +53,11 @@ public class WifiManager implements Manager {
             }
         }
 
+    }
+
+    @Override
+    public void addCommands(String string, ObdCommand obdCommand) {
+        commandsFactory.put(string, obdCommand);
     }
 
     public boolean isConnected() {

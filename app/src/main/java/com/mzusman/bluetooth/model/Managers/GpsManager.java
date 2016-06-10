@@ -4,9 +4,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
-import com.mzusman.bluetooth.model.Manager;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Class : GpsManager.
@@ -16,29 +17,16 @@ import java.util.ArrayList;
  * GPS Listener is done through the main loop - so it doesnt interrupt our OBD readings
  *
  */
-public class GpsManager implements Manager, LocationListener {
+public class GpsManager implements Readable, LocationListener {
 
     double longitude = 0;
     double latitude = 0;
     boolean status;
 
     @Override
-    public boolean isConnected() {
-        return status;
-
-    }
-
-    @Override
-    public void connect(String deviceAddress) {
-    }
-
-    @Override
-    public ArrayList<String> getReadings() {
+    public List<String> getReadings() throws IOException {
+        //not used
         return null;
-    }
-
-    @Override
-    public void stop() {
     }
 
     @Override

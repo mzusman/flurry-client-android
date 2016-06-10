@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.model.Managers.Network;
+package com.mzusman.bluetooth.model.Network;
 
 import android.util.Base64;
 import android.util.Log;

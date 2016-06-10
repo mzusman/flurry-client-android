@@ -15,7 +15,7 @@ import android.widget.EditText;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.activities.MainActivity;
-import com.mzusman.bluetooth.model.Managers.Network.NetworkManager;
+import com.mzusman.bluetooth.model.Network.NetworkManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.dialogs.RegisterDialog;

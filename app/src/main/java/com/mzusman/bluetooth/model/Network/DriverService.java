@@ -1,4 +1,4 @@
-package com.mzusman.bluetooth.model.Managers.Network;
+package com.mzusman.bluetooth.model.Network;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

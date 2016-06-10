@@ -26,7 +26,6 @@ import android.widget.TextView;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.commands.ObdCommand;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
-import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Model;
@@ -84,19 +83,7 @@ public class FragmentDetailsList extends Fragment {
         driverID = getArguments().getInt(Constants.USER_ID_TAG);
         log.debug("onResponse: id:" + driverID);
         String manager = getArguments().getString(Constants.MANAGER_TAG);
-        if (manager.equals(Constants.WIFI_TAG)) {
-            Model.getInstance().setManager(new WifiManager(new Manager.Factory() {
-                @Override
-                public void setCommandsFactory(HashMap<String, ObdCommand> commandsFactory) {
-                    for (int i = 0; i < AvailableCommandNames.values().length; i++) {
-                        AvailableCommandNames command = AvailableCommandNames.values()[i];
-                        if (command.isSelected()) {
-                            commandsFactory.put(AvailableCommandNames.values()[i].getValue(), command.getCommand());
-                        }
-                    }
-                }
-            }), Constants.WIFI_ADDRESS);
-        }
+        Model.getInstance().createNewManager(manager);
 
         listView = (ListView) view.findViewById(R.id.details);
         DetailsAdapter detailsAdapter = new DetailsAdapter(activity);
@@ -161,33 +148,9 @@ public class FragmentDetailsList extends Fragment {
      * and notify him about that . - > get the location listener ready
      */
     private void locationInit() {
-        LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new GpsManager();
 
-        //check if there are permissions -
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    log.debug("check if there are location permissions");
-                    getActivity().finish();
-
-                }
-            }).setMessage("Please Enable Location Services").show();
-
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                Constants.GPS_MIN_TIME,
-                Constants.GPS_MIN_DISTANCE,
-                locationListener);
         //sets the manager
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!Model.getInstance().isGpsEnabled()) {
             buildAlertMessageNoGps();
         } else initThread();
     }
@@ -211,7 +174,7 @@ public class FragmentDetailsList extends Fragment {
                         .replace(R.id.fragment_container, new FragmentProfile(),
                                 Constants.DETAILS_TAG).commit();
             }
-        }). create().show();
+        }).create().show();
     }
 
     public class CallBack {
@@ -256,7 +219,6 @@ public class FragmentDetailsList extends Fragment {
         }
     }
 
-
     private void sendRemote(int driverID) {
         String data = null;
         try {
@@ -281,7 +243,6 @@ public class FragmentDetailsList extends Fragment {
             }
         });
     }
-
 
     private void onSentSuccess() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

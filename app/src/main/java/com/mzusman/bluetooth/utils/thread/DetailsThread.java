@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.fragments.FragmentDetailsList;
 import com.mzusman.bluetooth.fragments.FragmentProfile;
-import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;

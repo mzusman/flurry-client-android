@@ -13,7 +13,6 @@ import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
 import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
-import com.mzusman.bluetooth.model.Manager;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
@@ -27,18 +26,18 @@ public class BtManager implements Manager {
     BluetoothSocket bluetoothSocket;
     BluetoothDevice bluetoothDevice;
 
-    boolean run = true;
-
-
     ArrayList<String> readings = new ArrayList<>();
 
     long time = System.currentTimeMillis();
 
+    public BtManager() {
 
-    public BtManager(Factory factory) {
-        factory.setCommandsFactory(commandsFactory);
     }
 
+    @Override
+    public void addCommands(String string, ObdCommand obdCommand) {
+        commandsFactory.put(string, obdCommand);
+    }
 
     @Override
     public boolean isConnected() {
