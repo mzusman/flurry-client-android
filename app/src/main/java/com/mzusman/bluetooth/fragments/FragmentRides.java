@@ -25,8 +25,7 @@ public class FragmentRides extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rides, container, false);
-        RidesAdapter ridesAdapter = new RidesAdapter(Model.getInstance().getId(),
-                Model.getInstance().getAllRides(), getActivity());
+        RidesAdapter ridesAdapter = new RidesAdapter(Model.getInstance().getAllDriverRides(), getActivity());
         ListView listView = (ListView) view.findViewById(R.id.rides_lv);
         listView.setAdapter(ridesAdapter);
         setHasOptionsMenu(true);
@@ -44,7 +43,7 @@ public class FragmentRides extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container,new FragmentProfile()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, new FragmentProfile()).commit();
         return true;
     }
 }

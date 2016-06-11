@@ -36,6 +36,11 @@ public class ModelSql {
         return SqlManager.getAllRides(database);
     }
 
+    public List<RideDescription> getAllDriverRides(String driverID) {
+        SQLiteDatabase database = sqlHelper.getReadableDatabase();
+        return SqlManager.getAllDriverRides(driverID, database);
+    }
+
 
     class SqlHelper extends SQLiteOpenHelper {
 

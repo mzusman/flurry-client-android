@@ -26,11 +26,10 @@ import java.util.List;
  */
 public class RidesAdapter extends BaseAdapter {
     ArrayList<RideDescription> rideDescriptions;
-    int id;
     Context context;
     private static LayoutInflater inflater = null;
 
-    public RidesAdapter(int id, List<RideDescription> rideDescriptionList, Context context) {
+    public RidesAdapter(List<RideDescription> rideDescriptionList, Context context) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.rideDescriptions = (ArrayList<RideDescription>) rideDescriptionList;
@@ -74,35 +73,40 @@ public class RidesAdapter extends BaseAdapter {
 
         final RideDescription currentRide = rideDescriptions.get(i);
         final ActionProcessButton button = (ActionProcessButton) vi.findViewById(R.id.send_btn);
+        button.setMode(ActionProcessButton.Mode.ENDLESS);
         if (rideDescriptions.get(i).isSent()) {
             button.setText("Done");
             button.setProgress(100);
             button.setClickable(false);
+            button.setFocusable(false);
+
         } else {
             button.setText("Send");
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    button.setProgress(1);
+                    Model.getInstance().sendRemote(Integer.parseInt(currentRide.getDriverID()), new Model.OnEvent() {
+                        @Override
+                        public void onSuccess() {
+                            button.setText("Done");
+                            button.setProgress(100);
+                        }
+                        @Override
+                        public void onFailure() {
+                            button.setProgress(-1);
+                            button.setText("Error");
+                        }
+                    });
+                }
+            });
         }
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                button.setProgress(1);
-                Model.getInstance().sendRemote(Integer.parseInt(currentRide.getDriverID()), new Model.OnEvent() {
-                    @Override
-                    public void onSuccess() {
-                        button.setText("Done");
-                        button.setProgress(100);
-                    }
 
-                    @Override
-                    public void onFailure() {
-                        button.setProgress(-1);
-                        button.setText("Error");
-                    }
-                });
-            }
-        });
 
         TextView textView = (TextView) vi.findViewById(R.id.tv_file_name);
-        textView.setText("Ride from: " + currentRide.getFileName());
+        textView.setText("Ride from: " + currentRide.getFileName()
+                + ",\n" + currentRide.isSent() + ",\n" + currentRide.getDriverID());
+
 
         return vi;
     }

@@ -37,4 +37,13 @@ public class RideDescription {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    @Override
+    public String toString() {
+        return "RideDescription{" +
+                "sent=" + sent +
+                ", fileName='" + fileName + '\'' +
+                ", driverID='" + driverID + '\'' +
+                '}';
+    }
 }

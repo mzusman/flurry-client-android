@@ -18,6 +18,7 @@ import com.mzusman.bluetooth.model.Managers.SqlManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Network.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
+import com.mzusman.bluetooth.utils.adapters.RidesAdapter;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 import com.mzusman.bluetooth.utils.thread.DetailsThread;
 
@@ -174,7 +175,7 @@ public class Model {
                 this.addRideToDatabase(currentRide);
                 currentRide = null;
             }
-            currentRide = new RideDescription(false, currentTime, String.valueOf(0));//todo:how to get the id
+            currentRide = new RideDescription(false, currentTime, String.valueOf(id));
             fileOutputStream = context.openFileOutput(currentRide.getFileName(), Context.MODE_PRIVATE);
             jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
             jsonWriter.beginArray();
@@ -220,7 +221,7 @@ public class Model {
         try {
             jsonWriter.endArray();
             jsonWriter.close();
-            this.fileOutputStream.close();
+            fileOutputStream.close();
             jsonWriter = null;
             fileOutputStream = null;
         } catch (IOException e) {
@@ -238,6 +239,10 @@ public class Model {
 
     public List<RideDescription> getAllRides() {
         return sql.getAllRides();
+    }
+
+    public List<RideDescription> getAllDriverRides() {
+        return sql.getAllDriverRides(String.valueOf(id));
     }
 
     public void addRideToDatabase(RideDescription description) {

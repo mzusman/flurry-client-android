@@ -10,6 +10,9 @@ import android.widget.EditText;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.utils.logger.Log4jHelper;
+
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -22,6 +25,7 @@ import retrofit2.Callback;
  */
 public class RegisterDialog extends BlurDialogFragment {
 
+    Logger log = Log4jHelper.getLogger("register");
     static Callback callback;
 
     public static RegisterDialog newInstance(Callback callback) {
@@ -36,6 +40,7 @@ public class RegisterDialog extends BlurDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        log.info("opened register dialog");
         View view = inflater.inflate(R.layout.register_dialog, container, false);
         final EditText name = (EditText) view.findViewById(R.id.name_register_edit);
         final EditText username = (EditText) view.findViewById(R.id.username_register_edit);

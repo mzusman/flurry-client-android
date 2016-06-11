@@ -23,7 +23,6 @@ public class Constants {
     final public static String GPS_TAG = "gps";
     final public static String USER_ID_TAG = "ID";
     final public static String WIFI_ADDRESS = "192.168.0.10,35000";
-    final public static String FILE_DATA = "data.json";
 
 
 }
