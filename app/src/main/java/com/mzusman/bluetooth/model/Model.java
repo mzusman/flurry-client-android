@@ -69,7 +69,6 @@ public class Model {
     public void createNewManager(String tag) {
         if (tag == null || (manager = tagManager.get(tag)) == null)
             return;
-//        manager = tagManager.get(tag);
         for (int i = 0; i < AvailableCommandNames.values().length; i++) {
             AvailableCommandNames command = AvailableCommandNames.values()[i];
             if (command.isSelected()) {
