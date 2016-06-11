@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.JsonWriter;
@@ -13,6 +14,7 @@ import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Managers.BtManager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.Manager;
+import com.mzusman.bluetooth.model.Managers.SqlManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Network.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
@@ -21,23 +23,40 @@ import com.mzusman.bluetooth.utils.thread.DetailsThread;
 
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Model {
     Manager manager;
     NetworkManager networkManager;
     GpsManager gpsManager;
     LocationManager locationManager;
-
+    ModelSql sql = new ModelSql();
+    Logger log = Log4jHelper.getLogger("model");
     private JsonWriter jsonWriter;
     private FileOutputStream fileOutputStream;
     private Logger logger = Log4jHelper.getLogger("Model");
     Context context;
     HashMap<String, Manager> tagManager = new HashMap<>();
+    RideDescription currentRide;
+
+    public interface OnEvent {
+        void onSuccess();
+
+        void onFailure();
+    }
 
 
     public void setGpsManager(GpsManager gpsManager) {
@@ -75,7 +94,6 @@ public class Model {
                 addNewCommand(AvailableCommandNames.values()[i].getValue(), command.getCommand());
             }
         }
-        return;
     }
 
     public Model addNewCommand(String commandName, ObdCommand obdCommand) {
@@ -147,7 +165,6 @@ public class Model {
         if (jsonWriter == null)
             initJsonWriting();
         writeToJson(arrayList, time);
-
     }
 
     /**
@@ -155,7 +172,14 @@ public class Model {
      */
     private void initJsonWriting() {
         try {
-            fileOutputStream = context.openFileOutput(Constants.FILE_DATA, Context.MODE_PRIVATE);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String currentTime = sdf.format(new Date());
+            if (currentRide != null) {
+                this.addRideToDatabase(currentRide);
+                currentRide = null;
+            }
+            currentRide = new RideDescription(false, currentTime);
+            fileOutputStream = context.openFileOutput(currentRide.getFileName(), Context.MODE_PRIVATE);
             jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
             jsonWriter.beginArray();
 
@@ -210,6 +234,46 @@ public class Model {
 
     public void writeToLog(String message) {
         logger.debug(message);
+    }
+
+    public List<RideDescription> getAllRides() {
+        return sql.getAllRides();
+    }
+
+    public void addRideToDatabase(RideDescription description) {
+        sql.add(description);
+    }
+
+
+    private String loadFromFile() throws IOException {
+        File file = context.getFileStreamPath(Constants.FILE_DATA);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fileInputStream.read(data);
+        fileInputStream.close();
+        return new String(data, "UTF-8");
+    }
+
+
+    public void sendRemote(int driverID, OnEvent event) {
+        String data = null;
+        try {
+            data = loadFromFile();
+        } catch (IOException e) {
+            log.debug(e.getMessage());
+        }
+        Model.getInstance().getNetworkManager().sendData(driverID, data, new OnEvent() {
+            @Override
+            public void onSuccess() {
+                log.debug("send data success");
+            }
+
+            @Override
+            public void onFailure() {
+                log.debug("send data fail");
+            }
+        });
+
     }
 
 }

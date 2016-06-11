@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
 
     defaultConfig {
         applicationId "com.mzusman.bluetooth"
         minSdkVersion 17
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -29,10 +29,8 @@ dependencies {
     compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'info.hoang8f:fbutton:1.0.5'
     testCompile 'org.mockito:mockito-core:1.+'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:appcompat-v7:21.1'
     compile 'fr.tvbarthel.blurdialogfragment:lib:2.1.5'
-    compile "com.android.support:recyclerview-v7:23.0.1"
     compile 'com.github.d-max:spots-dialog:0.4@aar'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'junit:junit:4.12'

@@ -118,7 +118,20 @@ public class FragmentDetailsList extends Fragment {
                 builder.setMessage(message).setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendRemote(driverID);
+                        showDialog("Sending...");
+                        Model.getInstance().sendRemote(driverID, new Model.OnEvent() {
+                            @Override
+                            public void onSuccess() {
+                                dismissDialog();
+                                onSentSuccess();
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                dismissDialog();
+                                sendAgain();
+                            }
+                        });
                     }
                 }).setCancelable(false).show();
             }
@@ -127,17 +140,31 @@ public class FragmentDetailsList extends Fragment {
 
     void sendAgain() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-        builder.setCancelable(false).setMessage("Cannot connect to the cloud, Please try again.").setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+        builder.setCancelable(false).setMessage("Cannot connect to the cloud, Please try again.")
+                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, int which) {
+                        showDialog("Sending...");
+                        Model.getInstance().sendRemote(driverID, new Model.OnEvent() {
+                            @Override
+                            public void onSuccess() {
+                                dismissDialog();
+                                onSentSuccess();
+                            }
+                            @Override
+                            public void onFailure() {
+                                dismissDialog();
+                                sendAgain();
+                            }
+                        });
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendRemote(driverID);
-            } }) .setNegativeButton("Cencel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        getActivity().finish();
-                    }
-                }).show();
+                dialog.dismiss();
+                getActivity().finish();
+            }
+        }).show();
     }
 
     /**
@@ -192,16 +219,6 @@ public class FragmentDetailsList extends Fragment {
         detailsTask.start();
     }
 
-    private String loadFromFile() throws IOException {
-        showDialog("Sending...");
-        File file = activity.getFileStreamPath(Constants.FILE_DATA);
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
-        fileInputStream.read(data);
-        fileInputStream.close();
-        return new String(data, "UTF-8");
-    }
-
     private void showDialog(String message) {
         dialog = new SpotsDialog(getActivity(), message);
         dialog.setCancelable(false);
@@ -217,30 +234,6 @@ public class FragmentDetailsList extends Fragment {
         }
     }
 
-    private void sendRemote(int driverID) {
-        String data = null;
-        try {
-            data = loadFromFile();
-        } catch (IOException e) {
-            log.debug(e.getMessage());
-        }
-        Model.getInstance().getNetworkManager().sendData(driverID, data, new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                log.debug("send data success");
-                dismissDialog();
-                onSentSuccess();
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                log.debug("send data fail");
-                dismissDialog();
-                sendAgain();
-            }
-        });
-    }
-
     private void onSentSuccess() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Information has been Sent. \nThank You!")
@@ -252,8 +245,5 @@ public class FragmentDetailsList extends Fragment {
                                         Constants.DETAILS_TAG).commit();
                     }
                 }).setCancelable(false).show();
-
     }
-
-
 }

@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.model.Network;
 import android.util.Base64;
 import android.util.Log;
 
+import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -66,7 +68,7 @@ public class NetworkManager {
                 return chain.proceed(request);
             }
         });
-        builder.readTimeout(60, TimeUnit.SECONDS).connectTimeout(60,TimeUnit.SECONDS);
+        builder.readTimeout(60, TimeUnit.SECONDS).connectTimeout(60, TimeUnit.SECONDS);
         OkHttpClient okHttpClient = builder.build();
         retrofit = this.builder.client(okHttpClient).build();
         driverService = retrofit.create(DriverService.class);
@@ -79,10 +81,22 @@ public class NetworkManager {
         retrofit = null;
     }
 
-    public void sendData(int driverID, String drivingData, Callback<Void> callback) {
+    public void sendData(int driverID, String drivingData, final Model.OnEvent event) {
         this.driverID = driverID;
         Call<Void> call = driverService.createDrivingData(driverID, drivingData);
-        call.enqueue(callback);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful())
+                    event.onSuccess();
+                else event.onFailure();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                event.onFailure();
+            }
+        });
     }
 
     public void registerUser(String username, String driverName, String password, Callback<UserCreditials> callback) throws IOException {

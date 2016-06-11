@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Asaf on 11/06/2016.
  */
-public class SqlManager extends SQLiteOpenHelper {
+public class SqlManager {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "RidesFiles.db";
@@ -24,27 +24,15 @@ public class SqlManager extends SQLiteOpenHelper {
     public static final String RIDE_SENT = "sent";
 
 
-    public SqlManager(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    public static void create(SQLiteDatabase db) {
         db.execSQL("create table " +
                 RIDES_TABLE + " (" +
-                RIDE_ID + " TEXT PRIMARY KEY," +
                 RIDE_FILE_NAME + " TEXT," +
                 RIDE_SENT + " TEXT);");
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }
-
     public static void add(SQLiteDatabase db, RideDescription rideDescription) {
         ContentValues values = new ContentValues();
-        values.put(RIDE_ID, rideDescription.getId());
         values.put(RIDE_FILE_NAME, rideDescription.getFileName());
         if (rideDescription.isSent()) {
             values.put(RIDE_SENT, "YES");
@@ -67,12 +55,16 @@ public class SqlManager extends SQLiteOpenHelper {
                 String file = cursor.getString(fileIndex);
                 String sent = cursor.getString(sentIndex);
                 boolean isSent = sent.equals("YES");
-                RideDescription description = new RideDescription(id, isSent, file);
+                RideDescription description = new RideDescription(isSent, file);
                 list.add(description);
             } while (cursor.moveToNext());
         }
         return list;
     }
 
+
+    public static void drop(SQLiteDatabase db) {
+        db.execSQL("drop table " + RIDES_TABLE);
+    }
 
 }
