@@ -96,7 +96,7 @@ public class SqlManager {
     }
 
     public static List<RideDescription> getAllDriverRides(String driverID, SQLiteDatabase database) {
-        Cursor cursor = database.rawQuery("SELECT * FROM " + RIDES_TABLE + "WHERE"
+        Cursor cursor = database.rawQuery("SELECT * FROM " + RIDES_TABLE + " WHERE "
                 + RIDE_DRIVER_ID + " = " + driverID, null);
 
         log.info("get related rides");
