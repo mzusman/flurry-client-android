@@ -86,10 +86,6 @@ public class Model {
     }
 
 
-    public Manager getManager() {
-        return this.manager;
-    }
-
     public ArrayList<String> getReading(Activity activity) throws IOException, InterruptedException {
 
         if (!manager.isConnected()) {
@@ -146,22 +142,6 @@ public class Model {
     public void setNetworkManager(NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
-
-    /*
-    @return - may return null if the setGpsManager was'nt invoked
-     */
-    public GpsManager getGpsManager() {
-        return gpsManager;
-    }
-
-    public String getRead(String READINGS) {
-        return manager.getReading(READINGS);
-    }
-
-    public void drop() {
-        manager.stop();
-    }
-
 
     public void writeToFile(ArrayList<String> arrayList, long time) {
         if (jsonWriter == null)
