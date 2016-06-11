@@ -67,6 +67,7 @@ public class LoginFragment extends Fragment {
                         LoginFragment.this.id = ((NetworkManager.UserCreditials) response.body()).driver_id;
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         log.debug("onResponse: id:" + LoginFragment.this.id);
+                        Model.getInstance().setDriverId(LoginFragment.this.id);
                         intent.putExtra(Constants.USER_ID_TAG, id);
                         startActivity(intent);
                         getActivity().finish();
@@ -105,6 +106,7 @@ public class LoginFragment extends Fragment {
                     actionProcessButton.setText(R.string.welc);
                     LoginFragment.this.id = (response.body().driver_id);
                     log.debug("onResponse: id:" + LoginFragment.this.id);
+                    Model.getInstance().setDriverId(LoginFragment.this.id);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);

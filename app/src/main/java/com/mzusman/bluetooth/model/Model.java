@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,18 +40,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Model {
-    Manager manager;
-    NetworkManager networkManager;
-    GpsManager gpsManager;
-    LocationManager locationManager;
-    ModelSql sql = new ModelSql();
-    Logger log = Log4jHelper.getLogger("model");
+    private Manager manager;
+    private NetworkManager networkManager;
+    private GpsManager gpsManager;
+    private LocationManager locationManager;
+    private ModelSql sql = new ModelSql();
+    private Logger log = Log4jHelper.getLogger("model");
     private JsonWriter jsonWriter;
     private FileOutputStream fileOutputStream;
-    private Logger logger = Log4jHelper.getLogger("Model");
-    Context context;
-    HashMap<String, Manager> tagManager = new HashMap<>();
-    RideDescription currentRide;
+    private Context context;
+    private HashMap<String, Manager> tagManager = new HashMap<>();
+    private RideDescription currentRide;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private int id;
 
     public interface OnEvent {
         void onSuccess();
@@ -58,6 +60,13 @@ public class Model {
         void onFailure();
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setDriverId(int id) {
+        this.id = id;
+    }
 
     public void setGpsManager(GpsManager gpsManager) {
         this.gpsManager = gpsManager;
@@ -78,11 +87,6 @@ public class Model {
 
     public static Model getInstance() {
         return instance;
-    }
-
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
     }
 
     public void createNewManager(String tag) {
@@ -124,17 +128,10 @@ public class Model {
             @Override
             public void run() {
                 gpsManager = new GpsManager();
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.
-                        checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         Constants.GPS_MIN_TIME,
                         Constants.GPS_MIN_DISTANCE,
                         gpsManager);
-
             }
         });
 
@@ -172,19 +169,18 @@ public class Model {
      */
     private void initJsonWriting() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             String currentTime = sdf.format(new Date());
             if (currentRide != null) {
                 this.addRideToDatabase(currentRide);
                 currentRide = null;
             }
-            currentRide = new RideDescription(false, currentTime);
+            currentRide = new RideDescription(false, currentTime, String.valueOf(0));//todo:how to get the id
             fileOutputStream = context.openFileOutput(currentRide.getFileName(), Context.MODE_PRIVATE);
             jsonWriter = new JsonWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
             jsonWriter.beginArray();
 
         } catch (IOException e) {
-            logger.debug(e.getMessage());
+            log.debug(e.getMessage());
         }
     }
 
@@ -213,7 +209,7 @@ public class Model {
             jsonWriter.endObject();
             jsonWriter.flush();
         } catch (IOException e) {
-            logger.debug(e.getMessage());
+            log.debug(e.getMessage());
         }
     }
 
@@ -228,12 +224,16 @@ public class Model {
             jsonWriter = null;
             fileOutputStream = null;
         } catch (IOException e) {
-            logger.debug(e.getMessage());
+            log.debug(e.getMessage());
         }
     }
 
+    public DateFormat getDateFormat() {
+        return sdf;
+    }
+
     public void writeToLog(String message) {
-        logger.debug(message);
+        log.debug(message);
     }
 
     public List<RideDescription> getAllRides() {
@@ -245,8 +245,8 @@ public class Model {
     }
 
 
-    private String loadFromFile() throws IOException {
-        File file = context.getFileStreamPath(Constants.FILE_DATA);
+    private String loadFromFile(String fileName) throws IOException {
+        File file = context.getFileStreamPath(fileName);
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
         fileInputStream.read(data);
@@ -255,10 +255,10 @@ public class Model {
     }
 
 
-    public void sendRemote(int driverID, OnEvent event) {
+    public void sendRemote(int driverID, final OnEvent event) {
         String data = null;
         try {
-            data = loadFromFile();
+            data = loadFromFile(currentRide.getFileName());
         } catch (IOException e) {
             log.debug(e.getMessage());
         }
@@ -266,11 +266,18 @@ public class Model {
             @Override
             public void onSuccess() {
                 log.debug("send data success");
+                currentRide.setSent(true);
+                addRideToDatabase(currentRide);
+                currentRide = null;
+                event.onSuccess();
             }
 
             @Override
             public void onFailure() {
                 log.debug("send data fail");
+                currentRide.setSent(false);
+                addRideToDatabase(currentRide);
+                event.onFailure();
             }
         });
 

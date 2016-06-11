@@ -22,7 +22,13 @@ public class ModelSql {
 
     public void add(RideDescription rideDescription) {
         SQLiteDatabase database = sqlHelper.getWritableDatabase();
-        SqlManager.add(database, rideDescription);
+        if (!SqlManager.update(database, rideDescription))
+            SqlManager.add(database, rideDescription);
+    }
+
+    private boolean checkIfExist(RideDescription rideDescription) {
+        SQLiteDatabase database = sqlHelper.getReadableDatabase();
+        return SqlManager.checkIfExist(database, rideDescription.getFileName());
     }
 
     public List<RideDescription> getAllRides() {

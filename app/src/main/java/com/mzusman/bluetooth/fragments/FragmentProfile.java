@@ -117,6 +117,16 @@ public class FragmentProfile extends Fragment {
                 startActivity(i);
             }
         });
+
+        ImageView rides = (ImageView) view.findViewById(R.id.rides_iv);
+        rides.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FragmentRides();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment).commit();
+            }
+        });
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose Action");
         //allows the fragment to get onTouchListener notifications
         return view;

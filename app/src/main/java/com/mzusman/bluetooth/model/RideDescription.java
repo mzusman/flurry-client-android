@@ -6,10 +6,20 @@ package com.mzusman.bluetooth.model;
 public class RideDescription {
     private boolean sent;
     private String fileName;
+    private String driverID;
 
-    public RideDescription(boolean sent, String fileName) {
+    public RideDescription(boolean sent, String fileName, String driverID) {
         this.sent = sent;
         this.fileName = fileName;
+        this.driverID = driverID;
+    }
+
+    public String getDriverID() {
+        return driverID;
+    }
+
+    public void setDriverID(String driverID) {
+        this.driverID = driverID;
     }
 
     public boolean isSent() {
