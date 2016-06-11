@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
+import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
@@ -27,7 +28,6 @@ import java.io.File;
  */
 public class FragmentProfile extends Fragment {
 
-    int userId;
     Logger log = Log4jHelper.getLogger("ProfileFragment");
 
     @Nullable
@@ -38,7 +38,6 @@ public class FragmentProfile extends Fragment {
 
         // initialize the profiles array and list view
         //
-        this.userId = getActivity().getIntent().getExtras().getInt(Constants.USER_ID_TAG);
 
         ImageView wifi = (ImageView) view.findViewById(R.id.wifi_ib);
         wifi.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +51,6 @@ public class FragmentProfile extends Fragment {
                                 Bundle wifiBundle = new Bundle();
                                 Fragment fragment = new FragmentDetailsList();
                                 wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
-                                wifiBundle.putInt(Constants.USER_ID_TAG, userId);
                                 fragment.setArguments(wifiBundle);
                                 getFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, fragment,
@@ -68,7 +66,6 @@ public class FragmentProfile extends Fragment {
                 Bundle btBundle = new Bundle();
                 btBundle.putString(Constants.MANAGER_TAG,
                         Constants.BT_TAG); // making archive for the next fragment
-                btBundle.putInt(Constants.USER_ID_TAG, userId);
                 // to know that we clicked on the BT button
                 Fragment fragment = new FragmentDeviceList();
                 fragment.setArguments(btBundle);
@@ -111,7 +108,7 @@ public class FragmentProfile extends Fragment {
         data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://54.152.123.228/api/v1/flurry/drivers/" + userId + "/";
+                String url = "http://54.152.123.228/api/v1/flurry/drivers/" + Model.getInstance().getId() + "/";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
@@ -148,7 +145,7 @@ public class FragmentProfile extends Fragment {
         Uri path = Uri.fromFile(logFile);
         email.setType("text/html");
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{"mor.zusmann@gmail.com"});
-        email.putExtra(Intent.EXTRA_SUBJECT, "log from " + userId);
+        email.putExtra(Intent.EXTRA_SUBJECT, "log from " + Model.getInstance().getId());
         email.putExtra(Intent.EXTRA_STREAM, path);
         startActivity(Intent.createChooser(email, "Send email"));
         return true;

@@ -259,20 +259,19 @@ public class Model {
         return new String(data, "UTF-8");
     }
 
-
-    public void sendRemote(int driverID, final OnEvent event) {
+    public void sendRemote(final RideDescription rideDescription, final OnEvent event) {
         String data = null;
         try {
-            data = loadFromFile(currentRide.getFileName());
+            data = loadFromFile(rideDescription.getFileName());
         } catch (IOException e) {
             log.debug(e.getMessage());
         }
-        Model.getInstance().getNetworkManager().sendData(driverID, data, new OnEvent() {
+        Model.getInstance().getNetworkManager().sendData(Integer.parseInt(rideDescription.getDriverID()), data, new OnEvent() {
             @Override
             public void onSuccess() {
                 log.debug("send data success");
                 currentRide.setSent(true);
-                addRideToDatabase(currentRide);
+                addRideToDatabase(rideDescription);
                 currentRide = null;
                 event.onSuccess();
             }
@@ -281,11 +280,17 @@ public class Model {
             public void onFailure() {
                 log.debug("send data fail");
                 currentRide.setSent(false);
-                addRideToDatabase(currentRide);
+                addRideToDatabase(rideDescription);
                 event.onFailure();
             }
         });
 
     }
+
+    public void sendRemote(OnEvent event) {
+        if (currentRide != null)
+            sendRemote(currentRide, event);
+    }
+
 
 }

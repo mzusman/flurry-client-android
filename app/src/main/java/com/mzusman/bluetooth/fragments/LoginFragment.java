@@ -34,7 +34,6 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     ActionProcessButton actionProcessButton;
     String response;
-    int id;
     Button registerButton;
     Logger log = Log4jHelper.getLogger("LoginFragment");
 
@@ -64,11 +63,10 @@ public class LoginFragment extends Fragment {
                 RegisterDialog registerDialog = RegisterDialog.newInstance(new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) {
-                        LoginFragment.this.id = ((NetworkManager.UserCreditials) response.body()).driver_id;
+                        int id = ((NetworkManager.UserCreditials) response.body()).driver_id;
                         Intent intent = new Intent(getActivity(), MainActivity.class);
-                        log.debug("onResponse: id:" + LoginFragment.this.id);
-                        Model.getInstance().setDriverId(LoginFragment.this.id);
-                        intent.putExtra(Constants.USER_ID_TAG, id);
+                        log.debug("onResponse: id:" + id);
+                        Model.getInstance().setDriverId(id);//important
                         startActivity(intent);
                         getActivity().finish();
                     }
@@ -104,11 +102,10 @@ public class LoginFragment extends Fragment {
                 if (response.isSuccessful()) {
                     actionProcessButton.setProgress(100);
                     actionProcessButton.setText(R.string.welc);
-                    LoginFragment.this.id = (response.body().driver_id);
-                    log.debug("onResponse: id:" + LoginFragment.this.id);
-                    Model.getInstance().setDriverId(LoginFragment.this.id);
+                    int id = (response.body().driver_id);
+                    log.debug("onResponse: id:" + id);
+                    Model.getInstance().setDriverId(id); //important
                     Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra(Constants.USER_ID_TAG, id);
                     startActivity(intent);
                     getActivity().finish();
                 } else {

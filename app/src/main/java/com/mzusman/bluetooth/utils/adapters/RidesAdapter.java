@@ -86,12 +86,15 @@ public class RidesAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     button.setProgress(1);
-                    Model.getInstance().sendRemote(Integer.parseInt(currentRide.getDriverID()), new Model.OnEvent() {
+                    Model.getInstance().sendRemote(currentRide, new Model.OnEvent() {
                         @Override
                         public void onSuccess() {
                             button.setText("Done");
                             button.setProgress(100);
+                            button.setClickable(false);
+                            button.setFocusable(false);
                         }
+
                         @Override
                         public void onFailure() {
                             button.setProgress(-1);

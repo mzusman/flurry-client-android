@@ -48,7 +48,6 @@ import retrofit2.Response;
 
 public class FragmentDetailsList extends Fragment {
 
-    private int driverID;
 
     Logger log = Log4jHelper.getLogger("DetailsListFragment");
 
@@ -76,8 +75,6 @@ public class FragmentDetailsList extends Fragment {
         /**
          * Build the factory out side of the manager class
          */
-        driverID = getArguments().getInt(Constants.USER_ID_TAG);
-        log.debug("onResponse: id:" + driverID);
         String manager = getArguments().getString(Constants.MANAGER_TAG);
         Model.getInstance().createNewManager(manager);
 
@@ -119,7 +116,7 @@ public class FragmentDetailsList extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         showDialog("Sending...");
-                        Model.getInstance().sendRemote(driverID, new Model.OnEvent() {
+                        Model.getInstance().sendRemote(new Model.OnEvent() {
                             @Override
                             public void onSuccess() {
                                 dismissDialog();
@@ -145,12 +142,13 @@ public class FragmentDetailsList extends Fragment {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
                         showDialog("Sending...");
-                        Model.getInstance().sendRemote(driverID, new Model.OnEvent() {
+                        Model.getInstance().sendRemote(new Model.OnEvent() {
                             @Override
                             public void onSuccess() {
                                 dismissDialog();
                                 onSentSuccess();
                             }
+
                             @Override
                             public void onFailure() {
                                 dismissDialog();
