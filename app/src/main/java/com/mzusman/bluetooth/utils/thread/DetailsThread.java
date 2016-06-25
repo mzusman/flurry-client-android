@@ -42,7 +42,7 @@ public class DetailsThread extends Thread {
 
     private Callback callback;
     private final DetailsThread.Event event;
-    private final static int SLEEP_TIME = 500;
+    private final static int SLEEP_TIME = 100;
     private DetailsAdapter detailsAdapter;
     private Activity activity;
     private ArrayList<String> readings;
@@ -56,7 +56,7 @@ public class DetailsThread extends Thread {
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(FragmentDetailsList.CallBack fragcallBack,ListView listView, @NonNull Activity activity, TextView timeView) {
+    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, ListView listView, @NonNull Activity activity, TextView timeView) {
         this.fragCallBack = fragcallBack;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();

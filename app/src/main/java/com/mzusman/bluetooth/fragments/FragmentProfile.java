@@ -1,11 +1,14 @@
 package com.mzusman.bluetooth.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -39,10 +42,11 @@ public class FragmentProfile extends Fragment {
         // initialize the profiles array and list view
         //
 
-        ImageView wifi = (ImageView) view.findViewById(R.id.wifi_ib);
+        final ImageView wifi = (ImageView) view.findViewById(R.id.wifi_ib);
         wifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
                 wifiBtn.setMessage(R.string.wifi_msg)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

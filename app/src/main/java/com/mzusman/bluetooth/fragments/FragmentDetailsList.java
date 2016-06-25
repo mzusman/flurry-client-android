@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -39,6 +40,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import dmax.dialog.SpotsDialog;
@@ -71,7 +73,6 @@ public class FragmentDetailsList extends Fragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         this.activity = getActivity();
         setHasOptionsMenu(true);
-
         /**
          * Build the factory out side of the manager class
          */
@@ -100,6 +101,46 @@ public class FragmentDetailsList extends Fragment {
         return true;
     }
 
+    interface CallbackWait {
+        void onWaitStop();
+    }
+
+    private void waitForNSeconds(final int n, final CallbackWait callBack) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = n; i >= 0; i--) {
+                    final int finalI = i;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            changeDialogMessage(String.format("Waiting(%d)...", finalI));
+                        }
+                    });
+                    try {
+                        Thread.currentThread().sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissDialog();
+                        }
+                    });
+                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onWaitStop();
+                    }
+                });
+
+            }
+        }).start();
+    }
+
+
     private void stopRunning() {
         detailsTask.stopRunning(new DetailsThread.Callback() {
             @Override
@@ -109,13 +150,10 @@ public class FragmentDetailsList extends Fragment {
                 //check if connected to the wifi
                 WifiManager wifi = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
                 wifi.setWifiEnabled(false);
-                if (wifi.isWifiEnabled())
-                    message = R.string.dsc_wifi_msg_con;
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage(message).setPositiveButton("Send", new DialogInterface.OnClickListener() {
+
+                waitForNSeconds(7, new CallbackWait() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        showDialog("Sending...");
+                    public void onWaitStop() {
                         Model.getInstance().sendRemote(new Model.OnEvent() {
                             @Override
                             public void onSuccess() {
@@ -130,7 +168,7 @@ public class FragmentDetailsList extends Fragment {
                             }
                         });
                     }
-                }).setCancelable(false).show();
+                });
             }
         });
     }
@@ -170,7 +208,6 @@ public class FragmentDetailsList extends Fragment {
      * and notify him about that . - > get the location listener ready
      */
     private void locationInit() {
-
         //sets the manager
         if (!Model.getInstance().isGpsEnabled()) {
             buildAlertMessageNoGps();
@@ -222,6 +259,14 @@ public class FragmentDetailsList extends Fragment {
         dialog.setCancelable(false);
         dialog.show();
     }
+
+    private void changeDialogMessage(String message) {
+        if (dialog == null)
+            showDialog(message);
+        dialog.setMessage(message);
+
+    }
+
 
     private void dismissDialog() {
         if (dialog == null)

@@ -43,6 +43,11 @@ public class LoginFragment extends Fragment {
         View view = inflater.inflate(R.layout.login_fragment, container, false);
         final EditText userText = (EditText) view.findViewById(R.id.username_edit);
         final EditText passText = (EditText) view.findViewById(R.id.password_edit);
+        String userPass;
+        if ((userPass = Model.getInstance().getLogin()) != null) {
+            userText.setText(userPass.split(",")[0]);
+            passText.setText(userPass.split(",")[1]);
+        }
         actionProcessButton = (ActionProcessButton) view.findViewById(R.id.btnLogin);
         actionProcessButton.setMode(ActionProcessButton.Mode.ENDLESS);
         actionProcessButton.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +100,7 @@ public class LoginFragment extends Fragment {
 
     public void loginUser(String username, String password) {
 
-        Model.getInstance().setNetworkManager(username, password).loginUser(new Callback<NetworkManager.UserCreditials>() {
+        Model.getInstance().onLogin(username, password, new Callback<NetworkManager.UserCreditials>() {
             @Override
             public void onResponse(Call<NetworkManager.UserCreditials> call, Response<NetworkManager.UserCreditials> response) {
                 LoginFragment.this.response = response.message();

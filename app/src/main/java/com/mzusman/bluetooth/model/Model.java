@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.model;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
@@ -147,6 +148,21 @@ public class Model {
         if (networkManager == null)
             networkManager = new NetworkManager();
         return networkManager;
+    }
+
+    private static final String USER_PREF = "USER";
+
+    public void onLogin(String username, String password, Callback<NetworkManager.UserCreditials> callback) {
+        setNetworkManager(username, password).loginUser(callback);
+        SharedPreferences preferences = context.getSharedPreferences(USER_PREF, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(USER_PREF, username + "," + password);
+        editor.apply();
+    }
+
+    public String getLogin() {
+        SharedPreferences preferences = context.getSharedPreferences(USER_PREF, 0);
+        return preferences.getString(USER_PREF, null);
     }
 
     public NetworkManager setNetworkManager(String username, String password) {
