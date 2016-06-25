@@ -59,9 +59,8 @@
 
         <ImageButton
             android:id="@+id/rides_iv"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".5"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_launcher" />

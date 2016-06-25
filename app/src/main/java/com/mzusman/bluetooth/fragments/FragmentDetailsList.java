@@ -122,13 +122,14 @@ public class FragmentDetailsList extends Fragment {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dismissDialog();
-                        }
-                    });
+
                 }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissDialog();
+                    }
+                });
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -154,6 +155,7 @@ public class FragmentDetailsList extends Fragment {
                 waitForNSeconds(7, new CallbackWait() {
                     @Override
                     public void onWaitStop() {
+                        showDialog("Trying to send...");
                         Model.getInstance().sendRemote(new Model.OnEvent() {
                             @Override
                             public void onSuccess() {
