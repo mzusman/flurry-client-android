@@ -43,23 +43,20 @@ public class FragmentBlueToothDevices extends Fragment {
         String managerString = getArguments().getString(Constants.MANAGER_TAG);
         if (managerString.equals(Constants.BT_TAG)) connector = new BTConnector();
 
+        devicesArrayList = (ArrayList<String>) connector.initateConnections();
 
         ListView listOfDevices = (ListView) view.findViewById(R.id.device_list);
         devicesAdapter = new DevicesAdapter(devicesArrayList, getActivity());
         listOfDevices.setAdapter(devicesAdapter);
-
-        connector.initateConnections();
-
-
         listOfDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String deviceAdress = devicesAdapter.getDeviceAddress(position);
+                String deviceAddress = devicesAdapter.getDeviceAddress(position);
                 Fragment details = new FragmentDetailsList();
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.MANAGER_TAG, Constants.BT_TAG);
-                bundle.putString(Constants.DEVICE_TAG, deviceAdress);
+                bundle.putString(Constants.DEVICE_TAG, deviceAddress);
 
                 details.setArguments(bundle);
 
@@ -68,6 +65,9 @@ public class FragmentBlueToothDevices extends Fragment {
                 transaction.commit();
             }
         });
+
+
+
 
         return view;
 
@@ -91,12 +91,14 @@ public class FragmentBlueToothDevices extends Fragment {
             }
 
             final Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
+
             if (bluetoothDevices.size() > 0) {
                 for (BluetoothDevice device : bluetoothDevices) {
                     devicesString.add(device.getName() + "," +
                             device.getAddress());//insert address to the list
                 }
             }
+
             return devicesString;
         }
     }

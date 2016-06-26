@@ -8,6 +8,8 @@ import com.mzusman.bluetooth.commands.protocol.TimeoutCommand;
 import com.mzusman.bluetooth.enums.ObdProtocols;
 import com.mzusman.bluetooth.exceptions.NonNumericResponseException;
 import com.mzusman.bluetooth.exceptions.ResponseException;
+import com.mzusman.bluetooth.model.Model;
+import com.mzusman.bluetooth.utils.Constants;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
 
 import org.apache.log4j.Logger;
@@ -36,7 +38,7 @@ public class WifiManager implements Manager {
 
     @Override
     public void connect(String address) throws IOException, InterruptedException {
-        String[] addressStr = address.split(",");
+        String[] addressStr = Model.getInstance().getDeviceAddress(Constants.WIFI_TAG).split(",");
         socket = new Socket();
         SocketAddress socketAddress = new InetSocketAddress(addressStr[0], Integer.parseInt(addressStr[1]));
         socket.connect(socketAddress, TIME_OUT_VALUE);

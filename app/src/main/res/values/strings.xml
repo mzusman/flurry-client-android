@@ -27,4 +27,9 @@
     <string name="try_again">Cannot Connect</string>
     <string name="cred">Bad Credentials</string>
     <string name="options">options</string>
+    <string name="ip_address">ip-address</string>
+    <string name="port">port</string>
+    <string name="save">Save</string>
+    <string name="waiting">waiting</string>
+    <string name="close">close</string>
 </resources>

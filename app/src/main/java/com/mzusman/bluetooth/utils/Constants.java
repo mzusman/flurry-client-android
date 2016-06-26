@@ -5,6 +5,8 @@ package com.mzusman.bluetooth.utils;
  */
 public class Constants {
 
+    public static final String  FLURRY_TAG = "FLURRY";
+
     private Constants() {
 
     }

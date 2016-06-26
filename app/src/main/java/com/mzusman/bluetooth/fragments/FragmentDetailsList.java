@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.activities.DrawerLocker;
 import com.mzusman.bluetooth.commands.ObdCommand;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
@@ -78,9 +79,9 @@ public class FragmentDetailsList extends Fragment {
          */
         String manager = getArguments().getString(Constants.MANAGER_TAG);
         String address = getArguments().getString(Constants.DEVICE_TAG);
-        Model.getInstance().setDeviceAddress(address);
+        Model.getInstance().setDeviceAddress(address, manager);
         Model.getInstance().createNewManager(manager);
-
+        ((DrawerLocker) getActivity()).setDrawerEnabled(false);
         listView = (ListView) view.findViewById(R.id.details);
         DetailsAdapter detailsAdapter = new DetailsAdapter(activity);
         listView.setAdapter(detailsAdapter);

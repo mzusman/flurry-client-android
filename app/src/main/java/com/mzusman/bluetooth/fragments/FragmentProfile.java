@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mzusman.bluetooth.R;
+import com.mzusman.bluetooth.activities.DrawerLocker;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Model;
 import com.mzusman.bluetooth.utils.Constants;
@@ -38,6 +39,7 @@ public class FragmentProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         setHasOptionsMenu(true);
+        ((DrawerLocker) getActivity()).setDrawerEnabled(true);
 
         // initialize the profiles array and list view
         //
@@ -55,7 +57,6 @@ public class FragmentProfile extends Fragment {
                                 Bundle wifiBundle = new Bundle();
                                 Fragment fragment = new FragmentDetailsList();
                                 wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
-                                wifiBundle.putString(Constants.DEVICE_TAG, Constants.WIFI_ADDRESS);
                                 fragment.setArguments(wifiBundle);
                                 getFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, fragment,

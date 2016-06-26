@@ -1,13 +1,9 @@
 package com.mzusman.bluetooth.model;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 import android.util.JsonWriter;
 
 import com.mzusman.bluetooth.commands.ObdCommand;
@@ -15,13 +11,10 @@ import com.mzusman.bluetooth.enums.AvailableCommandNames;
 import com.mzusman.bluetooth.model.Managers.BtManager;
 import com.mzusman.bluetooth.model.Managers.GpsManager;
 import com.mzusman.bluetooth.model.Managers.Manager;
-import com.mzusman.bluetooth.model.Managers.SqlManager;
 import com.mzusman.bluetooth.model.Managers.WifiManager;
 import com.mzusman.bluetooth.model.Network.NetworkManager;
 import com.mzusman.bluetooth.utils.Constants;
-import com.mzusman.bluetooth.utils.adapters.RidesAdapter;
 import com.mzusman.bluetooth.utils.logger.Log4jHelper;
-import com.mzusman.bluetooth.utils.thread.DetailsThread;
 
 import org.apache.log4j.Logger;
 
@@ -37,9 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Model {
     private Manager manager;
@@ -55,7 +46,6 @@ public class Model {
     private RideDescription currentRide;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
     private int id;
-    private String deviceAddress;
 
     public interface OnEvent {
         void onSuccess();
@@ -63,9 +53,6 @@ public class Model {
         void onFailure();
     }
 
-    public void setDeviceAddress(String address) {
-        this.deviceAddress = address;
-    }
 
     public int getId() {
         return id;
@@ -73,10 +60,6 @@ public class Model {
 
     public void setDriverId(int id) {
         this.id = id;
-    }
-
-    public void setGpsManager(GpsManager gpsManager) {
-        this.gpsManager = gpsManager;
     }
 
     private static Model instance = new Model();
@@ -118,7 +101,7 @@ public class Model {
     public ArrayList<String> getReading(Activity activity) throws IOException, InterruptedException {
 
         if (!manager.isConnected()) {
-            manager.connect(deviceAddress);
+            manager.connect(null);
         }
         if (gpsManager == null) {
             startGpsRequests(activity);
@@ -170,11 +153,27 @@ public class Model {
         return preferences.getString(USER_PREF, null);
     }
 
+    public String getDeviceAddress(String tag) {
+        SharedPreferences preferences = context.getSharedPreferences(tag, 0);
+        if (tag.equals(Constants.WIFI_TAG))
+            return preferences.getString(tag, Constants.WIFI_ADDRESS);
+        else return preferences.getString(tag, "0");
+    }
+
+
+    public void setDeviceAddress(String address, String tag) {
+        SharedPreferences preferences = context.getSharedPreferences(tag, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(tag, address);
+        editor.apply();
+    }
+
     public NetworkManager setNetworkManager(String username, String password) {
         if (networkManager == null)
             networkManager = new NetworkManager(username, password);
         return networkManager;
     }
+
 
     public void setNetworkManager(NetworkManager networkManager) {
         this.networkManager = networkManager;
