@@ -54,6 +54,8 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                actionProcessButton.setClickable(false);
+                actionProcessButton.setFocusable(false);
                 hideKeyboard();
                 loginUser(userText.getText().toString(), passText.getText().toString());
                 actionProcessButton.setProgress(1);
@@ -123,6 +125,8 @@ public class LoginFragment extends Fragment {
             @Override
             public void onFailure(Call<NetworkManager.UserCreditials> call, Throwable t) {
                 actionProcessButton.setProgress(-1);
+                actionProcessButton.setClickable(true);
+                actionProcessButton.setFocusable(true);
                 actionProcessButton.setText(R.string.try_again);
                 Model.getInstance().setNetworkManager(null);
             }

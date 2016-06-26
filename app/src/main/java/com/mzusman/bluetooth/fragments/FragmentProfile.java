@@ -11,7 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.mzusman.bluetooth.R;
 import com.mzusman.bluetooth.enums.AvailableCommandNames;
@@ -59,7 +61,8 @@ public class FragmentProfile extends Fragment {
                                         .replace(R.id.fragment_container, fragment,
                                                 Constants.DETAILS_TAG).commit();
                             }
-                        }).setCancelable(false).create().show();
+                        }).setNegativeButton("Cancel", null)
+                        .setCancelable(false).create().show();
             }
         });
         ImageView bt = (ImageView) view.findViewById(R.id.bt_ib);
@@ -102,6 +105,7 @@ public class FragmentProfile extends Fragment {
                             if (selectedCommands[i])
                                 log.debug("selected " + AvailableCommandNames.values()[i].getValue());
                         }
+                        Toast.makeText(getActivity(), "Commands have been saved!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 }).setCancelable(false).create();
@@ -119,39 +123,15 @@ public class FragmentProfile extends Fragment {
             }
         });
 
-        ImageView rides = (ImageView) view.findViewById(R.id.rides_iv);
-        rides.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment = new FragmentRides();
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, fragment).commit();
-            }
-        });
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose Action");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Choose an Action");
         //allows the fragment to get onTouchListener notifications
         return view;
     }
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (!menu.hasVisibleItems()) {
-            MenuInflater menuInflater = getActivity().getMenuInflater();
-            menuInflater.inflate(R.menu.profile_menu, menu);
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent email = new Intent(Intent.ACTION_SEND);
-        File logFile = new File(Environment.getExternalStorageDirectory(), Log4jHelper.logFileName);
-        Uri path = Uri.fromFile(logFile);
-        email.setType("text/html");
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{"mor.zusmann@gmail.com"});
-        email.putExtra(Intent.EXTRA_SUBJECT, "log from " + Model.getInstance().getId());
-        email.putExtra(Intent.EXTRA_STREAM, path);
-        startActivity(Intent.createChooser(email, "Send email"));
+
         return true;
     }
 }
