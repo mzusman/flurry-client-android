@@ -77,6 +77,8 @@ public class FragmentDetailsList extends Fragment {
          * Build the factory out side of the manager class
          */
         String manager = getArguments().getString(Constants.MANAGER_TAG);
+        String address = getArguments().getString(Constants.DEVICE_TAG);
+        Model.getInstance().setDeviceAddress(address);
         Model.getInstance().createNewManager(manager);
 
         listView = (ListView) view.findViewById(R.id.details);
@@ -118,25 +120,23 @@ public class FragmentDetailsList extends Fragment {
                         }
                     });
                     try {
-                        Thread.currentThread().sleep(1000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissDialog();
+                        }
+                    });
                 }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dismissDialog();
-                    }
-                });
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         callBack.onWaitStop();
                     }
                 });
-
             }
         }).start();
     }
@@ -200,7 +200,9 @@ public class FragmentDetailsList extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                getActivity().finish();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new FragmentProfile(),
+                                Constants.DETAILS_TAG).commit();
             }
         }).show();
     }

@@ -53,13 +53,18 @@ public class Model {
     private Context context;
     private HashMap<String, Manager> tagManager = new HashMap<>();
     private RideDescription currentRide;
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
     private int id;
+    private String deviceAddress;
 
     public interface OnEvent {
         void onSuccess();
 
         void onFailure();
+    }
+
+    public void setDeviceAddress(String address) {
+        this.deviceAddress = address;
     }
 
     public int getId() {
@@ -113,7 +118,7 @@ public class Model {
     public ArrayList<String> getReading(Activity activity) throws IOException, InterruptedException {
 
         if (!manager.isConnected()) {
-            manager.connect(Constants.WIFI_ADDRESS);
+            manager.connect(deviceAddress);
         }
         if (gpsManager == null) {
             startGpsRequests(activity);

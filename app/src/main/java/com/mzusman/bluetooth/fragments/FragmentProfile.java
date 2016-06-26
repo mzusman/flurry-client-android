@@ -1,11 +1,9 @@
 package com.mzusman.bluetooth.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
@@ -47,7 +45,7 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder wifiBtn = new AlertDialog.Builder(getActivity());
                 wifiBtn.setMessage(R.string.wifi_msg)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
@@ -55,6 +53,7 @@ public class FragmentProfile extends Fragment {
                                 Bundle wifiBundle = new Bundle();
                                 Fragment fragment = new FragmentDetailsList();
                                 wifiBundle.putString(Constants.MANAGER_TAG, Constants.WIFI_TAG);
+                                wifiBundle.putString(Constants.DEVICE_TAG, Constants.WIFI_ADDRESS);
                                 fragment.setArguments(wifiBundle);
                                 getFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, fragment,
@@ -67,11 +66,12 @@ public class FragmentProfile extends Fragment {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
                 Bundle btBundle = new Bundle();
                 btBundle.putString(Constants.MANAGER_TAG,
                         Constants.BT_TAG); // making archive for the next fragment
                 // to know that we clicked on the BT button
-                Fragment fragment = new FragmentDeviceList();
+                Fragment fragment = new FragmentBlueToothDevices();
                 fragment.setArguments(btBundle);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, fragment, Constants.DETAILS_TAG).commit();

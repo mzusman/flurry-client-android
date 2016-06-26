@@ -16,9 +16,11 @@ import com.mzusman.bluetooth.model.RideDescription;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -107,8 +109,9 @@ public class RidesAdapter extends BaseAdapter {
 
 
         TextView textView = (TextView) vi.findViewById(R.id.tv_file_name);
-        textView.setText("Ride from: " + currentRide.getFileName()
-                + ",\n" + currentRide.isSent() + ",\n" + currentRide.getDriverID());
+
+        textView.setText("Ride from = " + currentRide.getFileName()
+                + "\nSent = " + currentRide.isSent() + "\nDriverID = " + currentRide.getDriverID());
 
 
         return vi;

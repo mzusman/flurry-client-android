@@ -3,6 +3,7 @@ package com.mzusman.bluetooth.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ public class FragmentRides extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rides, container, false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Recordings History");
         RidesAdapter ridesAdapter = new RidesAdapter(Model.getInstance().getAllDriverRides(), getActivity());
         ListView listView = (ListView) view.findViewById(R.id.rides_lv);
         listView.setAdapter(ridesAdapter);
