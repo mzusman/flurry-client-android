@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker {
             throw new RuntimeException("fail", e);
         }
         intentFiltersArray = new IntentFilter[]{ndef, new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
-        ,new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)};
+                , new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)};
         techListsArray = new String[][]{new String[]{NfcA.class.getName()
                 , NfcF.class.getName()}};
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -95,23 +95,27 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker {
     @Override
     protected void onPause() {
         super.onPause();
-        nfcAdapter.disableForegroundDispatch(this);
+        if (nfcAdapter != null)
+            nfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray);
+        if (nfcAdapter != null)
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (nfcFragment == null)
-            Toast.makeText(this, "Discovered tag:" + intent.getParcelableExtra(NfcAdapter.EXTRA_TAG).toString() + " with intent ", Toast.LENGTH_SHORT).show();
-        else {
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            nfcFragment.onIntent(tag);
+        if (nfcAdapter != null) {
+            if (nfcFragment == null)
+                Toast.makeText(this, "Discovered tag:" + intent.getParcelableExtra(NfcAdapter.EXTRA_TAG).toString() + " with intent ", Toast.LENGTH_SHORT).show();
+            else {
+                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                nfcFragment.onIntent(tag);
+            }
         }
     }
 

@@ -184,7 +184,6 @@ public class Model {
             initJsonWriting();
         writeToJson(arrayList, time);
     }
-
     /**
      * three methods that are writing the data into a json
      */
@@ -283,6 +282,7 @@ public class Model {
         String data = null;
         try {
             data = loadFromFile(rideDescription.getFileName());
+            log.info("load from file " + rideDescription.getFileName() + " success");
         } catch (IOException e) {
             log.debug(e.getMessage());
         }
@@ -290,21 +290,19 @@ public class Model {
             @Override
             public void onSuccess() {
                 log.debug("send data success");
-                currentRide.setSent(true);
+                rideDescription.setSent(true);
                 addRideToDatabase(rideDescription);
-                currentRide = null;
                 event.onSuccess();
             }
 
             @Override
             public void onFailure() {
                 log.debug("send data fail");
-                currentRide.setSent(false);
+                rideDescription.setSent(false);
                 addRideToDatabase(rideDescription);
                 event.onFailure();
             }
         });
-
     }
 
     public void sendRemote(OnEvent event) {

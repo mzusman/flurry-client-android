@@ -56,7 +56,7 @@ public class DetailsThread extends Thread {
     /**
      * ListView in order to post it with the main loop
      */
-    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, ListView listView, @NonNull Activity activity, TextView timeView ) {
+    public DetailsThread(FragmentDetailsList.CallBack fragcallBack, ListView listView, @NonNull Activity activity, TextView timeView) {
         this.fragCallBack = fragcallBack;
         this.activity = activity;
         this.detailsAdapter = (DetailsAdapter) listView.getAdapter();
@@ -101,15 +101,7 @@ public class DetailsThread extends Thread {
             if (event.finish)
                 break;
             time = System.currentTimeMillis();
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    disposeDialog();
-                    detailsAdapter.setArray(readings);
-                    detailsAdapter.notifyDataSetChanged();
-                    textView.setText("time: " + Long.toString(time));
-                }
-            });
+            notifyChanges();
             Model.getInstance().writeToFile(readings, time);
             try {
                 Thread.sleep(SLEEP_TIME);
@@ -119,11 +111,25 @@ public class DetailsThread extends Thread {
         Model.getInstance().endJsonWrite();
     }
 
+    private void notifyChanges() {
+        if (readings != null)
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    disposeDialog();
+                    detailsAdapter.setArray(readings);
+                    detailsAdapter.notifyDataSetChanged();
+                    textView.setText("time: " + Long.toString(time));
+                }
+            });
+    }
+
     private void getConnectionReadings() {
         try {
             readings = Model.getInstance().getReading(activity);
         } catch (IOException e) {
             disposeDialog();
+            notifyChanges();
             tryAgainDialog();
             synchronized (event) {
                 try {

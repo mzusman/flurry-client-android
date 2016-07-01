@@ -40,8 +40,8 @@ public class NfcActivity extends Activity {
                     finish();
                 }
                 msg = msg.replaceAll("[^\\d]", "");
-                        Toast.makeText(this, "Welcome!,Id:" +msg,
-                                Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Welcome!,Id:" + msg,
+                        Toast.LENGTH_SHORT).show();
                 Model.getInstance().setDriverId(Integer.parseInt(msg)); //important
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
