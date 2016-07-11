@@ -252,14 +252,6 @@ public class Model {
         return sdf;
     }
 
-    public void writeToLog(String message) {
-        log.debug(message);
-    }
-
-    public List<RideDescription> getAllRides() {
-        return sql.getAllRides();
-    }
-
     public List<RideDescription> getAllDriverRides() {
         return sql.getAllDriverRides(String.valueOf(id));
     }

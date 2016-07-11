@@ -69,9 +69,6 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
-//        setSupportActionBar(toolbar);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.navList);
 

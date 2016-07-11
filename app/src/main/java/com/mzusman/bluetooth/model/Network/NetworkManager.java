@@ -31,7 +31,7 @@ public class NetworkManager {
     private static Retrofit retrofit;
     private static Retrofit.Builder builder = new Retrofit.Builder().
             addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://54.152.123.228/api/v1/flurry/");
+            .baseUrl("http://52.90.153.90/api/v1/flurry/");
 
     //non auth constructor
     public NetworkManager() {
@@ -129,16 +129,6 @@ public class NetworkManager {
         }
     }
 
-    public class UserLogin {
-        public String username;
-        public String password;
-
-        public UserLogin(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-    }
-
     public class UserCreditials {
         public int driver_id;
         public int user_id;
@@ -149,15 +139,4 @@ public class NetworkManager {
         }
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setDriverID(int driverID) {
-        this.driverID = driverID;
-    }
 }
