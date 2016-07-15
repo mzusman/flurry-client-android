@@ -16,7 +16,9 @@ Flurry project helps you to collect data from experimenters using Android applic
 # Client
 
 Highly customizable application, being able to set/change the server's address, Obd-II's address from within the 
-application, change the wanted obd commands, choose between wi-fi and bluetooth.
+application, change the wanted obd commands, choose between wi-fi and bluetooth and support nfc(to bypass login).
+
+### Images:
 
 
 
