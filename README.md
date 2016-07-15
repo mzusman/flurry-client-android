@@ -41,6 +41,6 @@ application, change the wanted obd commands, choose between wi-fi and bluetooth 
 ##### Write tag to a nfc sticker (opens the app without login on attachment with the sticker):
 <img src="./pics/nfc.jpg" alt="nfc" width="200" height="300"/>
 
-####OBDDII Library in usage -  [OBDII-java-library](https://github.com/pires/obd-java-api)
+####OBD-II Library in usage -  [OBDII-java-library](https://github.com/pires/obd-java-api)
 ###Apache License v2
 
