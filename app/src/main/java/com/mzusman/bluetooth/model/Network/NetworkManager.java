@@ -49,13 +49,13 @@ public class NetworkManager {
         builder = new Retrofit.Builder().
                 addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("http://" + ip + "/api/v1/flurry/");
-        makeAuthorizationHeader(username, password);
+        makeAuthenticationHeader(username, password);
         this.username = username;
         this.password = password;
     }
 
 
-    private void makeAuthorizationHeader(String username, String password) {
+    private void makeAuthenticationHeader(String username, String password) {
         String credentials = username + ":" + password;
         final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -79,13 +79,6 @@ public class NetworkManager {
         driverService = retrofit.create(DriverService.class);
     }
 
-    public void resetCredentials() {
-        this.username = null;
-        this.password = null;
-        this.driverService = null;
-        retrofit = null;
-    }
-
     public void sendData(int driverID, String drivingData, final Model.OnEvent event) {
         this.driverID = driverID;
         Call<Void> call = driverService.createDrivingData(driverID, drivingData);
@@ -104,21 +97,18 @@ public class NetworkManager {
         });
     }
 
-    public void registerUser(String username, String driverName, String password, Callback<UserCreditials> callback) throws IOException {
+    public void registerUser(String username, String driverName, String password, Callback<UserCredentials> callback) throws IOException {
         UserRegister user = new UserRegister(username, driverName, password);
-        Call<UserCreditials> call = driverService.registerDriver(user);
+        Call<UserCredentials> call = driverService.registerDriver(user);
         call.enqueue(callback);
 
         this.username = username;
         this.password = password;
-        makeAuthorizationHeader(username, password);
-
-
+        makeAuthenticationHeader(username, password);
     }
 
-    public void loginUser(Callback<NetworkManager.UserCreditials> callback) {
-
-        Call<UserCreditials> call = driverService.loginDriver();
+    public void loginUser(Callback<UserCredentials> callback) {
+        Call<UserCredentials> call = driverService.loginDriver();
         call.enqueue(callback);
     }
 
@@ -134,11 +124,11 @@ public class NetworkManager {
         }
     }
 
-    public class UserCreditials {
+    public class UserCredentials {
         public int driver_id;
         public int user_id;
 
-        public UserCreditials(int driver_id, int user_id) {
+        public UserCredentials(int driver_id, int user_id) {
             this.driver_id = driver_id;
             this.user_id = user_id;
         }

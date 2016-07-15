@@ -152,7 +152,7 @@ public class Model {
 
     private static final String USER_PREF = "USER";
 
-    public void onLogin(String username, String password, Callback<NetworkManager.UserCreditials> callback) {
+    public void onLogin(String username, String password, Callback<NetworkManager.UserCredentials> callback) {
         setNetworkManager(username, password).loginUser(callback);
         SharedPreferences preferences = context.getSharedPreferences(USER_PREF, 0);
         SharedPreferences.Editor editor = preferences.edit();

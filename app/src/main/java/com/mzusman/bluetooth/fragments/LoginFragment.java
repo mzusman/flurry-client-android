@@ -71,7 +71,7 @@ public class LoginFragment extends Fragment {
                 RegisterDialog registerDialog = RegisterDialog.newInstance(new Callback() {
                     @Override
                     public void onResponse(Call call, Response response) {
-                        int id = ((NetworkManager.UserCreditials) response.body()).driver_id;
+                        int id = ((NetworkManager.UserCredentials) response.body()).driver_id;
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         log.debug("onResponse: id:" + id);
                         Model.getInstance().setDriverId(id);//important
@@ -111,9 +111,9 @@ public class LoginFragment extends Fragment {
 
     public void loginUser(String username, String password) {
 
-        Model.getInstance().onLogin(username, password, new Callback<NetworkManager.UserCreditials>() {
+        Model.getInstance().onLogin(username, password, new Callback<NetworkManager.UserCredentials>() {
             @Override
-            public void onResponse(Call<NetworkManager.UserCreditials> call, Response<NetworkManager.UserCreditials> response) {
+            public void onResponse(Call<NetworkManager.UserCredentials> call, Response<NetworkManager.UserCredentials> response) {
                 LoginFragment.this.response = response.message();
                 if (response.isSuccessful()) {
                     actionProcessButton.setProgress(100);
@@ -134,7 +134,7 @@ public class LoginFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<NetworkManager.UserCreditials> call, Throwable t) {
+            public void onFailure(Call<NetworkManager.UserCredentials> call, Throwable t) {
                 actionProcessButton.setProgress(-1);
                 actionProcessButton.setClickable(true);
                 actionProcessButton.setFocusable(true);

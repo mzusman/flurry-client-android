@@ -18,9 +18,9 @@ public interface DriverService {
 
     @Headers("Content-Type: application/json")
     @POST("users/")
-    Call<NetworkManager.UserCreditials> registerDriver(@Body NetworkManager.UserRegister  credentials);
+    Call<NetworkManager.UserCredentials> registerDriver(@Body NetworkManager.UserRegister  credentials);
 
 
     @POST("user-log-in/")
-    Call<NetworkManager.UserCreditials> loginDriver();
+    Call<NetworkManager.UserCredentials> loginDriver();
 }
