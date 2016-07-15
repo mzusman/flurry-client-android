@@ -134,8 +134,20 @@ public class Model {
      */
     public NetworkManager getNetworkManager() {
         if (networkManager == null)
-            networkManager = new NetworkManager();
+            networkManager = new NetworkManager(getSeverIp());
         return networkManager;
+    }
+
+    public String getSeverIp() {
+        SharedPreferences preferences = context.getSharedPreferences(Constants.SERVER_IP, 0);
+        return preferences.getString(Constants.SERVER_IP, Constants.DEFAULT_SERVER_IP);
+    }
+
+    public void setServerIp(String ip) {
+        SharedPreferences preferences = context.getSharedPreferences(Constants.SERVER_IP, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.SERVER_IP, ip);
+        editor.apply();
     }
 
     private static final String USER_PREF = "USER";
@@ -147,6 +159,7 @@ public class Model {
         editor.putString(USER_PREF, username + "," + password);
         editor.apply();
     }
+
 
     public String getLogin() {
         SharedPreferences preferences = context.getSharedPreferences(USER_PREF, 0);
@@ -170,7 +183,7 @@ public class Model {
 
     public NetworkManager setNetworkManager(String username, String password) {
         if (networkManager == null)
-            networkManager = new NetworkManager(username, password);
+            networkManager = new NetworkManager(getSeverIp(), username, password);
         return networkManager;
     }
 
@@ -184,6 +197,7 @@ public class Model {
             initJsonWriting();
         writeToJson(arrayList, time);
     }
+
     /**
      * three methods that are writing the data into a json
      */

@@ -29,12 +29,14 @@ public class NetworkManager {
     int driverID;
     DriverService driverService;
     private static Retrofit retrofit;
-    private static Retrofit.Builder builder = new Retrofit.Builder().
-            addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://52.90.153.90/api/v1/flurry/");
+
+    private Retrofit.Builder builder;
 
     //non auth constructor
-    public NetworkManager() {
+    public NetworkManager(String ip) {
+        builder = new Retrofit.Builder().
+                addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("http://" + ip + "/api/v1/flurry/");
         retrofit = builder.build();
         if (driverService == null)
             driverService = retrofit.create(DriverService.class);
@@ -43,7 +45,10 @@ public class NetworkManager {
     }
 
 
-    public NetworkManager(String username, String password) {
+    public NetworkManager(String ip, String username, String password) {
+        builder = new Retrofit.Builder().
+                addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("http://" + ip + "/api/v1/flurry/");
         makeAuthorizationHeader(username, password);
         this.username = username;
         this.password = password;

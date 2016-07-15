@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.mzusman.bluetooth.R;
@@ -86,6 +87,14 @@ public class LoginFragment extends Fragment {
                 registerDialog.show(getFragmentManager(), Constants.REGISTER_TAG);
             }
         });
+        ImageButton configButton = (ImageButton) view.findViewById(R.id.config_btn);
+        configButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentServer fragmentServer = new FragmentServer();
+                fragmentServer.show(getFragmentManager(), "sf");
+            }
+        });
 
         return view;
     }
@@ -118,6 +127,8 @@ public class LoginFragment extends Fragment {
                 } else {
                     actionProcessButton.setProgress(-1);
                     actionProcessButton.setText(R.string.cred);
+                    actionProcessButton.setClickable(true);
+                    actionProcessButton.setFocusable(true);
                     Model.getInstance().setNetworkManager(null);
                 }
             }

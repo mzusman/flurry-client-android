@@ -63,9 +63,7 @@ public class WifiManager implements Manager {
     }
 
     public boolean isConnected() {
-        if (socket != null)
-            return socket.isConnected();
-        return false;
+        return socket != null && socket.isConnected();
     }
 
     @Override

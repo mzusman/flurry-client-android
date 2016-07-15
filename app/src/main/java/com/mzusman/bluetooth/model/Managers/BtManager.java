@@ -44,7 +44,7 @@ public class BtManager implements Manager {
 
     @Override
     public boolean isConnected() {
-        return bluetoothSocket.isConnected();
+        return bluetoothSocket != null && bluetoothSocket.isConnected();
     }
 
     @Override

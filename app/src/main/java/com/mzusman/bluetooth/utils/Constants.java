@@ -5,7 +5,8 @@ package com.mzusman.bluetooth.utils;
  */
 public class Constants {
 
-    public static final String  FLURRY_TAG = "FLURRY";
+    public static final String FLURRY_TAG = "FLURRY";
+    public static final String SERVER_IP = "SERVER";
 
     private Constants() {
 
@@ -25,6 +26,7 @@ public class Constants {
     final public static String GPS_TAG = "gps";
     final public static String USER_ID_TAG = "ID";
     final public static String WIFI_ADDRESS = "192.168.0.10,35000";
+    final public static String DEFAULT_SERVER_IP = "flurry.herokuapp.com";
 
 
 }

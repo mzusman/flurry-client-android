@@ -32,4 +32,5 @@
     <string name="save">Save</string>
     <string name="waiting">waiting</string>
     <string name="close">close</string>
+    <string name="server_address">server address</string>
 </resources>
