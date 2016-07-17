@@ -3,7 +3,7 @@
 _Collecting drivers driving data for self and academic use_
 
 ---
-
+ 
 Flurry project helps you to collect data from experimenters using Android application and OBD-II device <img src="http://cf3.souqcdn.com/item/2013/11/25/63/61/64/4/item_XL_6361644_3688334.jpg" width="100">
 
 
